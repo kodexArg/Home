@@ -1,0 +1,127 @@
+/* GENERATED from ../tokens/syv.tokens.json — Subordinación y Valor design system.
+   "Diseño Verde" / Green Matte-Military — green evolution of the Naranja system.
+   Do not hand-edit values; edit the JSON SSOT and regenerate. Mobile-first.
+   Import once at the app root (Astro layout or Svelte :global).
+   Fonts: Nunito + DM Mono + Saira Stencil One (logo wordmark only). */
+
+:root {
+  /* --- ink / surface (warm near-black) --- */
+  --syv-ink-1000: #0C0B09; /* deepest backdrop / curtain */
+  --syv-ink-900:  #141210; /* body / card surface */
+  --syv-ink-850:  #1A1714; /* raised card surface */
+  --syv-ink-600:  #3A352F; /* hairline borders */
+  --syv-ink-500:  #6B6358; /* muted / disabled */
+
+  /* --- text --- */
+  --syv-cream-100: #F3EEE4; /* primary text */
+  --syv-warm-200:  #CDBFA8; /* secondary text */
+  --syv-white:     #F3EEE4; /* warm white (= cream-100) — logo / high contrast */
+
+  /* --- green — MATTE MILITARY olive-drab (1978). LEAD accent. Never luminous. --- */
+  --syv-green-300:  #B4BE8E; /* pale olive / soft chip */
+  --syv-green-400:  #97A267; /* hover lighten */
+  --syv-green-500:  #7B8A4E; /* DEFAULT interactive / heading */
+  --syv-green-600:  #5E6B3A; /* press / deepen */
+  --syv-green-deep: #4A5530; /* deepest olive — high-emphasis hairline */
+  /* NEON EXCEPTION — background glow spot only, never UI fill/text/border */
+  --syv-green-neon: #34E867;
+
+  /* --- celeste y blanco (institutional Argentina 1978) --- */
+  --syv-celeste-500: #8FB8D6;
+  --syv-celeste-300: #BCD6E8;
+
+  /* --- moss (military surfaces — cool green-greys) --- */
+  --syv-moss-900: #1A201A; /* green-black band / deep panel */
+  --syv-moss-700: #373D35; /* slate-green raised / alt card */
+  --syv-moss-500: #4E564A; /* military border / divider */
+
+  /* --- second voices (kept from the original Naranja) --- */
+  --syv-amber-500: #E0A23C; /* ámbar — 'the other tool' (was Naranja lead) */
+  --syv-amber-300: #EFC074;
+  --syv-teal-500:  #4FA6AB; /* petróleo */
+  --syv-teal-300:  #7CC4C8;
+
+  /* --- semantic --- */
+  --syv-good: var(--syv-green-500);
+  --syv-warn: var(--syv-amber-500);
+  --syv-bad:  #D9694E; /* warm red, never pure red */
+
+  /* --- lore tone aliases (rename only) --- */
+  /* the Ejército Rojo has little literal red: amber reads as their dry,
+     colourful register; #D9694E is the dry earth red of their banners. */
+  --syv-rojo-tierra: #D9694E; /* = bad — Ejército Rojo dry earth red */
+
+  /* --- semantic surface / role aliases --- */
+  --syv-surface-curtain:  var(--syv-ink-1000);
+  --syv-surface-body:     var(--syv-ink-900);
+  --syv-surface-card:     var(--syv-ink-850);
+  --syv-surface-military: var(--syv-moss-700);
+  --syv-surface-band:     var(--syv-moss-900);
+  --syv-text-primary:     var(--syv-cream-100);
+  --syv-text-secondary:   var(--syv-warm-200);
+  --syv-text-muted:       var(--syv-ink-500);
+  --syv-accent:           var(--syv-green-500);
+  --syv-accent-hover:     var(--syv-green-400);
+  --syv-accent-press:     var(--syv-green-600);
+  --syv-accent-emphasis:  var(--syv-green-deep);
+  --syv-accent-celeste:   var(--syv-celeste-500);
+
+  /* --- type --- */
+  --syv-font-sans: 'Nunito', system-ui, sans-serif;
+  --syv-font-mono: 'DM Mono', ui-monospace, monospace;
+  --syv-font-logo: 'Saira Stencil One', 'DM Mono', monospace; /* brand wordmark ONLY */
+  --syv-weight-regular: 400;
+  --syv-weight-medium:  500;
+  --syv-weight-display: 800;
+  --syv-size-display:  35px;
+  --syv-size-headline: 26px;
+  --syv-size-title:    19px;
+  --syv-size-body:     17px;
+  --syv-size-mono:     16px;
+  --syv-size-kicker:   12px;
+  --syv-lh-tight: 1.08;
+  --syv-lh-title: 1.2;
+  --syv-lh-body:  1.55;
+  --syv-lh-mono:  1.6;
+  --syv-ls-display: -0.02em;
+  --syv-ls-body:     0.01em;
+  --syv-ls-kicker:   0.18em;
+
+  /* --- spacing (4px base) --- */
+  --syv-space-xs: 4px;  --syv-space-sm: 8px;  --syv-space-md: 12px;
+  --syv-space-lg: 16px; --syv-space-xl: 20px; --syv-space-2xl: 24px;
+  --syv-space-3xl: 28px; --syv-space-4xl: 32px; --syv-space-5xl: 48px;
+  --syv-space-6xl: 56px; --syv-space-7xl: 64px;
+
+  /* --- radius (squared/austere military controls) --- */
+  /* chips/badges→sm; buttons/inputs/switch→md; cards→lg; pill→dots/avatars only */
+  --syv-radius-sm:   4px;
+  --syv-radius-md:   6px;
+  --syv-radius-lg:   12px;
+  --syv-radius-pill: 999px;
+
+  /* --- borders (no elevation shadows — depth = glow + hairline + radius) --- */
+  --syv-hairline: 1.5px solid var(--syv-ink-600);
+
+  /* --- the single off-center NEON-green radial glow (a layer, not a shadow) --- */
+  --syv-glow: radial-gradient(60% 40% at 78% 12%,
+      rgba(52,232,103,0.17) 0%, rgba(52,232,103,0.05) 38%, transparent 70%);
+  --syv-glow-desktop: radial-gradient(52% 40% at 82% 8%,
+      rgba(52,232,103,0.22) 0%, rgba(52,232,103,0.06) 42%, transparent 72%);
+
+  /* --- card surfaces (gradients; never a flat fill) --- */
+  --syv-card-surface: linear-gradient(155deg,
+      var(--syv-ink-850) 0%, var(--syv-ink-900) 55%, var(--syv-ink-1000) 100%);
+  --syv-card-military: linear-gradient(155deg,
+      var(--syv-moss-700) 0%, var(--syv-moss-900) 100%);
+
+  /* --- motion --- */
+  --syv-dur-slow:   760ms;
+  --syv-dur-medium: 320ms;
+  --syv-dur-fast:   160ms;
+  --syv-ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- breakpoints (mobile-first reference) --- */
+  --syv-bp-tablet:  768px;
+  --syv-bp-desktop: 1024px;
+}

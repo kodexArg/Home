@@ -1,0 +1,56 @@
+@import './syv.tokens.css';
+
+/* kodexarg.com — liminal canvas + SyV Pip-Boy LLM Router interface. */
+
+:root {
+  /* warm charcoal → cream */
+  --ink-1000: #0c0b09;
+  --ink-900: #141210;
+  --ink-800: #1c1916;
+  --ink-700: #262220;
+  --ink-600: #332e29;
+  --warm-400: #6b6358;
+  --warm-300: #8c8475;
+  --warm-200: #b6ad9d;
+  --cream-100: #f3eee4;
+
+  /* the candle (Presentation Orange) */
+  --orange-500: #ff6a1a;
+  --orange-400: #ff8a42;
+  --orange-300: #ffa86b;
+  --orange-glow: rgba(255, 106, 26, 0.22);
+
+  /* SyV Pip-Boy Green Accent (can be toggled or combined with orange) */
+  --pipboy-green: #7b8a4e;
+  --pipboy-glow: rgba(123, 138, 78, 0.35);
+
+  /* semantic */
+  --bg: var(--ink-900);
+  --fg: var(--cream-100);
+  --dim: var(--warm-400);
+
+  --font-mono: 'DM Mono', ui-monospace, "Cascadia Code", "JetBrains Mono", "Fira Code", monospace;
+
+  /* motion */
+  --ease-candle: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-slow: 900ms;
+  --t-med: 480ms;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}

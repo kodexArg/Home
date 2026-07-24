@@ -1,8 +1,34 @@
 ---
 import Base from '../layouts/Base.astro';
-import HelloWorld from '../components/HelloWorld.svelte';
+import Wordmark from '../components/Wordmark.svelte';
+import LlmRouterChat from '../components/LlmRouterChat.svelte';
 ---
 
-<Base title="Homepage">
-  <HelloWorld client:load />
+<Base title="kodexArg">
+  <header>
+    <Wordmark static size="0.95rem" href="https://cv.kodexarg.com" />
+  </header>
+
+  <main aria-label="LLM Router Interface">
+    <LlmRouterChat client:only="svelte" cvHref="https://cv.kodexarg.com" />
+  </main>
 </Base>
+
+<style>
+  header {
+    position: absolute;
+    inset: 0 0 auto 0;
+    padding: 1.4rem 1.8rem 1.1rem;
+    background: transparent;
+    z-index: 3;
+    width: max-content;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  main {
+    position: relative;
+    height: 100dvh;
+    overflow: hidden;
+  }
+</style>

@@ -6,6 +6,7 @@ export default defineConfig({
   site: 'https://home.kodexarg.com',
   integrations: [svelte()],
   adapter: cloudflare({
-    imageService: 'passthrough'
+    imageService: 'passthrough',
+    session: false
   })
 });
