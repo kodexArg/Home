@@ -22,6 +22,13 @@ export interface RouteResult {
 	action?: RouterAction;
 	destination?: RouteDestination;
 	options?: RouteDestination[];
+	/**
+	 * Score is strategy-local and NOT comparable across strategies:
+	 * RuleBasedStrategy uses hand-tuned constants (0.98/0.88/0.65/0.15),
+	 * while CloudflareVectorizeStrategy emits raw cosine similarity
+	 * (observed range ~0.55-0.72). Do not write `if (a.score > b.score)`
+	 * to compare results from different strategies.
+	 */
 	score?: number;
 	explanation: string;
 	strategyName: string;
