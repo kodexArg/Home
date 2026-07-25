@@ -31,8 +31,8 @@ export interface TypewriterConfig {
 }
 
 export const DEFAULT_CHAR_DELAY_MS = 18;
-export const DEFAULT_WORD_PAUSE_MS = 90;
-export const DEFAULT_TYPO_PROBABILITY = 0.01;
+export const DEFAULT_WORD_PAUSE_MS = 40;
+export const DEFAULT_TYPO_PROBABILITY = 0.005;
 export const DEFAULT_TYPO_HESITATION_MS = 1000;
 
 /**

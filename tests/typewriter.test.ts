@@ -32,7 +32,7 @@ function queueRandom(values: number[]): () => number {
 describe('generateTypewriterSteps', () => {
 	test('with an RNG that never triggers a typo, steps spell exactly the input text', () => {
 		const text = 'the quick brown fox';
-		const random = () => 0.99; // always above default typoProbability (0.01)
+		const random = () => 0.99; // always above default typoProbability (0.005)
 		const steps = generateTypewriterSteps(text, { random });
 
 		expect(steps.some((s) => s.kind === 'typo')).toBe(false);
@@ -44,7 +44,7 @@ describe('generateTypewriterSteps', () => {
 		// eligible-for-typo indices in "cat dog": 0 ('c'), 1 ('a'), 4 ('d'), 5 ('o')
 		// force a typo on the very first eligible char (index 0, 'c'), never again after.
 		const random = queueRandom([
-			0, // index 0 typo-check: triggers (< 0.01)
+			0, // index 0 typo-check: triggers (< 0.005)
 			0.5, // index 0 adjacency pick
 			0.99, // index 1 typo-check: no
 			0.99, // index 4 typo-check: no
