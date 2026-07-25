@@ -17,5 +17,11 @@
       "binding": "SESSION",
       "id": "c8f72c7b92cf427ea9633033e8d49fac"
     }
+  ],
+  "routes": [
+    {
+      "pattern": "home.kodexarg.com",
+      "custom_domain": true
+    }
   ]
 }

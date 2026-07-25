@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { queryCloudflareVectorize } from '../../lib/cloudflare/vectorizeService';
 import { RuleBasedStrategy } from '../../lib/router/strategies/ruleBasedStrategy';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
 	try {
 		const body = await request.json();
 		const query = body?.query;
@@ -21,7 +22,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			);
 		}
 
-		const env = locals?.runtime?.env;
 		if (env?.AI && env?.VECTOR_INDEX) {
 			const vectorResults = await queryCloudflareVectorize(env, query, 3);
 			if (vectorResults && vectorResults.length > 0) {
