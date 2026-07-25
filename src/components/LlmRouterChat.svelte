@@ -1,124 +1,40 @@
 <script>
+	/*
+	 * LlmRouterChat — presentation only.
+	 *
+	 * All conversation logic (history, 3s cooldown, routing, RouteResult
+	 * interpretation) lives in ../lib/chat/chatSession.ts. This component just
+	 * drives session.submit() and renders the lines it publishes.
+	 */
 	import SyvInput from './SyvInput.svelte';
-	import { globalAdaptiveRouter } from '../lib/router/adaptiveRouter';
-	import { presentResult } from '../lib/router/presentResult';
+	import { createChatSession, isSubmittable } from '../lib/chat/chatSession';
 
 	let { cvHref = 'https://cv.kodexarg.com' } = $props();
 
-	// Chat state
+	// View state: mirrors of the session snapshot + what is currently typed.
 	let history = $state([]);
-	let currentInput = $state('');
 	let isRouting = $state(false);
-
-	// Language flag: 'es' (default) | 'en' (Global mode)
 	let language = $state('es');
+	let currentInput = $state('');
+
+	const session = createChatSession({
+		onChange: (snapshot) => {
+			history = snapshot.history;
+			isRouting = snapshot.isRouting;
+			language = snapshot.language;
+		}
+	});
+
 	let placeholder = $derived(language === 'es' ? '¿Sí?' : 'Yes?');
 
 	function toggleLanguage() {
-		language = language === 'es' ? 'en' : 'es';
+		session.toggleLanguage();
 	}
 
-	let lastQueryTimestamp = $state(0);
-
-	async function commitQuery(query) {
-		const trimmed = query.trim();
-		if (!trimmed) return;
-
-		// 3-second cooldown check
-		const now = Date.now();
-		const elapsed = now - lastQueryTimestamp;
-		if (elapsed < 3000) {
-			const remainingSec = Math.ceil((3000 - elapsed) / 1000);
-			history = [
-				...history,
-				{ role: 'user', text: trimmed },
-				{
-					role: 'assistant',
-					kind: 'status',
-					text: language === 'es'
-						? `⏱️ Por favor espera ${remainingSec}s antes de enviar otra consulta (cooldown de 3s).`
-						: `⏱️ Please wait ${remainingSec}s before sending another query (3s cooldown).`
-				}
-			];
-			currentInput = '';
-			return;
-		}
-
-		lastQueryTimestamp = Date.now();
-
-		// 1. Add user message
-		history = [...history, { role: 'user', text: trimmed }];
+	function commitQuery(query) {
+		if (!isSubmittable(query)) return;
 		currentInput = '';
-		isRouting = true;
-
-		try {
-			// 2. Perform closed-action router execution with active language
-			const routeResult = await globalAdaptiveRouter.route(trimmed, { language });
-
-			// Simulated typing/routing delay
-			await new Promise((res) => setTimeout(res, 200));
-
-			if (routeResult.outcome === 'Action' && routeResult.action?.kind === 'navigate' && routeResult.destination) {
-				const presented = presentResult(routeResult);
-
-				history = [
-					...history,
-					{
-						role: 'assistant',
-						kind: 'navigate',
-						opener: presented.opener,
-						abstract: presented.description,
-						destination: routeResult.destination,
-						score: routeResult.score,
-						strategyName: routeResult.strategyName
-					}
-				];
-			} else if (routeResult.outcome === 'Confirm' || routeResult.action?.kind === 'confirm') {
-				const presented = presentResult(routeResult);
-
-				const optionsList = routeResult.options || (routeResult.destination ? [routeResult.destination] : []);
-
-				history = [
-					...history,
-					{
-						role: 'assistant',
-						kind: 'confirm',
-						opener: presented.opener,
-						abstract: presented.description,
-						closer: presented.closer,
-						destination: routeResult.destination || optionsList[0],
-						options: optionsList,
-						score: routeResult.score,
-						strategyName: routeResult.strategyName
-					}
-				];
-			} else {
-				const presented = presentResult(routeResult);
-
-				history = [
-					...history,
-					{
-						role: 'assistant',
-						kind: 'status',
-						text: presented.opener
-					}
-				];
-			}
-		} catch (e) {
-			console.error('Routing error:', e);
-			history = [
-				...history,
-				{
-					role: 'assistant',
-					kind: 'status',
-					text: language === 'es'
-						? 'Ocurrió un error procesando la consulta. Intente nuevamente.'
-						: 'An error occurred while processing your request. Please try again.'
-				}
-			];
-		} finally {
-			isRouting = false;
-		}
+		void session.submit(query);
 	}
 </script>
 
@@ -250,6 +166,7 @@
 			{placeholder}
 			bind:value={currentInput}
 			onCommit={commitQuery}
+			autogrow
 		/>
 	</div>
 </div>

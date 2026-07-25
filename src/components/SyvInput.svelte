@@ -9,13 +9,24 @@
 		value = $bindable(''),
 		onCommit = () => {},
 		invalid = false,
-		hint = undefined
+		hint = undefined,
+		/** When true the field is a flexible textarea that grows with its content. */
+		autogrow = false
 	} = $props();
 
 	let inputEl;
 
+	// Keep the flexible field exactly as tall as its content (capped in CSS).
+	$effect(() => {
+		value;
+		if (!autogrow || !inputEl) return;
+		inputEl.style.height = 'auto';
+		inputEl.style.height = `${inputEl.scrollHeight}px`;
+	});
+
 	function handleKeyDown(e) {
-		if (e.key === 'Enter') {
+		// Shift+Enter keeps a soft newline in the flexible field; Enter commits.
+		if (e.key === 'Enter' && !(autogrow && e.shiftKey)) {
 			e.preventDefault();
 			if (onCommit) {
 				onCommit(value);
@@ -28,24 +39,45 @@
 	{#if label}
 		<label class="syv-field__label" for="syv-pipboy-input">{label}</label>
 	{/if}
-	<input
-		id="syv-pipboy-input"
-		bind:this={inputEl}
-		bind:value={value}
-		type="text"
-		{placeholder}
-		onkeydown={handleKeyDown}
-		class="syv-input"
-		class:syv-input--bad={invalid}
-		aria-label={label || placeholder || 'Escribe tu mensaje'}
-		aria-invalid={invalid ? 'true' : undefined}
-		aria-describedby={hint ? 'syv-pipboy-hint' : undefined}
-		autocomplete="off"
-		autocapitalize="off"
-		autocorrect="off"
-		spellcheck="false"
-		maxlength={2048}
-	/>
+	{#if autogrow}
+		<textarea
+			id="syv-pipboy-input"
+			bind:this={inputEl}
+			bind:value={value}
+			rows="1"
+			{placeholder}
+			onkeydown={handleKeyDown}
+			class="syv-input syv-input--grow"
+			class:syv-input--bad={invalid}
+			aria-label={label || placeholder || 'Escribe tu mensaje'}
+			aria-invalid={invalid ? 'true' : undefined}
+			aria-describedby={hint ? 'syv-pipboy-hint' : undefined}
+			autocomplete="off"
+			autocapitalize="off"
+			autocorrect="off"
+			spellcheck="false"
+			maxlength={2048}
+		></textarea>
+	{:else}
+		<input
+			id="syv-pipboy-input"
+			bind:this={inputEl}
+			bind:value={value}
+			type="text"
+			{placeholder}
+			onkeydown={handleKeyDown}
+			class="syv-input"
+			class:syv-input--bad={invalid}
+			aria-label={label || placeholder || 'Escribe tu mensaje'}
+			aria-invalid={invalid ? 'true' : undefined}
+			aria-describedby={hint ? 'syv-pipboy-hint' : undefined}
+			autocomplete="off"
+			autocapitalize="off"
+			autocorrect="off"
+			spellcheck="false"
+			maxlength={2048}
+		/>
+	{/if}
 	{#if hint}
 		<span class="syv-field__hint" class:syv-field__hint--bad={invalid}>{hint}</span>
 	{/if}
@@ -131,6 +163,17 @@
 		background-size: calc(100% - 28px) 1.5px, 1ch 100%;
 		background-position: 14px calc(100% - 8px), 14px 0;
 		box-shadow: inset 0 -10px 16px -12px var(--orange-glow);
+	}
+
+	/* flexible field: same skin, grows with its content instead of scrolling sideways */
+	.syv-input--grow {
+		display: block;
+		resize: none;
+		overflow-y: auto;
+		min-height: calc(1.5em + 23px);
+		max-height: 30vh;
+		white-space: pre-wrap;
+		word-break: break-word;
 	}
 
 	.syv-input--bad {
