@@ -74,10 +74,7 @@
 					}
 				];
 			} else if (routeResult.outcome === 'Confirm' || routeResult.action?.kind === 'confirm') {
-				const promptMsg = routeResult.action?.promptMessage ||
-					(language === 'es'
-						? '¿Sí? Encontré algunas opciones con certeza moderada (entre 50% y 85%). ¿Te referías a alguno de estos repositorios?'
-						: 'Yes? I found a few options with moderate certainty (between 50% and 85%). Did you mean one of these repositories?');
+				const presented = presentResult(routeResult);
 
 				const optionsList = routeResult.options || (routeResult.destination ? [routeResult.destination] : []);
 
@@ -86,24 +83,24 @@
 					{
 						role: 'assistant',
 						kind: 'confirm',
-						promptText: promptMsg,
+						opener: presented.opener,
+						abstract: presented.description,
+						closer: presented.closer,
+						destination: routeResult.destination || optionsList[0],
 						options: optionsList,
 						score: routeResult.score,
 						strategyName: routeResult.strategyName
 					}
 				];
 			} else {
-				const fallbackMsg = routeResult.explanation ||
-					(language === 'es'
-						? 'No se alcanzó el 50% de certeza para esa consulta. Intenta especificar mejor el repositorio.'
-						: 'Could not reach 50% certainty for that query. Please specify the repository name.');
+				const presented = presentResult(routeResult);
 
 				history = [
 					...history,
 					{
 						role: 'assistant',
 						kind: 'status',
-						text: fallbackMsg
+						text: presented.opener
 					}
 				];
 			}
@@ -180,20 +177,55 @@
 					</div>
 				{:else if line.kind === 'confirm' && line.options}
 					<div class="confirm-block">
-						<span class="bot-text prompt-msg">{line.promptText}</span>
-						<div class="options-grid">
-							{#each line.options as opt}
+						<span class="bot-text prompt-msg">{line.opener}</span>
+						{#if line.destination}
+							<span class="link-container">
+								<span class="link-icon" aria-hidden="true">
+									<svg
+										width="13"
+										height="13"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2.2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+										<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+									</svg>
+								</span>
 								<a
-									class="opt-card"
-									href={opt.url}
+									class="who"
+									href={line.destination.url}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									<span class="opt-title">› {opt.name}</span>
-									<span class="opt-desc">{opt.description}</span>
+									{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
 								</a>
-							{/each}
-						</div>
+							</span>
+						{/if}
+						{#if line.abstract}
+							<span class="bot-text abstract-text">{line.abstract}</span>
+						{/if}
+						{#if line.options.length > 1}
+							<div class="options-grid">
+								{#each line.options as opt}
+									<a
+										class="opt-card"
+										href={opt.url}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<span class="opt-title">› {opt.name}</span>
+										<span class="opt-desc">{opt.description}</span>
+									</a>
+								{/each}
+							</div>
+						{/if}
+						{#if line.closer}
+							<span class="bot-text closer-text">{line.closer}</span>
+						{/if}
 					</div>
 				{:else}
 					<span class="bot-text">{line.text}</span>
@@ -373,6 +405,12 @@
 	.prompt-msg {
 		font-weight: 500;
 		color: var(--cream-100);
+	}
+
+	.closer-text {
+		font-size: 0.8rem;
+		font-style: italic;
+		color: var(--warm-400);
 	}
 
 	.options-grid {
