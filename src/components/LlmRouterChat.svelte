@@ -1,6 +1,7 @@
 <script>
 	import SyvInput from './SyvInput.svelte';
 	import { globalAdaptiveRouter } from '../lib/router/adaptiveRouter';
+	import { presentResult } from '../lib/router/presentResult';
 
 	let { cvHref = 'https://cv.kodexarg.com' } = $props();
 
@@ -58,21 +59,15 @@
 			await new Promise((res) => setTimeout(res, 200));
 
 			if (routeResult.outcome === 'Action' && routeResult.action?.kind === 'navigate' && routeResult.destination) {
-				let prefixText = language === 'es' ? 'Puedes consultar el recurso aquí: ' : 'You can access the resource here: ';
-				if (routeResult.destination.id === 'cv') {
-					prefixText = language === 'es' ? 'Puedes ver su currículum aquí: ' : 'You can view the resume/CV here: ';
-				} else if (routeResult.destination.id === 'github') {
-					prefixText = language === 'es' ? 'Puedes revisar los repositorios en GitHub aquí: ' : 'You can check GitHub repositories here: ';
-				} else if (routeResult.destination.id === 'docs') {
-					prefixText = language === 'es' ? 'Puedes acceder a la documentación oficial aquí: ' : 'You can access official docs here: ';
-				}
+				const presented = presentResult(routeResult);
 
 				history = [
 					...history,
 					{
 						role: 'assistant',
 						kind: 'navigate',
-						prefixText,
+						opener: presented.opener,
+						abstract: presented.description,
 						destination: routeResult.destination,
 						score: routeResult.score,
 						strategyName: routeResult.strategyName
@@ -152,32 +147,37 @@
 					<span class="prompt">› </span>
 					<span class="user-text">{line.text}</span>
 				{:else if line.kind === 'navigate' && line.destination}
-					<span class="bot-text">{line.prefixText}</span>
-					<span class="link-container">
-						<span class="link-icon" aria-hidden="true">
-							<svg
-								width="13"
-								height="13"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2.2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+					<div class="navigate-block">
+						<span class="bot-text opener-text">{line.opener}</span>
+						<span class="link-container">
+							<span class="link-icon" aria-hidden="true">
+								<svg
+									width="13"
+									height="13"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+									<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+								</svg>
+							</span>
+							<a
+								class="who"
+								href={line.destination.url}
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-								<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-							</svg>
+								{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
+							</a>
 						</span>
-						<a
-							class="who"
-							href={line.destination.url}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
-						</a>
-					</span>
+						{#if line.abstract}
+							<span class="bot-text abstract-text">{line.abstract}</span>
+						{/if}
+					</div>
 				{:else if line.kind === 'confirm' && line.options}
 					<div class="confirm-block">
 						<span class="bot-text prompt-msg">{line.promptText}</span>
@@ -311,6 +311,22 @@
 	.routing-text {
 		color: var(--orange-300);
 		animation: pulse 1s infinite alternate;
+	}
+
+	.navigate-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		width: 100%;
+	}
+
+	.opener-text {
+		font-weight: 500;
+	}
+
+	.abstract-text {
+		font-size: 0.8rem;
+		color: var(--warm-400);
 	}
 
 	.link-container {
