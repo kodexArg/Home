@@ -18,7 +18,7 @@ To prevent ambiguity, domain overlap, or inconsistent naming across components, 
 | **`SyV`** | **Subordinación y Valor** — The official warm orange, Pip-Boy typewriter design system. | Component styling, CSS tokens |
 | **`Presentation Orange`** | Color theme palette variant featuring warm amber, candle orange (`--orange-500`), cream, and dark ink tones. | CSS variables, design system |
 | **`AdaptiveRouter`** | Client/Edge strategy manager that dynamically evaluates available routing engines. | `src/lib/router/adaptiveRouter.ts` |
-| **`RouterStrategy`** | Interface implemented by concrete routing strategies (`WindowAiStrategy`, `WebLlmStrategy`, `CloudflareVectorizeStrategy`, `RuleBasedStrategy`). | `src/lib/router/types.ts` |
+| **`RouterStrategy`** | Interface implemented by concrete routing strategies (`WindowAiStrategy`, `CloudflareVectorizeStrategy`, `RuleBasedStrategy`). | `src/lib/router/types.ts` |
 | **`RouteDestination`** | Object representing a verified public target repository or subdomain (e.g. `cv.kodexarg.com`). | `src/lib/router/destinations.ts` |
 | **`RouteResult`** | Typed outcome returned by a router strategy (`outcome: 'Action' \| 'NO_MATCH' \| 'Escalate'`). | `src/lib/router/types.ts` |
 | **`RouterAction`** | Closed action payload emitted by the router containing `kind: 'navigate' \| 'confirm' \| 'status'`. | `src/lib/router/types.ts` |
