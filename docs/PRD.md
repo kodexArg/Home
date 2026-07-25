@@ -23,7 +23,7 @@ Bots and scrapers must not be able to drive the router by hammering an API. Huma
 
 1. **Minimal home**: logo (wordmark) + chat-like console. No nav chrome, no card grids.
 2. **Two-Tier Closed Router**: the console is a **closed-action intent router** (aligned with `kodexArg/alvs-financial-gateway` architecture). Known routes produce structured `Action` outcomes; non-matching queries produce `NO_MATCH` / status lines. No arbitrary generated assistant prose.
-3. **Adaptive Strategy Pattern**: client/edge multi-strategy engine (`window.ai` Gemini Nano → WebGPU WebLLM → Cloudflare Vectorize Edge DB → RuleBased).
+3. **Adaptive Strategy Pattern**: client/edge multi-strategy engine (`window.ai` Gemini Nano → Cloudflare Vectorize Edge DB → RuleBased).
 4. **Cloudflare Edge Vector Search**: native zero-secret integration with **Cloudflare Workers AI** (`env.AI`) and **Cloudflare Vectorize** (`env.VECTOR_INDEX`).
 5. **Tooling & Engine**: strictly managed via **Bun** (`bun install`, `bun.lock`, `bun run build`, `bunx wrangler`).
 6. **Safe cooldown & zero-trust**: server-enforced delay between queries and origin checks.
@@ -107,9 +107,8 @@ export interface RouterStrategy {
 #### Active Strategy Chain:
 
 1. **`WindowAiStrategy`**: Chrome Built-in AI (`window.ai.languageModel` / Gemini Nano on-device).
-2. **`WebLlmStrategy`**: WebGPU in-browser Small Language Models.
-3. **`CloudflareVectorizeStrategy`**: Edge vector search via `/api/vector-route` using **Cloudflare Workers AI** (`env.AI`) and **Cloudflare Vectorize** (`env.VECTOR_INDEX`).
-4. **`RuleBasedStrategy`**: Instant zero-overhead keyword and pattern matcher.
+2. **`CloudflareVectorizeStrategy`**: Edge vector search via `/api/vector-route` using **Cloudflare Workers AI** (`env.AI`) and **Cloudflare Vectorize** (`env.VECTOR_INDEX`).
+3. **`RuleBasedStrategy`**: Instant zero-overhead keyword and pattern matcher.
 
 ### 4.3 Allowlist Destinations
 
@@ -163,7 +162,7 @@ Cloudflare integration uses **native Environment Bindings** configured in `wrang
 ┌─────────────────────────────────────────────────────────────┐
 │  Browser (Svelte island)                                    │
 │  Wordmark + LlmRouterChat + SyvInput ("¿Sí?")               │
-│  - AdaptiveRouter (WindowAi -> WebLlm -> Vectorize -> Rule) │
+│  - AdaptiveRouter (WindowAi -> Vectorize -> Rule)           │
 └──────────────────────────────┬──────────────────────────────┘
                                │ POST /api/vector-route
                                ▼

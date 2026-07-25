@@ -21,13 +21,10 @@ AdaptiveRouter (src/lib/router/adaptiveRouter.ts)
     ├─► Tier 1: WindowAiStrategy (Chrome window.ai / Gemini Nano Native)
     │     └─► Browser On-Device Inference (0ms latency, 0MB download)
     │
-    ├─► Tier 2: WebLlmStrategy (WebGPU / WebLLM In-Browser SLM)
-    │     └─► In-Tab WebGPU Execution (Cross-browser, offline after cache)
-    │
-    ├─► Tier 3: CloudflareVectorizeStrategy (Cloudflare Workers AI + Vectorize)
+    ├─► Tier 2: CloudflareVectorizeStrategy (Cloudflare Workers AI + Vectorize)
     │     └─► Edge Embedding (@cf/baai/bge-small-en-v1.5) via native env.AI & env.VECTOR_INDEX
     │
-    └─► Tier 4: RuleBasedStrategy (Deterministic Fallback Engine)
+    └─► Tier 3: RuleBasedStrategy (Deterministic Fallback Engine)
           └─► Instant Local Pattern Matcher (0ms latency, 100% reliable)
 ```
 
@@ -38,18 +35,18 @@ AdaptiveRouter (src/lib/router/adaptiveRouter.ts)
 * **Connection Protocol:** Direct IPC via Chromium native browser API.
 * **Format:** Prompts output JSON formatted intent actions (`{"outcome": "Action", "destinationId": "cv"}`).
 
-### 2. Tier 2 — Client-Side WebGPU (`WebLlmStrategy`)
-* **Technology:** In-browser execution via `@mlc-ai/web-llm` / WebGPU shaders.
-* **Connection Protocol:** Direct GPU shader execution in the browser tab.
-
-### 3. Tier 3 — Edge Vector Embedding (`CloudflareVectorizeStrategy`)
+### 2. Tier 2 — Edge Vector Embedding (`CloudflareVectorizeStrategy`)
 * **Technology:** Cloudflare Workers AI + Cloudflare Vectorize database.
 * **Connection Protocol:** Internal Cloudflare zero-trust IPC binding via `env.AI` and `env.VECTOR_INDEX` via POST `/api/vector-route`.
 * **Embedding Model:** `@cf/baai/bge-small-en-v1.5` (384 dimensions).
 
-### 4. Tier 4 — Local Fallback (`RuleBasedStrategy`)
+### 3. Tier 3 — Local Fallback (`RuleBasedStrategy`)
 * **Technology:** Pure JavaScript normalized keyword and pattern matcher.
 * **Connection Protocol:** In-memory synchronous execution.
+
+## Removed Tiers
+
+* **WebGPU / WebLLM in-browser SLM (`WebLlmStrategy`)** — listed here as Tier 2 until 2026-07-25. Removed in PR #2 (`fix: cascade AdaptiveRouter through all supported strategies on NO_MATCH`): `src/lib/router/strategies/webLlmStrategy.ts` is deleted, `@mlc-ai/web-llm` is not a dependency of this project, and `tests/adaptiveRouter.test.ts` carries a regression assertion that no default strategy name contains `WebLLM`. Tiers below it were renumbered accordingly.
 
 ## Reliability & Fallback Guarantee
 
