@@ -1,6 +1,7 @@
 <script>
 	import SyvInput from './SyvInput.svelte';
 	import { globalAdaptiveRouter } from '../lib/router/adaptiveRouter';
+	import { presentResult } from '../lib/router/presentResult';
 
 	let { cvHref = 'https://cv.kodexarg.com' } = $props();
 
@@ -58,31 +59,22 @@
 			await new Promise((res) => setTimeout(res, 200));
 
 			if (routeResult.outcome === 'Action' && routeResult.action?.kind === 'navigate' && routeResult.destination) {
-				let prefixText = language === 'es' ? 'Puedes consultar el recurso aquí: ' : 'You can access the resource here: ';
-				if (routeResult.destination.id === 'cv') {
-					prefixText = language === 'es' ? 'Puedes ver su currículum aquí: ' : 'You can view the resume/CV here: ';
-				} else if (routeResult.destination.id === 'github') {
-					prefixText = language === 'es' ? 'Puedes revisar los repositorios en GitHub aquí: ' : 'You can check GitHub repositories here: ';
-				} else if (routeResult.destination.id === 'docs') {
-					prefixText = language === 'es' ? 'Puedes acceder a la documentación oficial aquí: ' : 'You can access official docs here: ';
-				}
+				const presented = presentResult(routeResult);
 
 				history = [
 					...history,
 					{
 						role: 'assistant',
 						kind: 'navigate',
-						prefixText,
+						opener: presented.opener,
+						abstract: presented.description,
 						destination: routeResult.destination,
 						score: routeResult.score,
 						strategyName: routeResult.strategyName
 					}
 				];
 			} else if (routeResult.outcome === 'Confirm' || routeResult.action?.kind === 'confirm') {
-				const promptMsg = routeResult.action?.promptMessage ||
-					(language === 'es'
-						? '¿Sí? Encontré algunas opciones con certeza moderada (entre 50% y 85%). ¿Te referías a alguno de estos repositorios?'
-						: 'Yes? I found a few options with moderate certainty (between 50% and 85%). Did you mean one of these repositories?');
+				const presented = presentResult(routeResult);
 
 				const optionsList = routeResult.options || (routeResult.destination ? [routeResult.destination] : []);
 
@@ -91,24 +83,24 @@
 					{
 						role: 'assistant',
 						kind: 'confirm',
-						promptText: promptMsg,
+						opener: presented.opener,
+						abstract: presented.description,
+						closer: presented.closer,
+						destination: routeResult.destination || optionsList[0],
 						options: optionsList,
 						score: routeResult.score,
 						strategyName: routeResult.strategyName
 					}
 				];
 			} else {
-				const fallbackMsg = routeResult.explanation ||
-					(language === 'es'
-						? 'No se alcanzó el 50% de certeza para esa consulta. Intenta especificar mejor el repositorio.'
-						: 'Could not reach 50% certainty for that query. Please specify the repository name.');
+				const presented = presentResult(routeResult);
 
 				history = [
 					...history,
 					{
 						role: 'assistant',
 						kind: 'status',
-						text: fallbackMsg
+						text: presented.opener
 					}
 				];
 			}
@@ -152,48 +144,88 @@
 					<span class="prompt">› </span>
 					<span class="user-text">{line.text}</span>
 				{:else if line.kind === 'navigate' && line.destination}
-					<span class="bot-text">{line.prefixText}</span>
-					<span class="link-container">
-						<span class="link-icon" aria-hidden="true">
-							<svg
-								width="13"
-								height="13"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2.2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+					<div class="navigate-block">
+						<span class="bot-text opener-text">{line.opener}</span>
+						<span class="link-container">
+							<span class="link-icon" aria-hidden="true">
+								<svg
+									width="13"
+									height="13"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+									<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+								</svg>
+							</span>
+							<a
+								class="who"
+								href={line.destination.url}
+								target="_blank"
+								rel="noopener noreferrer"
 							>
-								<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-								<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-							</svg>
+								{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
+							</a>
 						</span>
-						<a
-							class="who"
-							href={line.destination.url}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
-						</a>
-					</span>
+						{#if line.abstract}
+							<span class="bot-text abstract-text">{line.abstract}</span>
+						{/if}
+					</div>
 				{:else if line.kind === 'confirm' && line.options}
 					<div class="confirm-block">
-						<span class="bot-text prompt-msg">{line.promptText}</span>
-						<div class="options-grid">
-							{#each line.options as opt}
+						<span class="bot-text prompt-msg">{line.opener}</span>
+						{#if line.destination}
+							<span class="link-container">
+								<span class="link-icon" aria-hidden="true">
+									<svg
+										width="13"
+										height="13"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2.2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+										<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+									</svg>
+								</span>
 								<a
-									class="opt-card"
-									href={opt.url}
+									class="who"
+									href={line.destination.url}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									<span class="opt-title">› {opt.name}</span>
-									<span class="opt-desc">{opt.description}</span>
+									{line.destination.name} ({line.destination.url.replace(/^https?:\/\//, '')})
 								</a>
-							{/each}
-						</div>
+							</span>
+						{/if}
+						{#if line.abstract}
+							<span class="bot-text abstract-text">{line.abstract}</span>
+						{/if}
+						{#if line.options.length > 1}
+							<div class="options-grid">
+								{#each line.options as opt}
+									<a
+										class="opt-card"
+										href={opt.url}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<span class="opt-title">› {opt.name}</span>
+										<span class="opt-desc">{opt.description}</span>
+									</a>
+								{/each}
+							</div>
+						{/if}
+						{#if line.closer}
+							<span class="bot-text closer-text">{line.closer}</span>
+						{/if}
 					</div>
 				{:else}
 					<span class="bot-text">{line.text}</span>
@@ -313,6 +345,22 @@
 		animation: pulse 1s infinite alternate;
 	}
 
+	.navigate-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		width: 100%;
+	}
+
+	.opener-text {
+		font-weight: 500;
+	}
+
+	.abstract-text {
+		font-size: 0.8rem;
+		color: var(--warm-400);
+	}
+
 	.link-container {
 		display: inline-flex;
 		align-items: center;
@@ -357,6 +405,12 @@
 	.prompt-msg {
 		font-weight: 500;
 		color: var(--cream-100);
+	}
+
+	.closer-text {
+		font-size: 0.8rem;
+		font-style: italic;
+		color: var(--warm-400);
 	}
 
 	.options-grid {
