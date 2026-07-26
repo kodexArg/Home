@@ -92,6 +92,8 @@ Consequences that bind:
 * Widening this pack's scope — adding a document number, an address, anything a third party could use to impersonate him — is not an ordinary corpus edit. It is an amendment to this section.
 * Lowering `identity`'s `minScore` towards `cv`'s is likewise an amendment. The number is the control.
 
+**Measured 2026-07-26, and 0.62 is currently unreachable.** Probed live against the real index, the pack's own questions score below its gate: "¿Cuántos años tiene?" tops out at 0.499 and "¿Cuál es su nombre completo?" at 0.385, so both fall to the out-of-scope refusal. Nothing leaks — the failure is closed, not open — but the pack answers nothing it was built to answer. The number was argued, never measured; this is the measurement. Making it reachable means an amendment to this section under the bullet above, and the amendment has to carry its own leak measurement, not an argument.
+
 ### 4. Output shape is enforced in code, not requested in the prompt
 
 `KodexAnswer.text` is one plain paragraph. The system prompt asks for it; the server **guarantees** it:
