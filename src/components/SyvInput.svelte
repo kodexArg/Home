@@ -26,9 +26,10 @@
 	});
 
 	function moveCaretToEndSoAcceptedTextReadsAsFreshlyTyped() {
+		if (!inputEl) return;
+		inputEl.focus();
 		requestAnimationFrame(() => {
 			if (!inputEl) return;
-			inputEl.focus();
 			const end = inputEl.value.length;
 			inputEl.setSelectionRange(end, end);
 		});
@@ -37,6 +38,11 @@
 	function acceptSuggestion() {
 		value = acceptOnTab;
 		moveCaretToEndSoAcceptedTextReadsAsFreshlyTyped();
+	}
+
+	export function acceptSuggestionFromOutside() {
+		if (!canAcceptSuggestion) return;
+		acceptSuggestion();
 	}
 
 	function isBackwardTabNavigation(e) {
@@ -115,13 +121,13 @@
 	.syv-field {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		gap: 9px;
 		width: 100%;
 	}
 
 	.syv-field__label {
 		font-family: var(--font-mono);
-		font-size: 11px;
+		font-size: 16.5px;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 		color: var(--warm-300);
@@ -135,16 +141,16 @@
 
 	.syv-input {
 		font-family: var(--font-mono);
-		font-size: 15px;
+		font-size: 22.5px;
 		letter-spacing: 0;
 		color: var(--cream-100);
 		font-variant-ligatures: none;
 		cursor: text;
-		text-shadow: 0.5px 0.6px 0.4px rgba(8, 7, 5, 0.7), -0.2px -0.15px 0 rgba(243, 238, 228, 0.18);
+		text-shadow: 0.75px 0.9px 0.6px rgba(8, 7, 5, 0.7), -0.3px -0.225px 0 rgba(243, 238, 228, 0.18);
 		border: 0;
-		border-radius: 6px;
-		padding: 11px 14px 12px;
-		padding-left: 0.8125rem;
+		border-radius: 9px;
+		padding: 16.5px 21px 18px;
+		padding-left: 1.21875rem;
 		width: 100%;
 		box-sizing: border-box;
 		line-height: 1.5;
@@ -152,8 +158,8 @@
 		--syv-input-baseline-rule-color: var(--ink-600);
 		background-image: linear-gradient(var(--syv-input-baseline-rule-color), var(--syv-input-baseline-rule-color));
 		background-repeat: no-repeat;
-		background-size: calc(100% - 28px) 1.5px;
-		background-position: 14px calc(100% - 8px);
+		background-size: calc(100% - 42px) 2.25px;
+		background-position: 21px calc(100% - 12px);
 		caret-color: var(--orange-500);
 		transition:
 			box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -185,18 +191,18 @@
 		--syv-input-focus-cell-grid-color: rgba(255, 106, 26, 0.08);
 		background-image:
 			linear-gradient(var(--syv-input-focus-ribbon-color), var(--syv-input-focus-ribbon-color)),
-			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1px), var(--syv-input-focus-cell-grid-color) calc(1ch - 1px) 1ch);
+			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-focus-cell-grid-color) calc(1ch - 1.5px) 1ch);
 		background-repeat: no-repeat, repeat-x;
-		background-size: calc(100% - 28px) 1.5px, 1ch 100%;
-		background-position: 14px calc(100% - 8px), 14px 0;
-		box-shadow: inset 0 -10px 16px -12px var(--orange-glow);
+		background-size: calc(100% - 42px) 2.25px, 1ch 100%;
+		background-position: 21px calc(100% - 12px), 21px 0;
+		box-shadow: inset 0 -15px 24px -18px var(--orange-glow);
 	}
 
 	.syv-input--grow {
 		display: block;
 		resize: none;
 		overflow-y: auto;
-		min-height: calc(1.5em + 23px);
+		min-height: calc(1.5em + 34.5px);
 		max-height: 30vh;
 		white-space: pre-wrap;
 		word-break: break-word;
@@ -210,13 +216,13 @@
 		background-color: rgba(217, 105, 78, 0.06);
 		background-image:
 			linear-gradient(#d9694e, #d9694e),
-			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1px), rgba(217, 105, 78, 0.10) calc(1ch - 1px) 1ch);
-		box-shadow: inset 0 -10px 16px -12px rgba(217, 105, 78, 0.5);
+			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), rgba(217, 105, 78, 0.10) calc(1ch - 1.5px) 1ch);
+		box-shadow: inset 0 -15px 24px -18px rgba(217, 105, 78, 0.5);
 	}
 
 	.syv-field__hint {
 		font-family: var(--font-mono);
-		font-size: 11px;
+		font-size: 16.5px;
 		color: var(--warm-400);
 	}
 

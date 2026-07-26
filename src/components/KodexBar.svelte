@@ -39,7 +39,27 @@
 	let placeholder = $derived(proposal || deriveRestingPlaceholder(language));
 
 	let showTabHint = $derived(Boolean(proposal) && currentInput.trim() === '');
-	let tabHintLabel = $derived(language === 'es' ? 'TAB para completar' : 'TAB to complete');
+
+	const NO_KEYBOARD_TO_PRESS_TAB_WITH = '(hover: none) and (pointer: coarse)';
+
+	let suggestionIsTappedNotTabbed = $state(false);
+
+	$effect(() => {
+		const coarse = window.matchMedia(NO_KEYBOARD_TO_PRESS_TAB_WITH);
+		suggestionIsTappedNotTabbed = coarse.matches;
+		const follow = (e) => (suggestionIsTappedNotTabbed = e.matches);
+		coarse.addEventListener('change', follow);
+		return () => coarse.removeEventListener('change', follow);
+	});
+
+	function hintLabelFor(activeLanguage, tapped) {
+		if (tapped) return activeLanguage === 'es' ? 'CLICK para autocompletar' : 'CLICK to autocomplete';
+		return activeLanguage === 'es' ? 'TAB para completar' : 'TAB to complete';
+	}
+
+	let tabHintLabel = $derived(hintLabelFor(language, suggestionIsTappedNotTabbed));
+
+	let inputRef;
 
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
@@ -146,9 +166,20 @@
 
 	<div class="input-bar-wrapper">
 		{#if showTabHint}
-			<span class="tab-hint">{tabHintLabel}</span>
+			{#if suggestionIsTappedNotTabbed}
+				<button
+					type="button"
+					class="tab-hint tab-hint--tappable"
+					onclick={() => inputRef?.acceptSuggestionFromOutside()}
+				>
+					{tabHintLabel}
+				</button>
+			{:else}
+				<span class="tab-hint">{tabHintLabel}</span>
+			{/if}
 		{/if}
 		<SyvInput
+			bind:this={inputRef}
 			label={undefined}
 			{placeholder}
 			acceptOnTab={proposal}
@@ -188,7 +219,7 @@
 		gap: 0.75rem;
 		padding-right: 0.5rem;
 
-		--kodexbar-stack-reserved-input-bar-height: 180px;
+		--kodexbar-stack-reserved-input-bar-height: 270px;
 		height: calc(100vh - var(--kodexbar-stack-reserved-input-bar-height));
 		overflow-y: auto;
 
@@ -269,7 +300,7 @@
 	.answer-block {
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: 0.8rem;
 		width: 100%;
 	}
 
@@ -324,11 +355,47 @@
 		color: var(--warm-400);
 		--kodexbar-tab-hint-whisper-opacity: 0.28;
 		opacity: var(--kodexbar-tab-hint-whisper-opacity);
-		padding-left: 0.8125rem;
+		padding-left: 1.21875rem;
 		margin-bottom: 0.3rem;
 		user-select: none;
 		pointer-events: none;
 		animation: hint-in 1.4s var(--ease-candle, ease-out) both;
+	}
+
+	.tab-hint--tappable {
+		display: inline-block;
+		appearance: none;
+		border: 0;
+		background: none;
+		font: inherit;
+		font-size: 9.5px;
+		text-align: left;
+		cursor: pointer;
+		pointer-events: auto;
+		--kodexbar-tab-hint-whisper-opacity: 0.55;
+		--kodexbar-tab-hint-ember: #b56f3c;
+		color: var(--kodexbar-tab-hint-ember);
+		padding: 0.45rem 1.21875rem 0.35rem;
+		margin-bottom: 0;
+		-webkit-tap-highlight-color: transparent;
+		animation:
+			hint-in 1.4s var(--ease-candle, ease-out) both,
+			ember-breath 4.2s ease-in-out 1.4s infinite alternate;
+	}
+
+	.tab-hint--tappable:active {
+		--kodexbar-tab-hint-whisper-opacity: 0.85;
+	}
+
+	@keyframes ember-breath {
+		from {
+			color: var(--kodexbar-tab-hint-ember);
+			text-shadow: 0 0 7px rgba(181, 111, 60, 0.35);
+		}
+		to {
+			color: var(--warm-400);
+			text-shadow: 0 0 0 rgba(181, 111, 60, 0);
+		}
 	}
 
 	@keyframes hint-in {

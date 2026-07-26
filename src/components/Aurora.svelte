@@ -77,7 +77,21 @@
 		z-index: -1;
 		overflow: hidden;
 		pointer-events: none;
-		background: var(--bg);
+		--aurora-void: #000000;
+		background:
+			linear-gradient(
+				to top,
+				var(--aurora-void) 0%,
+				rgba(0, 0, 0, 0.72) 20%,
+				rgba(0, 0, 0, 0) 52%
+			),
+			radial-gradient(
+				118% 88% at 50% 38%,
+				rgba(0, 0, 0, 0) 0%,
+				rgba(0, 0, 0, 0.55) 64%,
+				var(--aurora-void) 100%
+			),
+			var(--bg);
 	}
 
 	.spot {
