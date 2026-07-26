@@ -1,6 +1,7 @@
 import { globalAdaptiveRouter } from '../router/adaptiveRouter';
 import { presentResult } from '../router/presentResult';
 import type { RouteDestination, RouteResult, RouterOptions } from '../router/types';
+import { DEFAULT_LANGUAGE, type SupportedLanguage } from '../ui/language';
 
 /**
  * Headless chat session — owns the conversation state and the submit flow.
@@ -16,7 +17,8 @@ import type { RouteDestination, RouteResult, RouterOptions } from '../router/typ
  * copy) or from the fixed copy table below — never from user input.
  */
 
-export type ChatLanguage = 'es' | 'en';
+/** Alias of the shared UI language type so the two can never drift apart. */
+export type ChatLanguage = SupportedLanguage;
 
 export interface UserLine {
 	role: 'user';
@@ -133,7 +135,7 @@ export class ChatSession {
 		this.delay = options.delay ?? defaultDelay;
 		this.cooldownMs = options.cooldownMs ?? DEFAULT_COOLDOWN_MS;
 		this.responseDelayMs = options.responseDelayMs ?? DEFAULT_RESPONSE_DELAY_MS;
-		this.lang = options.language ?? 'es';
+		this.lang = options.language ?? DEFAULT_LANGUAGE;
 		this.onChange = options.onChange;
 		this.onError = options.onError ?? ((error) => console.error('Routing error:', error));
 	}

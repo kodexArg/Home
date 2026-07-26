@@ -7,17 +7,24 @@
 	 * drives session.submit() and renders the lines it publishes.
 	 */
 	import SyvInput from './SyvInput.svelte';
+	import LanguageToggle from './LanguageToggle.svelte';
 	import { createChatSession, isSubmittable } from '../lib/chat/chatSession';
+	import { getLanguageStore } from '../lib/ui/language';
 
 	let { cvHref = 'https://cv.kodexarg.com' } = $props();
+
+	// The language preference is owned by the shared store (persisted + mirrored
+	// onto <html lang>); the session is kept in sync from it.
+	const languageStore = getLanguageStore();
 
 	// View state: mirrors of the session snapshot + what is currently typed.
 	let history = $state([]);
 	let isRouting = $state(false);
-	let language = $state('es');
+	let language = $state(languageStore.language);
 	let currentInput = $state('');
 
 	const session = createChatSession({
+		language: languageStore.language,
 		onChange: (snapshot) => {
 			history = snapshot.history;
 			isRouting = snapshot.isRouting;
@@ -25,11 +32,11 @@
 		}
 	});
 
-	let placeholder = $derived(language === 'es' ? '¿Sí?' : 'Yes?');
+	// subscribe() pushes the current value immediately, so this also seeds the
+	// session for a visitor whose stored/browser language is not the default.
+	$effect(() => languageStore.subscribe((next) => session.setLanguage(next)));
 
-	function toggleLanguage() {
-		session.toggleLanguage();
-	}
+	let placeholder = $derived(language === 'es' ? '¿Sí?' : 'Yes?');
 
 	function commitQuery(query) {
 		if (!isSubmittable(query)) return;
@@ -39,17 +46,9 @@
 </script>
 
 <div class="chat-container" role="region" aria-label="Consola de chat kodexArg">
-	<!-- Top Bar with Language Flag Toggle -->
+	<!-- Top bar with the segmented ES | EN language control -->
 	<div class="top-controls">
-		<button
-			type="button"
-			class="lang-btn"
-			onclick={toggleLanguage}
-			title="Cambiar idioma (Español / English)"
-		>
-			<span class="lang-icon">🌐</span>
-			<span class="lang-text">{language === 'es' ? 'ES (¿Sí?)' : 'EN (Yes?)'}</span>
-		</button>
+		<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
 	</div>
 
 	<!-- Terminal Scrollback Stack -->
@@ -190,26 +189,6 @@
 		display: flex;
 		justify-content: flex-end;
 		width: 100%;
-	}
-
-	.lang-btn {
-		background: rgba(18, 16, 12, 0.75);
-		border: 1px solid var(--ink-600);
-		color: var(--warm-300);
-		font-family: var(--font-mono);
-		font-size: 0.75rem;
-		padding: 4px 10px;
-		border-radius: 4px;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		transition: all 0.2s ease;
-	}
-
-	.lang-btn:hover {
-		border-color: var(--orange-500);
-		color: var(--orange-300);
 	}
 
 	.stack {

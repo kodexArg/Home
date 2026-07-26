@@ -1,5 +1,6 @@
 ---
 import Aurora from '../components/Aurora.svelte';
+import { DEFAULT_LANGUAGE } from '../lib/ui/language';
 import '../styles/global.css';
 
 interface Props {
@@ -11,7 +12,8 @@ const { title = 'kodexArg — LLM Router', description = 'kodexArg LLM Router In
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<!-- First paint uses the app default; the language store re-stamps this on hydration. -->
+<html lang={DEFAULT_LANGUAGE}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
