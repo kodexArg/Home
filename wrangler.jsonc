@@ -34,7 +34,23 @@
       "id": "c8f72c7b92cf427ea9633033e8d49fac"
     }
   ],
+  // The apex is the front door; home.kodexarg.com is kept as an alias so old
+  // links and the deploy history stay valid.
+  //
+  // kodexarg.com and www.kodexarg.com previously served a separate Astro site
+  // (a `Terminal` component that never existed in this repository). That page
+  // was retired deliberately — taking the hostnames over as custom domains
+  // moves their DNS onto this Worker, so the old project is no longer reachable
+  // at either name.
   "routes": [
+    {
+      "pattern": "kodexarg.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.kodexarg.com",
+      "custom_domain": true
+    },
     {
       "pattern": "home.kodexarg.com",
       "custom_domain": true
