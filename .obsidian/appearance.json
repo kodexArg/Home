@@ -1,0 +1,9 @@
+{
+  "theme": "obsidian",
+  "nativeMenus": true,
+  "showRibbon": true,
+  "enabledCssSnippets": [
+    "presentation-orange"
+  ],
+  "mode": "dark"
+}

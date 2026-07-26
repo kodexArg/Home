@@ -1,0 +1,87 @@
+/* @import DEBE ir primero (antes de cualquier regla). Fuente de lectura.
+   Para cambiarla, swap el family= de abajo y --font-reading. Probadas:
+   SANS: Inter · Source+Sans+3 · IBM+Plex+Sans (elegida) · Atkinson+Hyperlegible · Work+Sans */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap');
+
+/* ============================================================================
+   presentation-orange.css — fondo y estilo del vault SyV en Obsidian
+   "Presentation Orange" de kodex: near-black cálido + glow naranja racionado.
+   Snippet nativo: Settings -> Appearance -> CSS snippets -> activar.
+   ============================================================================ */
+
+.theme-dark {
+  /* sans de lectura (cuerpo). Fallback: sans del sistema */
+  --font-reading: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --reading-size: 1.22rem;   /* tamaño del cuerpo (≈19.5px) — subí/bajá acá, no la escala */
+  --reading-tracking: 0.025em;  /* espaciado entre caracteres */
+
+  --ink-1000: #0C0B09;
+  --ink-900:  #141210;
+  --ink-850:  #1a1714;
+  --ink-600:  #3a352f;
+  --ink-500:  #6b6358;
+  --cream-100: #F3EEE4;
+  --warm-200:  #cdbfa8;
+  --orange-500: #ff8c42;
+  --orange-400: #ffaa70;
+  --orange-deep:#FF6A1A;
+
+  /* --- fondo del lienzo (lo que pediste) --- */
+  --background-primary:       var(--ink-1000);
+  --background-primary-alt:   var(--ink-900);
+  --background-secondary:     var(--ink-900);
+  --background-secondary-alt: var(--ink-850);
+
+  /* --- texto --- */
+  --text-normal:   var(--warm-200);
+  --text-muted:    var(--ink-500);
+  --text-faint:    var(--ink-600);
+  --text-accent:   var(--orange-500);
+  --text-accent-hover: var(--orange-400);
+  --text-bold:     var(--cream-100);
+
+  --h1-color: var(--orange-500);
+  --h2-color: var(--cream-100);
+  --interactive-accent: var(--orange-deep);
+  --link-color: var(--orange-500);
+}
+
+/* espaciado relajado en TODO el contenido (pedido de kodex) */
+.theme-dark .markdown-rendered,
+.theme-dark .markdown-source-view.mod-cm6 .cm-line {
+  letter-spacing: var(--reading-tracking);
+}
+
+/* glow naranja off-center detrás del texto (panel de edición + lectura) */
+.theme-dark .markdown-source-view,
+.theme-dark .markdown-reading-view {
+  background-image: radial-gradient(58% 36% at 82% 6%,
+      rgba(255,106,26,0.14) 0%, rgba(255,106,26,0.04) 40%, transparent 72%);
+  background-attachment: fixed;
+}
+
+/* --- CUERPO (paragraph): serif de lectura, justificado con guionado ---
+   Solo <p>. No toca títulos, listas, código ni callouts. Vale en lectura
+   y en Live Preview. */
+.theme-dark .markdown-rendered p,
+.theme-dark .markdown-source-view.mod-cm6 .cm-line {
+  font-family: var(--font-reading);
+  font-size: var(--reading-size);
+  letter-spacing: var(--reading-tracking);
+  line-height: 1.7;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* títulos lowercase, aireados — tamaños redondos en rem */
+.theme-dark .markdown-rendered h1,
+.theme-dark .markdown-rendered h2,
+.theme-dark .markdown-rendered h3 {
+  font-weight: 800;
+  text-transform: lowercase;
+}
+.theme-dark .markdown-rendered h1 { font-size: 3rem; }
+.theme-dark .markdown-rendered h2 { font-size: 2rem; }
+.theme-dark .markdown-rendered h3 { font-size: 1.5rem; }
