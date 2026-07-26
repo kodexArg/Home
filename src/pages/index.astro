@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Wordmark from '../components/Wordmark.svelte';
-import LlmRouterChat from '../components/LlmRouterChat.svelte';
+import KodexBar from '../components/KodexBar.svelte';
 ---
 
 <Base title="kodexArg">
@@ -9,8 +9,8 @@ import LlmRouterChat from '../components/LlmRouterChat.svelte';
     <Wordmark static size="0.95rem" href="https://cv.kodexarg.com" />
   </header>
 
-  <main aria-label="LLM Router Interface">
-    <LlmRouterChat client:only="svelte" cvHref="https://cv.kodexarg.com" />
+  <main aria-label="KodexBar">
+    <KodexBar client:only="svelte" />
   </main>
 </Base>
 

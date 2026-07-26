@@ -1,202 +1,216 @@
-import { describe, it, expect } from 'bun:test';
-import { createChatSession, isSubmittable } from '../src/lib/chat/chatSession';
-import type { ChatRouterPort } from '../src/lib/chat/chatSession';
-import type { RouteDestination, RouteResult } from '../src/lib/router/types';
+import { describe, expect, it } from 'bun:test';
+import {
+	ChatSession,
+	createChatSession,
+	isSubmittable,
+	type ChatLanguage,
+	type KodexBarPort
+} from '../src/lib/chat/chatSession';
+import type { KodexAnswer } from '../src/lib/kodexbar/types';
+import { getDestination } from '../src/lib/kodexbar/destinations';
 
-const CV: RouteDestination = {
-	id: 'cv',
-	name: 'CV',
-	url: 'https://cv.kodexarg.com',
-	description: 'Curriculum',
-	keywords: ['cv']
-};
-
-function actionResult(): RouteResult {
-	return {
-		outcome: 'Action',
-		action: { kind: 'navigate', destination: CV },
-		destination: CV,
-		score: 0.98,
-		explanation: 'exact',
-		strategyName: 'TestStrategy',
-		language: 'es'
-	};
-}
-
-/** Router double that records calls. */
-function makeRouter(result: RouteResult = actionResult()) {
-	const calls: string[] = [];
-	const router: ChatRouterPort = {
-		async route(query) {
-			calls.push(query);
-			return result;
+/** Backend stub. Records calls and returns whatever the test supplies. */
+function stubBackend(answer: Partial<KodexAnswer> = {}) {
+	const calls: Array<{ query: string; language: ChatLanguage }> = [];
+	const port: KodexBarPort = {
+		async ask(query, language) {
+			calls.push({ query, language });
+			return {
+				text: 'respuesta',
+				links: [],
+				language,
+				matched: true,
+				...answer
+			};
 		}
 	};
-	return { router, calls };
+	return { port, calls };
 }
 
-/** Clock starting far from 0 so the very first submit is outside the cooldown. */
-function makeClock(start = 1_000_000) {
-	let t = start;
-	return {
-		now: () => t,
-		advance: (ms: number) => {
-			t += ms;
-		}
-	};
-}
-
-const noDelay = async () => {};
-
-function session(overrides: Parameters<typeof createChatSession>[0] = {}) {
-	const clock = makeClock();
-	const { router, calls } = makeRouter();
-	const s = createChatSession({
-		router,
-		now: clock.now,
-		delay: noDelay,
-		onError: () => {},
-		...overrides
+/** Session with the clock and delay under test control. */
+function makeSession(options: Partial<Parameters<typeof createChatSession>[0]> = {}) {
+	let clock = 100_000;
+	const session = new ChatSession({
+		now: () => clock,
+		delay: async () => {},
+		...options
 	});
-	return { s, clock, calls };
+	return { session, advance: (ms: number) => (clock += ms) };
 }
 
-describe('ChatSession', () => {
-	it('appends the user turn and then the assistant turn, in order', async () => {
-		const { s } = session();
-
-		await s.submit('cv');
-
-		expect(s.history.length).toBe(2);
-		expect(s.history[0]).toEqual({ role: 'user', text: 'cv' });
-		expect(s.history[1]!.role).toBe('assistant');
-		expect((s.history[1] as { kind: string }).kind).toBe('navigate');
-		expect(s.isRouting).toBe(false);
+describe('isSubmittable', () => {
+	it('rejects empty and whitespace-only input', () => {
+		expect(isSubmittable('')).toBe(false);
+		expect(isSubmittable('   ')).toBe(false);
+		expect(isSubmittable('\n\t')).toBe(false);
 	});
 
-	it('blocks a second submit inside the cooldown window and yields the cooldown message', async () => {
-		const clock = makeClock();
-		const { router } = makeRouter();
-		const s = createChatSession({ router, now: clock.now, delay: noDelay });
+	it('accepts anything with content', () => {
+		expect(isSubmittable('cv')).toBe(true);
+		expect(isSubmittable('  cv  ')).toBe(true);
+	});
+});
 
-		await s.submit('cv');
-		clock.advance(1000);
-		const outcome = await s.submit('again');
+describe('submit', () => {
+	it('appends the user line and the answer line', async () => {
+		const { port } = stubBackend({ text: 'Es experto en Django.' });
+		const { session } = makeSession({ backend: port });
 
-		expect(outcome).toBe('cooldown');
-		expect(s.history.length).toBe(4);
-		expect(s.history[2]).toEqual({ role: 'user', text: 'again' });
-		expect(s.history[3]).toEqual({
+		expect(await session.submit('¿sabe django?')).toBe('answered');
+
+		const history = session.history;
+		expect(history).toHaveLength(2);
+		expect(history[0]).toEqual({ role: 'user', text: '¿sabe django?' });
+		expect(history[1]).toMatchObject({
 			role: 'assistant',
-			kind: 'status',
-			text: '⏱️ Por favor espera 2s antes de enviar otra consulta (cooldown de 3s).'
+			kind: 'answer',
+			text: 'Es experto en Django.',
+			matched: true
 		});
 	});
 
-	it('accepts a submit again after the cooldown elapses', async () => {
-		const clock = makeClock();
-		const { router, calls } = makeRouter();
-		const s = createChatSession({ router, now: clock.now, delay: noDelay });
+	it('trims the query before sending it', async () => {
+		const { port, calls } = stubBackend();
+		const { session } = makeSession({ backend: port });
 
-		await s.submit('cv');
-		clock.advance(3000);
-		const outcome = await s.submit('cv again');
-
-		expect(outcome).toBe('routed');
-		expect(calls).toEqual(['cv', 'cv again']);
-		expect(s.cooldownRemainingMs()).toBe(3000);
+		await session.submit('   cv   ');
+		expect(calls[0].query).toBe('cv');
 	});
 
-	it('ignores empty and whitespace-only queries', async () => {
-		const { s, calls } = session();
+	it('ignores an empty submit without touching history', async () => {
+		const { port, calls } = stubBackend();
+		const { session } = makeSession({ backend: port });
 
-		expect(await s.submit('')).toBe('ignored');
-		expect(await s.submit('   \n\t ')).toBe('ignored');
-		expect(s.history.length).toBe(0);
-		expect(calls).toEqual([]);
-		expect(isSubmittable('  ')).toBe(false);
-		expect(isSubmittable(' hi ')).toBe(true);
+		expect(await session.submit('   ')).toBe('ignored');
+		expect(session.history).toHaveLength(0);
+		expect(calls).toHaveLength(0);
 	});
 
-	it('survives a throwing router without corrupting history or sticking isRouting', async () => {
-		const clock = makeClock();
+	it('carries the links through verbatim', async () => {
+		const cv = getDestination('cv')!;
+		const { port } = stubBackend({ links: [cv] });
+		const { session } = makeSession({ backend: port });
+
+		await session.submit('cv');
+		const line = session.history[1] as { links: typeof cv[] };
+		expect(line.links).toHaveLength(1);
+		expect(line.links[0].url).toBe(cv.url);
+	});
+
+	it('sends the active language', async () => {
+		const { port, calls } = stubBackend();
+		const { session } = makeSession({ backend: port, language: 'en' });
+
+		await session.submit('cv');
+		expect(calls[0].language).toBe('en');
+	});
+});
+
+describe('cooldown', () => {
+	it('blocks a second submit inside the window', async () => {
+		const { port, calls } = stubBackend();
+		const { session } = makeSession({ backend: port, cooldownMs: 3000 });
+
+		await session.submit('primera');
+		expect(await session.submit('segunda')).toBe('cooldown');
+
+		expect(calls).toHaveLength(1);
+		expect(session.history[3]).toMatchObject({ kind: 'status' });
+		expect((session.history[3] as { text: string }).text).toInclude('3s');
+	});
+
+	it('allows a submit once the window has passed', async () => {
+		const { port, calls } = stubBackend();
+		const { session, advance } = makeSession({ backend: port, cooldownMs: 3000 });
+
+		await session.submit('primera');
+		advance(3001);
+		expect(await session.submit('segunda')).toBe('answered');
+		expect(calls).toHaveLength(2);
+	});
+
+	it('reports the remaining time', async () => {
+		const { port } = stubBackend();
+		const { session, advance } = makeSession({ backend: port, cooldownMs: 3000 });
+
+		await session.submit('primera');
+		expect(session.cooldownRemainingMs()).toBe(3000);
+		advance(1200);
+		expect(session.cooldownRemainingMs()).toBe(1800);
+		advance(5000);
+		expect(session.cooldownRemainingMs()).toBe(0);
+	});
+});
+
+describe('failures', () => {
+	it('shows a status line when the backend throws', async () => {
 		const errors: unknown[] = [];
-		const s = createChatSession({
-			router: {
-				async route() {
-					throw new Error('boom');
+		const { session } = makeSession({
+			backend: {
+				async ask() {
+					throw new Error('network down');
 				}
 			},
-			now: clock.now,
-			delay: noDelay,
 			onError: (e) => errors.push(e)
 		});
 
-		await s.submit('cv');
+		await session.submit('cv');
 
-		expect(s.isRouting).toBe(false);
-		expect(errors.length).toBe(1);
-		expect(s.history.length).toBe(2);
-		expect(s.history[0]).toEqual({ role: 'user', text: 'cv' });
-		expect(s.history[1]).toEqual({
-			role: 'assistant',
-			kind: 'status',
-			text: 'Ocurrió un error procesando la consulta. Intente nuevamente.'
-		});
+		expect(errors).toHaveLength(1);
+		expect(session.history[1]).toMatchObject({ kind: 'status' });
+		expect(session.isThinking).toBe(false);
 	});
 
-	it('asks the router exactly once per accepted submit', async () => {
-		const clock = makeClock();
-		const { router, calls } = makeRouter();
-		const s = createChatSession({ router, now: clock.now, delay: noDelay });
+	it('clears the thinking flag on both paths', async () => {
+		const { port } = stubBackend();
+		const { session } = makeSession({ backend: port });
 
-		await s.submit('one');
-		await s.submit('blocked by cooldown');
-		clock.advance(3000);
-		await s.submit('two');
-
-		expect(calls).toEqual(['one', 'two']);
+		await session.submit('cv');
+		expect(session.isThinking).toBe(false);
 	});
+});
 
-	it('routes with the active language and the language toggle flips it', async () => {
-		const calls: Array<{ query: string; language?: string }> = [];
-		const clock = makeClock();
-		const s = createChatSession({
-			router: {
-				async route(query, options) {
-					calls.push({ query, language: options?.language });
-					return actionResult();
-				}
-			},
-			now: clock.now,
-			delay: noDelay
+describe('language', () => {
+	it('toggles and emits', () => {
+		const snapshots: string[] = [];
+		const { session } = makeSession({
+			language: 'es',
+			onChange: (s) => snapshots.push(s.language)
 		});
 
-		await s.submit('cv');
-		expect(s.toggleLanguage()).toBe('en');
-		clock.advance(3000);
-		await s.submit('cv');
-
-		expect(calls).toEqual([
-			{ query: 'cv', language: 'es' },
-			{ query: 'cv', language: 'en' }
-		]);
+		expect(session.toggleLanguage()).toBe('en');
+		expect(session.language).toBe('en');
+		expect(snapshots).toContain('en');
 	});
 
-	it('notifies subscribers on every state change', async () => {
-		const clock = makeClock();
-		const { router } = makeRouter();
-		const seen: boolean[] = [];
-		const s = createChatSession({
-			router,
-			now: clock.now,
-			delay: noDelay,
-			onChange: (snap) => seen.push(snap.isRouting)
-		});
+	it('does not emit when the language is unchanged', () => {
+		let emissions = 0;
+		const { session } = makeSession({ language: 'es', onChange: () => emissions++ });
 
-		await s.submit('cv');
+		session.setLanguage('es');
+		expect(emissions).toBe(0);
+	});
 
-		expect(seen).toEqual([false, true, true, false]);
-		expect(s.snapshot().history.length).toBe(2);
+	it('uses the language in effect at submit time for the cooldown notice', async () => {
+		const { port } = stubBackend();
+		const { session } = makeSession({ backend: port, language: 'en', cooldownMs: 3000 });
+
+		await session.submit('first');
+		await session.submit('second');
+
+		expect((session.history[3] as { text: string }).text).toInclude('Wait');
+	});
+});
+
+describe('snapshot', () => {
+	it('returns a copy of history, not the live array', async () => {
+		const { port } = stubBackend();
+		const { session } = makeSession({ backend: port });
+
+		await session.submit('cv');
+		const snap = session.snapshot();
+		snap.history.push({ role: 'user', text: 'inyectada' });
+
+		expect(session.history).toHaveLength(2);
 	});
 });

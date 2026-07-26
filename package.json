@@ -7,7 +7,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "bun test",
+    "index:corpus": "bun run scripts/index-corpus.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.4",

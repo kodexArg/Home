@@ -1,38 +1,50 @@
-# PRD — kodexArg Home (personal router)
+# PRD — kodexArg Home (KodexBar)
 
 | | |
 |---|---|
-| **Product** | Personal home page for **kodexArg** |
+| **Product** | Personal home page for **kodexArg**, fronted by **KodexBar** |
 | **URL (target)** | `https://home.kodexarg.com` |
 | **Repo** | `kodexArg/Home` (this tree) |
-| **Status** | Active — v1.0 |
+| **Status** | Active — v2.0 (supersedes v1.0 "personal router") |
 | **Owner** | kodexArg / Gabriel Cavedal |
 | **Stack** | Astro + Svelte 5 islands on Cloudflare (Workers/Pages), **Bun** package manager |
 | **Design** | Presentation Orange / SyV tokens (`SyvInput`, monospaced console) |
-| **Cloudflare Native** | Cloudflare Workers AI + Cloudflare Vectorize (Zero-secret bindings) |
+| **Cloudflare Native** | Cloudflare Workers AI + Cloudflare Vectorize (zero-secret bindings) |
 
 ---
 
+## 0. What changed from v1.0
+
+v1.0 specified a **closed-action intent router**: a three-tier strategy cascade that mapped a query to one of ~33 links and was explicitly forbidden from producing assistant prose.
+
+v2.0 replaces it with **KodexBar**: a single-tier assistant that answers questions about Gabriel Cavedal *and* hands out links. It generates prose, from a model, deliberately.
+
+The v1.0 prohibition on prose existed to prevent hallucinated URLs. That protection is retained by a narrower and stronger mechanism — the model cannot emit a URL at all, only allowlisted ids — so the prohibition itself is no longer needed. See [ADR 09](adr-09-kodexbar-security.md) for the reversal and its compensating controls, and [ADR 10](adr-10-kodexbar-architecture.md) for the architecture.
+
 ## 1. Problem
 
-kodexArg needs a single, calm front door: not a portfolio dump, not a CMS, not an open chatbot. Visitors (and kodex himself) should land on a minimal surface — **logo + console** — and reach known destinations (GitHub projects, public pages) without hunting bookmarks or exposing an open LLM endpoint.
+kodexArg needs a single, calm front door: not a portfolio dump, not a CMS, not an open chatbot. Visitors land on a minimal surface — **logo + console** — and can either reach a known destination or ask a question about Gabriel Cavedal and get a real answer.
 
-Bots and scrapers must not be able to drive the router by hammering an API. Humans interact through the designed UI; the backend only accepts traffic that looks like that interaction, with hard rate limits.
+The second half is the point of v2.0. "Where is the CV?" and "does he know AWS?" are both legitimate, and v1.0 could only serve the first.
+
+Bots and scrapers must not be able to drive the endpoint by hammering it. Humans interact through the designed UI; the backend accepts only traffic that looks like that interaction, with hard server-side rate limits.
 
 ## 2. Goals
 
-1. **Minimal home**: logo (wordmark) + chat-like console. No nav chrome, no card grids.
-2. **Two-Tier Closed Router**: the console is a **closed-action intent router** (aligned with `kodexArg/alvs-financial-gateway` architecture). Known routes produce structured `Action` outcomes; non-matching queries produce `NO_MATCH` / status lines. No arbitrary generated assistant prose.
-3. **Adaptive Strategy Pattern**: client/edge multi-strategy engine (`window.ai` Gemini Nano → Cloudflare Vectorize Edge DB → RuleBased).
-4. **Cloudflare Edge Vector Search**: native zero-secret integration with **Cloudflare Workers AI** (`env.AI`) and **Cloudflare Vectorize** (`env.VECTOR_INDEX`).
-5. **Tooling & Engine**: strictly managed via **Bun** (`bun install`, `bun.lock`, `bun run build`, `bunx wrangler`).
-6. **Safe cooldown & zero-trust**: server-enforced delay between queries and origin checks.
+1. **Minimal home**: wordmark + chat-like console. No nav chrome, no card grids.
+2. **Grounded answers**: KodexBar answers only from a committed, versioned corpus. Off-corpus questions are declined by a deterministic gate before any model runs.
+3. **Structurally safe links**: the model returns destination **ids**; the server resolves them against an allowlist. A hallucinated link is unrepresentable, not merely unlikely.
+4. **One paragraph, no formatting**: replies read like chat. Plain prose, links rendered as chips beneath — never Markdown, never headings, never lists.
+5. **Open/closed corpus**: adding a knowledge domain (Subordinación y Valor, and others to follow) is a new pack plus a reindex — never an engine change.
+6. **Cloudflare-native**: zero-secret bindings to Workers AI (`env.AI`) and Vectorize (`env.VECTOR_INDEX`).
+7. **Tooling**: strictly **Bun** (`bun install`, `bun.lock`, `bun run build`, `bunx wrangler`).
 
 ### Non-goals
 
-- Open-ended freeform chat or unguided RAG.
+- A general-purpose chatbot. KodexBar answers about Gabriel Cavedal, kodexArg projects and how to reach him. Everything else is declined.
+- Conversational memory across turns. Each query is answered independently.
 - Account login / multi-user profiles.
-- Dynamic discovery of private GitHub repos (only **explicit allowlist** destinations).
+- Dynamic discovery of repositories. Destinations are an **explicit allowlist**, and membership requires the target be public and live.
 - SEO-heavy marketing pages or blog.
 
 ## 3. Product surface
@@ -41,154 +53,163 @@ Bots and scrapers must not be able to drive the router by hammering an API. Huma
 
 | Element | Role |
 |---------|------|
-| **Wordmark** | `kodexArg` (link optional: CV or self). Top-left, static. |
-| **Chat UI** | Bottom-anchored console: scrollback stack + `SyvInput` (`¿Sí?`). |
+| **Wordmark** | `kodexArg`. Top-left, static. |
+| **KodexBar** | Bottom-anchored console: scrollback stack + `SyvInput` (`¿Sí?`). |
 | **Atmosphere** | Aurora / dark Presentation Orange background only — no extra widgets. |
 
 Mobile-first width; max content ~720px for the console.
 
 ### 3.2 Interaction model
 
-1. Human focuses the pip-boy input (`¿Sí?`) and types a query or alias.
-2. On commit (Enter), client shows a short **routing** phase (`routing query via strategy…`).
-3. Strategy engine resolves query to a typed `RouteResult`:
-   - **`Action` (`kind: "navigate"`)** → prefix copy + link container (`[icon]` + `<a class="who">href</a>`).
-   - **`NO_MATCH`** → closed status line; no navigation.
-4. Link rendering: icon is non-clickable (`pointer-events: none`), link text is selectable (`user-select: text`) and hyperlinked.
+1. Visitor focuses the Pip-Boy input (`¿Sí?`) and types a query in Spanish or English.
+2. On commit (Enter), the client shows a short thinking phase and POSTs to `/api/ask`.
+3. The server embeds, retrieves, gates, and — if the gate opens — generates.
+4. The reply renders as **one paragraph of plain text**, optionally followed by link chips.
+5. Link rendering: icon is non-clickable (`pointer-events: none`), link text is selectable and hyperlinked.
 
-### 3.3 Visible protocol & UI link rendering
+There is no "did you mean?" step. v1.0's `Confirm` outcome with its candidate grid is removed: a model that can write a sentence can disambiguate in that sentence.
 
-```
-› Dónde puedo ver su currículum?
-Puedes ver su currículum aquí: [link-icon] cv.kodexarg.com
-```
+### 3.3 Visible protocol
 
-No fake “primary LLM cluster” copy. All responses map directly to typed router outcomes.
-
-## 4. Router — Strategy pattern
-
-### 4.1 Principle
+A link request:
 
 ```
-Input → AdaptiveRouter → Strategy Chain → RouteResult { outcome: 'Action' | 'NO_MATCH' }
+› quiero ver el cv de gabriel
+Acá está su currículum.
+[link-icon] Currículum / CV - Gabriel Cavedal (cv.kodexarg.com)
 ```
 
-- **Closed world**: only registered strategies and registered destination keys exist.
-- **No fuzzy “best guess”** that invents URLs.
-- **Default fallback**: `RuleBasedStrategy` (instant 0ms local matcher).
+A question:
 
-### 4.2 Strategy Chain & Interface
+```
+› ¿sabe AWS?
+Sí, es su terreno principal: diseñó y opera la plataforma AWS de Grupo ALVS
+(ECS Fargate, RDS, Cognito, todo con CloudFormation) y montó el MVP de
+Coveris sobre Amplify y Fargate.
+```
+
+An out-of-scope query:
+
+```
+› cuál es la capital de Francia
+No tengo información sobre eso. Puedo contarte sobre Gabriel Cavedal,
+sus proyectos y cómo contactarlo.
+```
+
+The third case never reaches a model.
+
+## 4. KodexBar — single-tier RAG
+
+### 4.1 Pipeline
+
+```
+Query → rate limit → embed (bge-m3) → Vectorize (topK 5, filter lang)
+      → gate: score < minScore ? fixed decline (no LLM)
+      → expand related chunks
+      → generate (llama-3.1-8b-instruct-fp8) → { text, linkIds[] }
+      → resolve ids vs allowlist + scrub formatting
+      → KodexAnswer { text, links[], language, matched }
+```
+
+Retrieval is deterministic — cosine similarity and a fixed threshold. The model writes the paragraph; it does not decide where the answer comes from.
+
+### 4.2 Contracts
 
 ```ts
-export type RouterActionKind = 'navigate' | 'confirm' | 'status';
+interface RawModelAnswer { text: string; linkIds: string[] }   // from the model
 
-export interface RouterAction {
-  kind: RouterActionKind;
-  target?: string;
-  label?: string;
-  destination?: RouteDestination;
-}
-
-export interface RouteResult {
-  outcome: 'Action' | 'NO_MATCH' | 'Escalate';
-  action?: RouterAction;
-  destination?: RouteDestination;
-  explanation: string;
-  strategyName: string;
-}
-
-export interface RouterStrategy {
-  name: string;
-  isSupported(): Promise<boolean>;
-  route(query: string): Promise<RouteResult>;
+interface KodexAnswer {
+  text: string                  // one plain paragraph, scrubbed server-side
+  links: LinkDestination[]      // resolved from linkIds; unknown ids dropped
+  language: 'es' | 'en'
+  matched: boolean              // false = gate closed, model not called
 }
 ```
 
-#### Active Strategy Chain:
+`linkIds` carries **ids, never URLs**. This is the load-bearing safety property — see [ADR 09 §1](adr-09-kodexbar-security.md).
 
-1. **`WindowAiStrategy`**: Chrome Built-in AI (`window.ai.languageModel` / Gemini Nano on-device).
-2. **`CloudflareVectorizeStrategy`**: Edge vector search via `/api/vector-route` using **Cloudflare Workers AI** (`env.AI`) and **Cloudflare Vectorize** (`env.VECTOR_INDEX`).
-3. **`RuleBasedStrategy`**: Instant zero-overhead keyword and pattern matcher.
+### 4.3 Knowledge packs
 
-### 4.3 Allowlist Destinations
+A `KnowledgePack` bundles chunks, a system-prompt fragment and a retrieval threshold. The engine knows packs and chunks; it does not know what a "skill" or a "project" is. Domain vocabulary lives in chunk text, `tags` and `related`.
 
-Configured in `src/lib/router/destinations.ts`:
+| Pack | Content | Status |
+|---|---|---|
+| `cv` | Profile, experience, skills, projects, education, contact, QA/method — extracted from `cv.kodexarg.com` (ES + EN) | v2.0 |
+| `syv` | Subordinación y Valor | Planned |
 
-| Destination ID | Name | Target URL | Matched Intent Keywords |
-|---|---|---|---|
-| `cv` | **Currículum / CV** | `https://cv.kodexarg.com` | `curriculum`, `cv`, `resume`, `hoja de vida`, `experiencia` |
-| `github` | **GitHub Repositories** | `https://github.com/kodexarg` | `github`, `repo`, `repositorio`, `código`, `proyectos` |
-| `docs` | **Documentation** | `https://docs.kodexarg.com` | `docs`, `documentación`, `guía`, `manual`, `api`, `wiki` |
-| `syv-design-system` | **SyV Design System** | `https://github.com/kodexarg/syv-design-system` | `syv`, `design system`, `diseño`, `paleta`, `componentes` |
+`related` is the graph: a skill chunk names the projects that evidence it, so one query retrieves the claim, its proof, and the links.
 
-## 5. Security & Cloudflare Native Bindings
+### 4.4 Destinations
 
-### 5.1 Zero Secrets Architecture
+Configured in `src/lib/kodexbar/destinations.ts`. **Membership rule: public and live, verified before adding.**
 
-Cloudflare integration uses **native Environment Bindings** configured in `wrangler.jsonc`:
+| Kind | Count | Examples |
+|---|---|---|
+| `contact` | 4 | `email` (`mailto:gcavedal@gmail.com`), `linkedin`, `telegram`, `platzi` |
+| `site` | 6 | `home`, `cv`, `docs`, `syv-design-system`, `eurotrip-live`, `github` |
+| `repo` | 27 | `engram`, `welpdesk`, `dj-indoor-monitor`, `openclaw`, … |
 
-```jsonc
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "homepage",
-  "compatibility_date": "2026-07-24",
-  "compatibility_flags": ["nodejs_compat"],
-  "ai": {
-    "binding": "AI"
-  },
-  "vectorize": [
-    {
-      "binding": "VECTOR_INDEX",
-      "index_name": "kodex-vector-index"
-    }
-  ]
-}
-```
+Private work (Coveris, `syv-mcp-tools`, SROA, the Grupo ALVS production platforms) lives in the corpus with **no destination**. KodexBar describes it and offers no link — intended, not a gap.
 
-- **Zero hardcoded secret keys**: `env.AI` and `env.VECTOR_INDEX` communicate over internal zero-trust Cloudflare Workers IPC.
+> Three v1.0 entries (`payflow`, `welpdesk`→`helpdesk.kodexarg.com`, `kcbd-monitor`) pointed at domains that do not resolve and were served as live links. Removed 2026-07-26; the verification rule above exists to prevent a repeat.
 
-### 5.2 Threat Model & Controls
+## 5. Security & Cloudflare native bindings
+
+### 5.1 Zero-secrets architecture
+
+`env.AI` and `env.VECTOR_INDEX` communicate over internal zero-trust Cloudflare Workers IPC; no API tokens exist in the codebase. Bindings are declared in `wrangler.jsonc` with `remote: true` — Vectorize has no local emulation, so development must exercise the real index.
+
+### 5.2 Threat model & controls
 
 | Threat | Mitigation |
 |--------|------------|
-| Bots POSTing route API | Cooldown + origin check + closed outcome validation |
-| Open redirect | Allowlist `href` targets only from `destinations.ts` |
-| LLM cost abuse | Cloudflare Workers AI + Vectorize free tier bounds (5M dimensions/month free) |
-| Arbitrary JS injection | Sanitized link rendering via Svelte templates |
+| Hallucinated / open redirect | Model emits ids only; `resolveLinkIds()` drops anything not in the allowlist (ADR 09 §1) |
+| Prompt injection steering the answer | Retrieval gate declines off-corpus queries before inference; the model only sees trusted, committed chunks (ADR 09 §2–§3) |
+| Model emitting Markdown, links or multi-paragraph output | Server-side scrub and truncate; the prompt asks, the code enforces (ADR 09 §4) |
+| Denial-of-wallet | Gate keeps off-topic traffic to embedding-only cost; KV-backed server-side rate limiting bounds the rest (ADR 09 §7) |
+| Bots POSTing the endpoint | Origin check + server-side rate limit; the client cooldown is UX, not a control |
+| Arbitrary JS injection | Reply rendered as text through Svelte templates, never as HTML |
 
-## 6. Architecture & Tooling
+## 6. Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Browser (Svelte island)                                    │
-│  Wordmark + LlmRouterChat + SyvInput ("¿Sí?")               │
-│  - AdaptiveRouter (WindowAi -> Vectorize -> Rule)           │
+│  Wordmark + KodexBar + SyvInput ("¿Sí?")                    │
+│  presentation only — no inference, no corpus                │
 └──────────────────────────────┬──────────────────────────────┘
-                               │ POST /api/vector-route
+                               │ POST /api/ask
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Cloudflare Worker / Pages Function                         │
-│  Bindings: env.AI (@cf/baai/bge-small-en-v1.5)             │
-│            env.VECTOR_INDEX (Cloudflare Vectorize DB)       │
+│  env.AI            @cf/baai/bge-m3            (embeddings)  │
+│                    @cf/meta/llama-3.1-8b-instruct-fp8       │
+│  env.VECTOR_INDEX  Cloudflare Vectorize (corpus)            │
+│  env.SESSION       KV (rate limiting)                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 6.1 Tooling & Execution Standard
+No client-side inference. Chrome Built-in AI / Gemini Nano is removed — the corpus is server-side, and shipping chunks to the browser would make it enumerable.
 
-- **Package Manager**: `bun` (`bun install`, `bun.lock`).
-- **CLI Runner**: `bunx wrangler` for Cloudflare tasks.
-- **Build & Test**: `bun run build`.
+### 6.1 Tooling standard
 
-## 7. UX Requirements
+- **Package manager**: `bun` (`bun install`, `bun.lock`).
+- **CLI runner**: `bunx wrangler` for Cloudflare tasks.
+- **Build & test**: `bun run build`, `bun test`.
+- **Corpus indexing**: `bun run index:corpus` — explicit, versioned, re-run on corpus change.
+
+## 7. UX requirements
 
 | ID | Requirement |
 |----|-------------|
-| UX-1 | Input field placeholder is simply `¿Sí?`. |
+| UX-1 | Input placeholder is simply `¿Sí?`. |
 | UX-2 | User prompt prefixed with `› `. |
-| UX-3 | Navigate results expose non-clickable icon + selectable hyperlinked URL. |
-| UX-4 | Closed-action router: no arbitrary generated LLM prose. |
-| UX-5 | Keyboard-only usable; caret and focus rings in SyV candle-orange tokens. |
+| UX-3 | Links render as non-clickable icon + selectable hyperlinked text. |
+| UX-4 | Replies are **one paragraph, plain text**. No Markdown, headings, lists or code blocks — ever. |
+| UX-5 | Out-of-scope queries get a fixed, polite decline naming what KodexBar *can* answer. |
+| UX-6 | Keyboard-only usable; caret and focus rings in SyV candle-orange tokens. |
+| UX-7 | Language follows the ES|EN toggle; the corpus is filtered to that language. |
 
 ---
 
-*PRD v1.0 — Active. Two-tier closed-action router, Cloudflare Vectorize + Workers AI attached, Bun-managed.*
+*PRD v2.0 — Active. KodexBar: single-tier grounded assistant over Cloudflare Workers AI + Vectorize, Bun-managed.*
