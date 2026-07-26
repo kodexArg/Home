@@ -14,6 +14,30 @@ import { defineChunks, type ChunkDef } from '../defineChunks';
  */
 const DEFS: ChunkDef[] = [
 	// =======================================================================
+	// KodexBar — identity and purpose
+	//
+	// "What is this?", "what is its function?" and "what is it for?" arrive
+	// short and abstract. This chunk gives them a target of their own:
+	// `proj-home-kodexbar` describes the stack, and its centroid sits in
+	// "vectorize / workers ai / astro", far from a question about purpose. All
+	// three phrasings are in the title and the body deliberately — `tags` are
+	// not embedded (see index-corpus.ts).
+	// =======================================================================
+	{
+		id: 'kodexbar-funcion',
+		title: 'What KodexBar is, what its function is and what it is for',
+		text: `KodexBar is this assistant: the query bar on the kodexArg home page, and the one
+			answering right now. It has a single function, and Gabriel Cavedal designed it that way: to
+			make reaching him easy. That is what it is for. Someone arriving with a consulting enquiry,
+			an architecture review or a work proposal has nothing to hunt for — they ask, KodexBar
+			answers, and the way to reach him comes with the answer. Email is the direct route; LinkedIn,
+			Telegram and the full CV are there too. Everything else it can tell you about his career,
+			projects and skills serves that one purpose: getting the conversation started.`,
+		related: ['email', 'linkedin', 'telegram', 'cv', 'contacto', 'disponibilidad'],
+		tags: ['what is this', 'what are you', 'who are you', 'what is your function', 'what is its function', 'what is it for', 'what does it do', 'function', 'purpose', 'kodexbar', 'this assistant', 'this bar', 'this site', 'contact']
+	},
+
+	// =======================================================================
 	// Profile and contact
 	// =======================================================================
 	{
@@ -327,7 +351,7 @@ const DEFS: ChunkDef[] = [
 			assistant behind it: vector retrieval over Cloudflare Vectorize with embeddings and generation
 			on Cloudflare Workers AI, built with Astro 7 and Svelte 5 islands. It answers questions about
 			Gabriel Cavedal and hands out links to the public projects. It is this very system.`,
-		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack'],
+		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
 		tags: ['home', 'kodexbar', 'kodexarg', 'this site', 'this page', 'who are you', 'what are you', 'vectorize', 'workers ai', 'rag', 'astro', 'svelte', 'cloudflare']
 	},
 	{

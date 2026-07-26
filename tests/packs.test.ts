@@ -103,6 +103,20 @@ describe('corpus integrity', () => {
 		expect(es.some((c) => c.tags.includes('django'))).toBe(true);
 		expect(es.some((c) => c.related.includes('github'))).toBe(true);
 	});
+
+	it('can describe itself and its purpose in every language', () => {
+		// "¿Qué es?" / "¿para qué sirve?" must land somewhere. Without a chunk
+		// authored for it the query only reaches `proj-home-kodexbar`, whose text
+		// is about the stack — so the gate answers with a stack description or
+		// declines outright. The contact edge is part of the commitment: the
+		// purpose is to reach Gabriel, so the answer has to be able to offer it.
+		for (const lang of SUPPORTED_LANGUAGES) {
+			const chunk = getChunk(`cv:kodexbar-funcion:${lang}`);
+			expect(chunk).toBeDefined();
+			expect(chunk!.related).toContain('email');
+			expect(getDestination('email')).toBeDefined();
+		}
+	});
 });
 
 describe('gate thresholds', () => {

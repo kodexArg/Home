@@ -18,6 +18,30 @@ import { defineChunks, type ChunkDef } from '../defineChunks';
  */
 const DEFS: ChunkDef[] = [
 	// =======================================================================
+	// KodexBar — identidad y propósito
+	//
+	// Las preguntas "¿qué es?", "¿cuál es su función?" y "¿para qué sirve?"
+	// llegan cortas y abstractas. Este chunk existe para que tengan un destino
+	// propio: `proj-home-kodexbar` describe el stack, y su centroide vive en
+	// "vectorize / workers ai / astro", lejos de una pregunta por el propósito.
+	// Las tres formas de la pregunta están en el título y en el texto a
+	// propósito — los `tags` no se embeben (ver index-corpus.ts).
+	// =======================================================================
+	{
+		id: 'kodexbar-funcion',
+		title: 'Qué es KodexBar, cuál es su función y para qué sirve',
+		text: `KodexBar es este asistente: la barra de consulta de la home de kodexArg, y es quien
+			está respondiendo ahora. Tiene una sola función y Gabriel Cavedal lo diseñó así: acercar el
+			contacto con él. Para eso sirve. Quien llega con una consulta de consultoría, una revisión de
+			arquitectura o una propuesta de trabajo no tiene que buscar nada: pregunta, y KodexBar
+			contesta y entrega la vía de contacto ahí mismo. El correo es el camino directo; también
+			están LinkedIn, Telegram y el CV completo. Todo lo que sabe contar sobre su trayectoria, sus
+			proyectos y sus habilidades está al servicio de eso: que la conversación empiece.`,
+		related: ['email', 'linkedin', 'telegram', 'cv', 'contacto', 'disponibilidad'],
+		tags: ['que es', 'que es esto', 'que sos', 'quien sos', 'cual es tu funcion', 'cual es su funcion', 'para que sirve', 'para que servis', 'que hace', 'funcion', 'proposito', 'kodexbar', 'este asistente', 'esta barra', 'este sitio', 'contacto']
+	},
+
+	// =======================================================================
 	// Perfil y contacto
 	// =======================================================================
 	{
@@ -360,7 +384,7 @@ const DEFS: ChunkDef[] = [
 			generación en Cloudflare Workers AI, construido con Astro 7 e islas Svelte 5. Responde
 			preguntas sobre Gabriel Cavedal y entrega links a los proyectos públicos. Es este mismo
 			sistema.`,
-		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack'],
+		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
 		tags: ['home', 'kodexbar', 'kodexarg', 'este sitio', 'esta pagina', 'quien sos', 'que sos', 'vectorize', 'workers ai', 'rag', 'astro', 'svelte', 'cloudflare']
 	},
 	{
