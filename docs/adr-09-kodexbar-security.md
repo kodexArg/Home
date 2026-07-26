@@ -150,14 +150,20 @@ This is a UX decision with security-relevant consequences, all of which MUST be 
 
 Failure direction: if KV is unavailable the offer cannot be recorded, and the endpoint sends the links with the answer as it did before this handshake existed. Withholding links that nothing can later reveal would silently lose content; there is nothing to protect here, since every destination is public by §5.
 
-### 9. Suggested follow-ups are ids, not free text
+### 9. The placeholder is model-drafted, and bounded in code
 
-The input's placeholder proposes the question a visitor is most likely to ask next, and TAB types it into the field. Because TAB puts that text one keystroke away from being submitted as the visitor's own query, it is held to the same rule as §1: the model never writes it.
+The input's placeholder proposes what the visitor would most likely send next, and TAB types it into the field. It used to be an id resolved against a committed registry, on the reasoning that TAB puts the text one keystroke from being submitted as the visitor's own query, so the model must never write it.
 
-* The model returns `nextId` — an id, never the question text — chosen from a short list of authored candidates (`SUGGESTIONS` in [suggestions.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/suggestions.ts)) offered to it in the prompt for that turn only.
-* `resolveSuggestion()` resolves `nextId` against that same candidate list. An id absent from it — hallucinated, stale, or simply missing — falls back to the strongest deterministic candidate, never to nothing and never to model text.
-* The placeholder can therefore only ever display a sentence authored and committed in `suggestions.ts`. This mirrors §1's guarantee for links: the failure mode of a bad model output is "shows a slightly less relevant authored question," not "shows arbitrary text."
-* No proposal is offered while a link offer is pending (§8) — the resting placeholder is already asking the yes/no question, and proposing a new one would collide with it.
+**That guarantee was traded away deliberately.** A closed registry cannot chain: it proposes a question adjacent to the answer, not one that follows from it, and it cannot ask for the specific link the model just chose. The model now drafts the phrase — the request for its links when it cited any, the next question when it did not — and the registry becomes the floor rather than the mechanism.
+
+What bounds it, none of which is a prompt instruction:
+
+* The draft passes through `scrubPlaceholderText()`, which runs the §4 prose pipeline: no URL, domain, mailto or email address survives it, and markdown is flattened.
+* It is capped at `MAX_PLACEHOLDER_CHARS`. Over-long drafts are **rejected, not truncated** — a cut-off question reads as broken, and the fallback is better than a fragment.
+* Every rejection falls back deterministically: to a request composed from the offered destination's registry name when links are pending, otherwise to `resolveSuggestion(nextId, …)` against the authored candidates, and finally to the opening question. The placeholder is never empty and never a fragment.
+* What is typed is a query like any other. It re-enters through `/api/ask` with the retrieval gate (§2), the rate limiter (§7) and every other control intact. The residual risk is a poorly phrased question, not an unsafe one.
+
+The gate closing (§2) means no model ran, so there is no draft: that path proposes the opening question. That is deliberate — a visitor whose question fell out of scope is exactly the one who needs pointing back at the front door.
 
 ### 10. The model never refers to this page
 
@@ -188,7 +194,7 @@ Any PR touching `src/lib/kodexbar/`, `src/pages/api/ask.ts`, `src/lib/chat/`, or
 - [ ] A pending link offer still comes from KV, never from the request body, and consuming it is unconditional (§8).
 - [ ] `classifyConsent()` still returns only `yes | no | other`, still fails to `other`, and its output is still never rendered (§8).
 - [ ] Revealed links still pass through `resolveLinkIds()` rather than being trusted from KV (§8).
-- [ ] `nextId` still resolves only against that turn's offered candidates; unknown ids still fall back to the deterministic first candidate, never to model text (§9).
+- [ ] A model-drafted placeholder still passes `scrubPlaceholderText()`, is still rejected rather than truncated when over-length, and every rejection still lands on a deterministic fallback (§9).
 - [ ] All three self-reference layers hold: no `home`-equivalent entry in `DESTINATIONS`, `BARE_DOMAIN` in `scrubAnswerText` still strips the site's own hostnames, and the system prompt still instructs against naming them in words (§10).
 - [ ] `SyvInput` (`¿Sí?`) design tokens and keyboard accessibility preserved.
 

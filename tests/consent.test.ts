@@ -3,6 +3,7 @@ import {
 	CONSENT_REPLY,
 	classifyConsent,
 	classifyLexically,
+	matchesProposedRequest,
 	normalise,
 	parseIntent
 } from '../src/lib/kodexbar/consent';
@@ -125,5 +126,32 @@ describe('the fixed replies', () => {
 				expect(text).not.toMatch(/https?:|www\.|@/);
 			}
 		}
+	});
+});
+
+describe('the phrase the interface proposed', () => {
+	it('is consent by comparison, with no lexicon and no model', async () => {
+		let called = false;
+		const env = envReturning('OTHER', () => {
+			called = true;
+		});
+
+		const intent = await classifyConsent(env, 'Mostrame el link al CV', 'es', 'Mostrame el link al CV');
+
+		expect(intent).toBe('yes');
+		expect(called).toBe(false);
+	});
+
+	it('matches through casing, accents and punctuation', () => {
+		expect(matchesProposedRequest('mostrame el link al cv!', 'Mostrame el link al CV')).toBe(true);
+	});
+
+	it('does not match a different request, which must still be classified', () => {
+		expect(matchesProposedRequest('Mostrame su GitHub', 'Mostrame el link al CV')).toBe(false);
+	});
+
+	it('ignores an absent or empty proposal', () => {
+		expect(matchesProposedRequest('cualquier cosa', undefined)).toBe(false);
+		expect(matchesProposedRequest('', '')).toBe(false);
 	});
 });

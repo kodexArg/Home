@@ -4,6 +4,7 @@ export const OFFER_TTL_SECONDS = 300;
 
 export interface PendingOffer {
 	ids: string[];
+	proposedRequest?: string;
 	suggestion?: string;
 	language: SupportedLanguage;
 }
@@ -45,6 +46,8 @@ function parseStoredOffer(stored: string): PendingOffer | null {
 
 	return {
 		ids,
+		proposedRequest:
+			typeof parsed?.proposedRequest === 'string' ? parsed.proposedRequest : undefined,
 		suggestion: typeof parsed?.suggestion === 'string' ? parsed.suggestion : undefined,
 		language: parsed?.language === 'en' ? 'en' : 'es'
 	};

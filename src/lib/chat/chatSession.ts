@@ -20,7 +20,6 @@ export interface AnswerLine {
 	text: string;
 	links: LinkDestination[];
 	matched: boolean;
-	offerPrompt: string;
 }
 
 export type ChatLine = UserLine | StatusLine | AnswerLine;
@@ -53,13 +52,11 @@ export interface ChatSessionOptions {
 const COPY = {
 	es: {
 		cooldown: (seconds: number) => `Esperá ${seconds}s antes de enviar otra consulta.`,
-		failure: 'No pude conectarme. Probá de nuevo en un momento.',
-		offer: '¿Ver los links?'
+		failure: 'No pude conectarme. Probá de nuevo en un momento.'
 	},
 	en: {
 		cooldown: (seconds: number) => `Wait ${seconds}s before sending another query.`,
-		failure: "I couldn't connect. Please try again in a moment.",
-		offer: 'Show links?'
+		failure: "I couldn't connect. Please try again in a moment."
 	}
 } as const;
 
@@ -170,8 +167,8 @@ export class ChatSession {
 		this.currentSuggestion = next;
 	}
 
-	private withholdSuggestionWhileLinkOfferIsPending(): void {
-		this.currentSuggestion = '';
+	private adoptLinkRequestWithoutRecordingIt(request: string | undefined): void {
+		this.currentSuggestion = request?.trim() ?? '';
 	}
 
 	setLanguage(language: ChatLanguage): void {
@@ -208,7 +205,7 @@ export class ChatSession {
 			await this.delay(this.responseDelayMs);
 
 			if (answer.offer) {
-				this.withholdSuggestionWhileLinkOfferIsPending();
+				this.adoptLinkRequestWithoutRecordingIt(answer.suggestion);
 			} else {
 				this.adoptSuggestionIfFreshAndUnseen(answer.suggestion);
 			}
@@ -218,8 +215,7 @@ export class ChatSession {
 				kind: 'answer',
 				text: answer.text,
 				links: answer.links,
-				matched: answer.matched,
-				offerPrompt: answer.offer ? COPY[this.lang].offer : ''
+				matched: answer.matched
 			});
 		} catch (error) {
 			this.onError(error);

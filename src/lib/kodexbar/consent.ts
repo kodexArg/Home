@@ -67,11 +67,20 @@ Answer with the single word only: YES, NO or OTHER. No punctuation, no explanati
 const CLASSIFIER_MAX_TOKENS = 4;
 const CLASSIFIER_TEMPERATURE = 0;
 
+export function matchesProposedRequest(query: string, proposedRequest: unknown): boolean {
+	if (typeof proposedRequest !== 'string') return false;
+	const proposed = normalise(proposedRequest);
+	return proposed.length > 0 && normalise(query) === proposed;
+}
+
 export async function classifyConsent(
 	env: Env,
 	query: string,
-	_lang: SupportedLanguage
+	_lang: SupportedLanguage,
+	proposedRequest?: string
 ): Promise<ConsentIntent> {
+	if (matchesProposedRequest(query, proposedRequest)) return 'yes';
+
 	const lexical = classifyLexically(query);
 	if (lexical) return lexical;
 

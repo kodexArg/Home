@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import { allowedLinksFor, answerQuery } from '../src/lib/kodexbar/answer';
 import { FAILURE, OUT_OF_SCOPE } from '../src/lib/kodexbar/systemPrompt';
+import { OPENING_SUGGESTION } from '../src/lib/kodexbar/suggestions';
 import { getChunk } from '../src/lib/kodexbar/packs';
 import type { RetrievalResult } from '../src/lib/kodexbar/retrieval';
 
@@ -228,5 +229,69 @@ describe('allowedLinksFor', () => {
 
 	it('returns nothing when no chunk cites a destination', () => {
 		expect(allowedLinksFor([{ related: [] }])).toEqual([]);
+	});
+});
+
+describe('the placeholder the answer proposes', () => {
+	it('uses the phrase the model drafted', async () => {
+		const env = envReturning('{"text":"Es arquitecto.","linkIds":[],"next":"¿Cuáles son sus proyectos actuales?"}');
+
+		const answer = await answerQuery(env, 'quién es', 'es', {
+			retriever: retrieverFor(hit(['cv:perfil:es']))
+		});
+
+		expect(answer.suggestion).toBe('¿Cuáles son sus proyectos actuales?');
+	});
+
+	it('composes a request from the destination when the draft is unusable and links were withheld', async () => {
+		const env = envReturning('{"text":"Podés escribirle.","linkIds":["cv"],"ask":"","next":"¿Qué más?"}');
+
+		const answer = await answerQuery(env, 'su cv', 'es', {
+			retriever: retrieverFor(hit(['cv:perfil:es']))
+		});
+
+		expect(answer.links.length).toBeGreaterThan(0);
+		expect(answer.suggestion).toStartWith('Mostrame el link a');
+	});
+
+	it('takes the drafted link request, not the drafted question, when links are withheld', async () => {
+		const env = envReturning('{"text":"Podés ver su CV.","linkIds":["cv"],"ask":"Mostrame el link al CV","next":"¿Dónde trabajó?"}');
+
+		const answer = await answerQuery(env, 'su cv', 'es', {
+			retriever: retrieverFor(hit(['cv:perfil:es']))
+		});
+
+		expect(answer.suggestion).toBe('Mostrame el link al CV');
+	});
+
+	it('never lets a model-drafted phrase carry a URL into the input box', async () => {
+		const env = envReturning('{"text":"Es arquitecto.","linkIds":[],"next":"Andá a cv.kodexarg.com"}');
+
+		const answer = await answerQuery(env, 'quién es', 'es', {
+			retriever: retrieverFor(hit(['cv:perfil:es']))
+		});
+
+		expect(answer.suggestion).not.toInclude('kodexarg.com');
+	});
+
+	it('proposes the opening question when the gate closed, never leaving the visitor with nothing', async () => {
+		const answer = await answerQuery(envReturning(''), 'capital de Francia', 'es', {
+			retriever: retrieverFor(MISS)
+		});
+
+		expect(answer.text).toBe(OUT_OF_SCOPE.es);
+		expect(answer.suggestion).toBe(OPENING_SUGGESTION.es);
+	});
+
+	it('keeps an authored follow-up aside for the turn that resolves the offer', async () => {
+		const env = envReturning('{"text":"Podés escribirle.","linkIds":["cv"],"nextId":"contacto","ask":"Mostrame el CV","next":"¿Dónde trabajó?"}');
+
+		const answer = await answerQuery(env, 'su cv', 'es', {
+			retriever: retrieverFor(hit(['cv:perfil:es']))
+		});
+
+		expect(answer.suggestion).toBe('Mostrame el CV');
+		expect(answer.followUp).toBeTruthy();
+		expect(answer.followUp).not.toBe(answer.suggestion);
 	});
 });

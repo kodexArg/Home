@@ -42,5 +42,6 @@ export interface KodexAnswer {
 	matched: boolean;
 	score?: number;
 	suggestion?: string;
+	followUp?: string;
 	offer?: boolean;
 }

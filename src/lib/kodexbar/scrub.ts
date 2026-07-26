@@ -1,4 +1,5 @@
 export const MAX_ANSWER_CHARS = 600;
+export const MAX_PLACEHOLDER_CHARS = 90;
 
 const BARE_OR_PROTOCOL_URL = /\b(?:https?:\/\/|www\.)[^\s<>()[\]{}'"]+/gi;
 const MAILTO_LINK = /\bmailto:[^\s<>()[\]{}'"]+/gi;
@@ -64,6 +65,24 @@ export function scrubAnswerText(raw: unknown): string {
 	return truncateAtBoundary(text, MAX_ANSWER_CHARS);
 }
 
+const SURROUNDING_QUOTES = /^["'“”‘’`]+|["'“”‘’`]+$/g;
+
+export function scrubPlaceholderText(raw: unknown): string {
+	if (typeof raw !== 'string') return '';
+
+	let text = raw;
+	text = stripFencedAndInlineCode(text);
+	text = unwrapMarkdownLinksAndImages(text);
+	text = stripLineAnchoredMarkdown(text);
+	text = stripEmphasisMarkers(text);
+	text = stripUrlLikeSpans(text);
+	text = collapseToSingleLine(text);
+	text = tidyDanglingPunctuation(text);
+	text = text.replace(SURROUNDING_QUOTES, '').trim();
+
+	return text.length > MAX_PLACEHOLDER_CHARS ? '' : text;
+}
+
 const SENTENCE_END_MARKS = ['. ', '! ', '? '];
 const MIN_SENTENCE_END_POSITION_RATIO = 0.6;
 
@@ -86,7 +105,7 @@ function truncateAtBoundary(text: string, max: number): string {
 
 export function parseModelJson(
 	raw: unknown
-): { text: string; linkIds: string[]; nextId?: string } | null {
+): { text: string; linkIds: string[]; nextId?: string; next?: string; ask?: string } | null {
 	if (typeof raw !== 'string') return null;
 
 	const cleaned = raw.replace(/```(?:json)?/gi, '').trim();
@@ -103,7 +122,9 @@ export function parseModelJson(
 			linkIds: Array.isArray(parsed?.linkIds)
 				? parsed.linkIds.filter((v: unknown): v is string => typeof v === 'string')
 				: [],
-			nextId: typeof parsed?.nextId === 'string' ? parsed.nextId : undefined
+			nextId: typeof parsed?.nextId === 'string' ? parsed.nextId : undefined,
+			next: typeof parsed?.next === 'string' ? parsed.next : undefined,
+			ask: typeof parsed?.ask === 'string' ? parsed.ask : undefined
 		};
 	} catch {
 		return null;

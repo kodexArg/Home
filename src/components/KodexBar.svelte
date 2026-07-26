@@ -92,9 +92,6 @@
 								{line.text}
 							{/if}
 						</span>
-						{#if line.links.length === 0 && line.offerPrompt && extrasVisibleForLine(i)}
-							<div class="offer">{line.offerPrompt}</div>
-						{/if}
 						{#if line.links.length > 0 && extrasVisibleForLine(i)}
 							<div class="links">
 								{#each line.links as link (link.id)}
@@ -282,11 +279,6 @@
 		gap: 0.25rem;
 	}
 
-	.offer {
-		color: var(--orange-400);
-		font-size: 0.82rem;
-		opacity: 0.72;
-	}
 
 	.link-container {
 		display: inline-flex;

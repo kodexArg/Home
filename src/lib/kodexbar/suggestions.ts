@@ -15,6 +15,23 @@ export interface Suggestion {
 
 export const MAX_CANDIDATES = 4;
 
+const LINK_REQUEST_PHRASE: Record<SupportedLanguage, (label: string) => string> = {
+	es: (label) => `Mostrame el link a ${label}`,
+	en: (label) => `Show me the link to ${label}`
+};
+
+function shortDestinationLabel(name: string): string {
+	return name.split(' - ')[0].trim();
+}
+
+export function linkRequestFor(
+	destinations: readonly { name: string }[],
+	lang: SupportedLanguage
+): string {
+	if (destinations.length === 0) return '';
+	return LINK_REQUEST_PHRASE[lang](shortDestinationLabel(destinations[0].name));
+}
+
 const ES: Omit<Suggestion, 'lang'>[] = [
 	{
 		id: 'contacto',

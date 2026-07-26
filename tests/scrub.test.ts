@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'bun:test';
-import { MAX_ANSWER_CHARS, parseModelJson, scrubAnswerText } from '../src/lib/kodexbar/scrub';
+import {
+	MAX_ANSWER_CHARS,
+	MAX_PLACEHOLDER_CHARS,
+	parseModelJson,
+	scrubAnswerText,
+	scrubPlaceholderText
+} from '../src/lib/kodexbar/scrub';
 
 describe('scrubAnswerText', () => {
 	it('collapses multi-paragraph output into one line', () => {
@@ -94,5 +100,40 @@ describe('parseModelJson', () => {
 		expect(parseModelJson('{"text": roto')).toBeNull();
 		expect(parseModelJson('')).toBeNull();
 		expect(parseModelJson(null)).toBeNull();
+	});
+});
+
+describe('scrubPlaceholderText', () => {
+	it('keeps a plain drafted request as written', () => {
+		expect(scrubPlaceholderText('Mostrame el link al CV')).toBe('Mostrame el link al CV');
+	});
+
+	it('strips a URL the model slipped into the phrase', () => {
+		expect(scrubPlaceholderText('Mirá cv.kodexarg.com')).toBe('Mirá');
+	});
+
+	it('unwraps the quotes a model puts around a phrase it is quoting', () => {
+		expect(scrubPlaceholderText('"¿Cuáles son sus proyectos?"')).toBe('¿Cuáles son sus proyectos?');
+	});
+
+	it('rejects an over-long draft rather than truncating it into a broken question', () => {
+		expect(scrubPlaceholderText('a'.repeat(MAX_PLACEHOLDER_CHARS + 1))).toBe('');
+	});
+
+	it('rejects anything that is not a string, so the caller falls back', () => {
+		expect(scrubPlaceholderText(undefined)).toBe('');
+		expect(scrubPlaceholderText(42)).toBe('');
+	});
+});
+
+describe('parseModelJson and the drafted placeholder', () => {
+	it('carries `next` through when the model supplies it', () => {
+		const parsed = parseModelJson('{"text":"hola","linkIds":[],"next":"¿Y sus proyectos?"}');
+		expect(parsed?.next).toBe('¿Y sus proyectos?');
+	});
+
+	it('leaves `next` undefined when the model omits it or sends the wrong type', () => {
+		expect(parseModelJson('{"text":"hola","linkIds":[]}')?.next).toBeUndefined();
+		expect(parseModelJson('{"text":"hola","linkIds":[],"next":7}')?.next).toBeUndefined();
 	});
 });

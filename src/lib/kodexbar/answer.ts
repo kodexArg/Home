@@ -4,8 +4,14 @@ import { getDestination, resolveLinkIds } from './destinations';
 import { getPack } from './packs';
 import { retrieve, type RetrievalResult } from './retrieval';
 import { buildSystemPrompt, buildUserPrompt, FAILURE, OUT_OF_SCOPE } from './systemPrompt';
-import { parseModelJson, scrubAnswerText } from './scrub';
-import { candidatesFor, resolveSuggestion } from './suggestions';
+import { parseModelJson, scrubAnswerText, scrubPlaceholderText } from './scrub';
+import {
+	OPENING_SUGGESTION,
+	candidatesFor,
+	linkRequestFor,
+	resolveSuggestion,
+	type Suggestion
+} from './suggestions';
 
 export const GENERATION_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8';
 export const MAX_OUTPUT_TOKENS = 320;
@@ -27,9 +33,10 @@ function toAnswer(
 	language: SupportedLanguage,
 	matched: boolean,
 	score?: number,
-	suggestion?: string
+	suggestion?: string,
+	followUp?: string
 ): KodexAnswer {
-	return { text, links, language, matched, score, suggestion };
+	return { text, links, language, matched, score, suggestion, followUp };
 }
 
 export interface AnswerOptions {
@@ -63,7 +70,14 @@ export async function answerQuery(
 	}
 
 	if (!retrievalGatePassed(retrieval)) {
-		return toAnswer(OUT_OF_SCOPE[lang], [], lang, false, retrieval.topScore);
+		return toAnswer(
+			OUT_OF_SCOPE[lang],
+			[],
+			lang,
+			false,
+			retrieval.topScore,
+			OPENING_SUGGESTION[lang]
+		);
 	}
 
 	if (!env?.AI) {
@@ -113,7 +127,29 @@ export async function answerQuery(
 
 	const offeredLinkIds = new Set(allowedLinks.map((d) => d.id));
 	const links = resolveLinkIds(parsed.linkIds).filter((d) => offeredLinkIds.has(d.id));
-	const suggestion = resolveSuggestion(parsed.nextId, suggestions);
 
-	return toAnswer(text, links, lang, true, retrieval.topScore, suggestion);
+	const authoredFallback = resolveSuggestion(parsed.nextId, suggestions) ?? OPENING_SUGGESTION[lang];
+
+	return toAnswer(
+		text,
+		links,
+		lang,
+		true,
+		retrieval.topScore,
+		placeholderFor(parsed.ask, parsed.next, links, authoredFallback, lang),
+		authoredFallback
+	);
+}
+
+function placeholderFor(
+	draftedLinkRequest: string | undefined,
+	draftedNextQuestion: string | undefined,
+	links: readonly LinkDestination[],
+	authoredFallback: string,
+	lang: SupportedLanguage
+): string {
+	if (links.length > 0) {
+		return scrubPlaceholderText(draftedLinkRequest) || linkRequestFor(links, lang);
+	}
+	return scrubPlaceholderText(draftedNextQuestion) || authoredFallback;
 }

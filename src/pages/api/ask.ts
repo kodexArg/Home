@@ -42,7 +42,7 @@ async function resolvePendingOfferReply(
 ): Promise<Response | null> {
 	if (!pending) return null;
 
-	const intent = await classifyConsent(env, query, lang);
+	const intent = await classifyConsent(env, query, lang, pending.proposedRequest);
 
 	if (intent === 'yes') {
 		return json({
@@ -110,12 +110,13 @@ export const POST: APIRoute = async ({ request }) => {
 		if (answer.links.length > 0) {
 			const stored = await putOffer(env, offerKey, {
 				ids: answer.links.map((link) => link.id),
-				suggestion: answer.suggestion,
+				proposedRequest: answer.suggestion,
+				suggestion: answer.followUp,
 				language: lang
 			});
 
 			if (stored) {
-				return json({ ...answer, links: [], suggestion: undefined, offer: true });
+				return json({ ...answer, links: [], followUp: undefined, offer: true });
 			}
 		}
 

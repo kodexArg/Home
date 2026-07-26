@@ -272,82 +272,61 @@ describe('follow-up suggestions', () => {
 });
 
 describe('the link offer', () => {
-	it('carries the question in place of the links', async () => {
-		const { port } = createRecordingStubBackend({ text: 'kodexArg es la marca.', offer: true });
+	it('renders an answer withholding its links as prose and nothing else', async () => {
+		const { port } = createRecordingStubBackend({
+			text: 'kodexArg es la marca.',
+			offer: true,
+			suggestion: 'Mostrame el link al CV'
+		});
 		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('quién es kodexArg');
 
 		expect(session.history[1]).toMatchObject({
 			kind: 'answer',
-			links: [],
-			offerPrompt: '¿Ver los links?'
+			text: 'kodexArg es la marca.',
+			links: []
 		});
 	});
 
-	it('asks in the language of the exchange', async () => {
-		const { port } = createRecordingStubBackend({ offer: true });
-		const { session } = createSessionWithControllableClock({ backend: port, language: 'en' });
-
-		await session.submit("who's kodexArg");
-
-		expect(session.history[1]).toMatchObject({ offerPrompt: 'Show links?' });
-	});
-
-	it('leaves the prompt empty on an ordinary answer', async () => {
-		const { port } = createRecordingStubBackend({ links: [getDestination('cv')!] });
-		const { session } = createSessionWithControllableClock({ backend: port });
-
-		await session.submit('su cv');
-
-		expect(session.history[1]).toMatchObject({ offerPrompt: '' });
-	});
-
-	it('proposes nothing while the offer stands, since the resting placeholder already reads as the answer', async () => {
-		const { port } = createRecordingStubBackend({ offer: true, suggestion: '¿Qué es Coveris?' });
+	it('puts the drafted link request in the placeholder, so TAB asks for them', async () => {
+		const { port } = createRecordingStubBackend({
+			offer: true,
+			suggestion: 'Mostrame el link al CV'
+		});
 		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('quién es kodexArg');
 
-		expect(session.snapshot().suggestion).toBe('');
+		expect(session.snapshot().suggestion).toBe('Mostrame el link al CV');
 	});
 
-	it('clears a proposal it was already showing', async () => {
-		const first = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
-		const { session, advance } = createSessionWithControllableClock({ backend: first.port });
+	it('proposes the same link request again on a later offer, unlike a follow-up question', async () => {
+		const { port } = createRecordingStubBackend({
+			offer: true,
+			suggestion: 'Mostrame el link al CV'
+		});
+		const { session, advance } = createSessionWithControllableClock({ backend: port });
+
 		await session.submit('primera');
-		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+		advance(5000);
+		await session.submit('segunda');
 
-		const offering = createRecordingStubBackend({ offer: true });
-		const { session: second } = createSessionWithControllableClock({ backend: offering.port });
-		await second.submit('primera');
-		expect(second.snapshot().suggestion).toBe('');
-		advance(0);
-	});
-
-	it('takes the follow-up back up once the offer resolves', async () => {
-		const { port } = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
-		const { session } = createSessionWithControllableClock({ backend: port });
-
-		await session.submit('sí');
-
-		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+		expect(session.snapshot().suggestion).toBe('Mostrame el link al CV');
 	});
 
 	it('renders the revealed links as an ordinary answer', async () => {
 		const { port } = createRecordingStubBackend({
 			text: 'Ahí van.',
-			links: [getDestination('cv')!, getDestination('github')!]
+			links: [getDestination('cv')!, getDestination('github')!],
+			suggestion: '¿Qué es Coveris?'
 		});
 		const { session } = createSessionWithControllableClock({ backend: port });
 
-		await session.submit('sí');
+		await session.submit('mostrame el link al cv');
 
-		expect(session.history[1]).toMatchObject({
-			kind: 'answer',
-			text: 'Ahí van.',
-			offerPrompt: ''
-		});
+		expect(session.history[1]).toMatchObject({ kind: 'answer', text: 'Ahí van.' });
 		expect((session.history[1] as { links: unknown[] }).links).toHaveLength(2);
+		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
 	});
 });

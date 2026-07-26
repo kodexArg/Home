@@ -1,7 +1,7 @@
 import type { CorpusChunk, LinkDestination } from './types';
 import type { SupportedLanguage } from '../ui/language';
 import type { Suggestion } from './suggestions';
-import { MAX_ANSWER_CHARS } from './scrub';
+import { MAX_ANSWER_CHARS, MAX_PLACEHOLDER_CHARS } from './scrub';
 
 export const OUT_OF_SCOPE: Record<SupportedLanguage, string> = {
 	es: 'No tengo información sobre eso. Puedo contarte sobre Gabriel Cavedal, su experiencia, sus proyectos y cómo contactarlo.',
@@ -15,7 +15,7 @@ export const FAILURE: Record<SupportedLanguage, string> = {
 
 const FORMAT_RULES: Record<SupportedLanguage, string> = {
 	es: `FORMATO DE SALIDA — obligatorio, siempre igual:
-- Respondé SOLO con un objeto JSON: {"text": "...", "linkIds": ["id"], "nextId": "id"}
+- Respondé SOLO con un objeto JSON: {"text": "...", "linkIds": ["id"], "nextId": "id", "next": "...", "ask": "..."}
 - "text": UN solo párrafo de texto plano, breve, máximo ${MAX_ANSWER_CHARS} caracteres.
 - Sin markdown, sin títulos, sin viñetas, sin negritas, sin saltos de línea.
 - NUNCA escribas URLs, dominios ni direcciones de correo dentro de "text".
@@ -26,17 +26,27 @@ const FORMAT_RULES: Record<SupportedLanguage, string> = {
   Los demás subdominios SÍ valen como referencia y son bienvenidos: el CV, la
   documentación, el design system, los proyectos. Esos son otros lugares.
 - Los links van solo en "linkIds", usando los ids permitidos que se listan abajo.
-  Se muestran solos, debajo de tu texto, así que no hace falta anunciarlos.
+  NO se muestran en este turno: el visitante los recibe recién si los pide.
+  No los anuncies, no los menciones, no digas que están abajo.
 - La frase tiene que quedar COMPLETA sin el dato del link. Nunca la termines
   apuntando a un valor que no podés escribir. Mal: "Su correo es". Bien:
   "Podés escribirle por mail" con "linkIds": ["email"].
 - Si ningún link corresponde, devolvé "linkIds": [].
-- "nextId": el id de la pregunta que este visitante querría hacer después,
-  elegido de PREGUNTAS SUGERIDAS. Es solo un id; no escribas la pregunta en
-  "text". Si ninguna encaja, devolvé "nextId": "".
+- "ask": cómo pediría el visitante los links que devolviste en "linkIds",
+  escrito en primera persona y nombrando qué son. Ejemplos: "Mostrame el link
+  al CV", "Mostrame su GitHub", "Pasame el mail". Si "linkIds" quedó vacío,
+  devolvé "ask": "".
+- "next": la PREGUNTA que este visitante querría hacer después, encadenada con
+  lo que acabás de contestar. Después de contar quién es, "¿Cuáles son sus
+  proyectos actuales?"; después de hablar de AWS, "¿Qué hizo con Django?".
+- "ask" y "next" van a aparecer escritos en el campo de texto del visitante,
+  listos para enviarse tal cual: máximo ${MAX_PLACEHOLDER_CHARS} caracteres,
+  una sola línea, sin comillas. Nunca los escribas dentro de "text".
+- "nextId": el id de PREGUNTAS SUGERIDAS más cercano a tu "next", como respaldo.
+  Si ninguno encaja, devolvé "nextId": "".
 - Tono de chat: directo y natural, como una respuesta hablada.`,
 	en: `OUTPUT FORMAT — mandatory, always identical:
-- Reply with ONLY a JSON object: {"text": "...", "linkIds": ["id"], "nextId": "id"}
+- Reply with ONLY a JSON object: {"text": "...", "linkIds": ["id"], "nextId": "id", "next": "...", "ask": "..."}
 - "text": ONE short plain-text paragraph, at most ${MAX_ANSWER_CHARS} characters.
 - No markdown, no headings, no bullets, no bold, no line breaks.
 - NEVER write URLs, domains or email addresses inside "text".
@@ -46,15 +56,25 @@ const FORMAT_RULES: Record<SupportedLanguage, string> = {
   send them "to the home page" in words either.
   Other subdomains ARE fine to reference and are welcome: the CV, the docs, the
   design system, the projects. Those are somewhere else.
-- Links go only in "linkIds", using the allowed ids listed below. They render on
-  their own beneath your text, so there is no need to announce them.
+- Links go only in "linkIds", using the allowed ids listed below.
+  They do NOT render on this turn: the visitor gets them only if they ask.
+  Do not announce them, do not mention them, do not say they are below.
 - The sentence must stand COMPLETE without the linked value. Never end it
   pointing at something you cannot write. Bad: "His email is". Good: "You can
   reach him by email" with "linkIds": ["email"].
 - If no link applies, return "linkIds": [].
-- "nextId": the id of the question this visitor would most likely ask next,
-  chosen from SUGGESTED QUESTIONS. It is an id only; never write the question
-  itself into "text". If none fits, return "nextId": "".
+- "ask": how the visitor would ask for the links you returned in "linkIds",
+  written in the first person and naming what they are. Examples: "Show me the
+  link to his CV", "Show me his GitHub", "Give me his email". If "linkIds" came
+  out empty, return "ask": "".
+- "next": the QUESTION this visitor would most likely ask next, chained to what
+  you just answered. After saying who he is, "What are his current projects?";
+  after talking about AWS, "What has he built with Django?".
+- "ask" and "next" will appear written in the visitor's input box, ready to send
+  as they stand: at most ${MAX_PLACEHOLDER_CHARS} characters, one line, no
+  quotes. Never write either of them inside "text".
+- "nextId": the id from SUGGESTED QUESTIONS closest to your "next", as a
+  fallback. If none fits, return "nextId": "".
 - Chat tone: direct and natural, like a spoken answer.`
 };
 
