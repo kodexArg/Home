@@ -16,6 +16,7 @@
 	import Typewriter from './Typewriter.svelte';
 	import { createChatSession, isSubmittable } from '../lib/chat/chatSession';
 	import { getLanguageStore } from '../lib/ui/language';
+	import { OPENING_SUGGESTION } from '../lib/kodexbar/suggestions';
 
 	// The language preference is owned by the shared store (persisted + mirrored
 	// onto <html lang>); the session is kept in sync from it.
@@ -26,6 +27,7 @@
 	let isThinking = $state(false);
 	let language = $state(languageStore.language);
 	let currentInput = $state('');
+	let suggestion = $state('');
 
 	const session = createChatSession({
 		language: languageStore.language,
@@ -33,6 +35,7 @@
 			history = snapshot.history;
 			isThinking = snapshot.isThinking;
 			language = snapshot.language;
+			suggestion = snapshot.suggestion;
 		}
 	});
 
@@ -40,7 +43,23 @@
 	// session for a visitor whose stored/browser language is not the default.
 	$effect(() => languageStore.subscribe((next) => session.setLanguage(next)));
 
-	let placeholder = $derived(language === 'es' ? '¿Sí?' : 'Yes?');
+	// The question TAB will type in. Before the first exchange there is no context
+	// to reason from, so it is the fixed opener; afterwards it is whatever the
+	// answer proposed, which is authored text resolved server-side from an id.
+	let proposal = $derived(history.length === 0 ? OPENING_SUGGESTION[language] : suggestion);
+
+	// With no proposal the field returns to the original neutral prompt.
+	let placeholder = $derived(proposal || (language === 'es' ? '¿Sí?' : 'Yes?'));
+
+	// TAB is invisible, so it needs saying — but only while it would do something.
+	let inputHint = $derived(
+		proposal && currentInput.trim() === ''
+			? language === 'es'
+				? 'TAB para completar'
+				: 'TAB to complete'
+			: undefined
+	);
+
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
 	// The typewriter is a first-impression effect, not a per-message one: only
@@ -148,6 +167,8 @@
 		<SyvInput
 			label={undefined}
 			{placeholder}
+			hint={inputHint}
+			acceptOnTab={proposal}
 			bind:value={currentInput}
 			onCommit={commitQuery}
 			autogrow

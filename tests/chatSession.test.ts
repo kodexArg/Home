@@ -214,3 +214,61 @@ describe('snapshot', () => {
 		expect(session.history).toHaveLength(2);
 	});
 });
+
+describe('follow-up suggestions', () => {
+	it('starts with nothing to propose', () => {
+		const { session } = makeSession();
+		expect(session.snapshot().suggestion).toBe('');
+	});
+
+	it('adopts the suggestion the answer carried', async () => {
+		const { port } = stubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
+		const { session } = makeSession({ backend: port });
+
+		await session.submit('quién es');
+		expect(session.snapshot().suggestion).toBe('¿Cómo puedo contactarlo?');
+	});
+
+	it('drops a suggestion it has already shown', async () => {
+		// The server is stateless and will happily repeat itself; showing the same
+		// placeholder twice reads as a bug.
+		const { port } = stubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
+		const { session, advance } = makeSession({ backend: port });
+
+		await session.submit('quién es');
+		advance(5000);
+		await session.submit('otra cosa');
+
+		expect(session.snapshot().suggestion).toBe('');
+	});
+
+	it('clears the suggestion when an answer carries none', async () => {
+		const { port } = stubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session, advance } = makeSession({ backend: port });
+		await session.submit('primera');
+		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+
+		const bare = stubBackend({ suggestion: undefined });
+		const { session: second } = makeSession({ backend: bare.port });
+		await second.submit('primera');
+		expect(second.snapshot().suggestion).toBe('');
+		advance(0);
+	});
+
+	it('ignores whitespace-only suggestions', async () => {
+		const { port } = stubBackend({ suggestion: '   ' });
+		const { session } = makeSession({ backend: port });
+		await session.submit('algo');
+		expect(session.snapshot().suggestion).toBe('');
+	});
+
+	it('leaves the suggestion untouched on a cooldown rejection', async () => {
+		const { port } = stubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session } = makeSession({ backend: port, cooldownMs: 3000 });
+
+		await session.submit('primera');
+		await session.submit('demasiado rápido');
+
+		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+	});
+});

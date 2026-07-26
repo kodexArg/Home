@@ -104,6 +104,8 @@ export interface KnowledgePack {
 export interface RawModelAnswer {
 	text: string;
 	linkIds: string[];
+	/** Id of a suggested follow-up question, resolved against the candidates. */
+	nextId?: string;
 }
 
 /** What /api/ask returns and the UI renders. */
@@ -120,4 +122,10 @@ export interface KodexAnswer {
 	matched: boolean;
 	/** Top cosine score seen, for debugging. Never rendered. */
 	score?: number;
+	/**
+	 * A follow-up question to offer as the input's placeholder, taken verbatim
+	 * from the authored registry in suggestions.ts — never model-authored text.
+	 * Absent when the context supports no candidate.
+	 */
+	suggestion?: string;
 }

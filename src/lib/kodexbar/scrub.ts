@@ -95,7 +95,9 @@ function truncateAtBoundary(text: string, max: number): string {
  * whole string. Returns null when nothing usable is present — the caller
  * decides what to do, and MUST NOT fall back to rendering the raw text.
  */
-export function parseModelJson(raw: unknown): { text: string; linkIds: string[] } | null {
+export function parseModelJson(
+	raw: unknown
+): { text: string; linkIds: string[]; nextId?: string } | null {
 	if (typeof raw !== 'string') return null;
 
 	const cleaned = raw.replace(/```(?:json)?/gi, '').trim();
@@ -128,7 +130,10 @@ export function parseModelJson(raw: unknown): { text: string; linkIds: string[] 
 						text: typeof parsed?.text === 'string' ? parsed.text : '',
 						linkIds: Array.isArray(parsed?.linkIds)
 							? parsed.linkIds.filter((v: unknown): v is string => typeof v === 'string')
-							: []
+							: [],
+						// Kept raw: it is an id, and the only thing done with it is a
+						// lookup against the candidates the model was offered.
+						nextId: typeof parsed?.nextId === 'string' ? parsed.nextId : undefined
 					};
 				} catch {
 					return null;

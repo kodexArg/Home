@@ -11,10 +11,22 @@
 		invalid = false,
 		hint = undefined,
 		/** When true the field is a flexible textarea that grows with its content. */
-		autogrow = false
+		autogrow = false,
+		/**
+		 * Text TAB types into the field. The proposal is only ever *typed*, never
+		 * submitted — Enter stays the visitor's, so they can edit or discard it.
+		 */
+		acceptOnTab = ''
 	} = $props();
 
 	let inputEl;
+
+	// TAB is the browser's focus control before it is ours, so it is only
+	// borrowed in the one state where nothing is lost: a forward TAB, on an empty
+	// field, with something to propose. Once the visitor has typed anything — or
+	// when there is no proposal — TAB moves focus as it always did, so the field
+	// can never trap a keyboard user.
+	let canAcceptSuggestion = $derived(Boolean(acceptOnTab) && value.trim() === '');
 
 	// Keep the flexible field exactly as tall as its content (capped in CSS).
 	$effect(() => {
@@ -24,7 +36,26 @@
 		inputEl.style.height = `${inputEl.scrollHeight}px`;
 	});
 
+	function acceptSuggestion() {
+		value = acceptOnTab;
+		// Caret to the end, so the accepted text reads as something the visitor
+		// just typed and can keep editing.
+		requestAnimationFrame(() => {
+			if (!inputEl) return;
+			inputEl.focus();
+			const end = inputEl.value.length;
+			inputEl.setSelectionRange(end, end);
+		});
+	}
+
 	function handleKeyDown(e) {
+		// Shift+Tab is backwards navigation and is never intercepted.
+		if (e.key === 'Tab' && !e.shiftKey && canAcceptSuggestion) {
+			e.preventDefault();
+			acceptSuggestion();
+			return;
+		}
+
 		// Shift+Enter keeps a soft newline in the flexible field; Enter commits.
 		if (e.key === 'Enter' && !(autogrow && e.shiftKey)) {
 			e.preventDefault();

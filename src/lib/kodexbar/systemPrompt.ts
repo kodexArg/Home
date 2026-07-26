@@ -1,5 +1,6 @@
 import type { CorpusChunk, LinkDestination } from './types';
 import type { SupportedLanguage } from '../ui/language';
+import type { Suggestion } from './suggestions';
 import { MAX_ANSWER_CHARS } from './scrub';
 
 /**
@@ -25,7 +26,7 @@ export const FAILURE: Record<SupportedLanguage, string> = {
 
 const FORMAT_RULES: Record<SupportedLanguage, string> = {
 	es: `FORMATO DE SALIDA — obligatorio, siempre igual:
-- Respondé SOLO con un objeto JSON: {"text": "...", "linkIds": ["id"]}
+- Respondé SOLO con un objeto JSON: {"text": "...", "linkIds": ["id"], "nextId": "id"}
 - "text": UN solo párrafo de texto plano, breve, máximo ${MAX_ANSWER_CHARS} caracteres.
 - Sin markdown, sin títulos, sin viñetas, sin negritas, sin saltos de línea.
 - NUNCA escribas URLs, dominios ni direcciones de correo dentro de "text".
@@ -35,9 +36,12 @@ const FORMAT_RULES: Record<SupportedLanguage, string> = {
   apuntando a un valor que no podés escribir. Mal: "Su correo es". Bien:
   "Podés escribirle por mail" con "linkIds": ["email"].
 - Si ningún link corresponde, devolvé "linkIds": [].
+- "nextId": el id de la pregunta que este visitante querría hacer después,
+  elegido de PREGUNTAS SUGERIDAS. Es solo un id; no escribas la pregunta en
+  "text". Si ninguna encaja, devolvé "nextId": "".
 - Tono de chat: directo y natural, como una respuesta hablada.`,
 	en: `OUTPUT FORMAT — mandatory, always identical:
-- Reply with ONLY a JSON object: {"text": "...", "linkIds": ["id"]}
+- Reply with ONLY a JSON object: {"text": "...", "linkIds": ["id"], "nextId": "id"}
 - "text": ONE short plain-text paragraph, at most ${MAX_ANSWER_CHARS} characters.
 - No markdown, no headings, no bullets, no bold, no line breaks.
 - NEVER write URLs, domains or email addresses inside "text".
@@ -47,6 +51,9 @@ const FORMAT_RULES: Record<SupportedLanguage, string> = {
   pointing at something you cannot write. Bad: "His email is". Good: "You can
   reach him by email" with "linkIds": ["email"].
 - If no link applies, return "linkIds": [].
+- "nextId": the id of the question this visitor would most likely ask next,
+  chosen from SUGGESTED QUESTIONS. It is an id only; never write the question
+  itself into "text". If none fits, return "nextId": "".
 - Chat tone: direct and natural, like a spoken answer.`
 };
 
@@ -61,9 +68,22 @@ const GROUNDING_RULES: Record<SupportedLanguage, string> = {
 - Never invent dates, figures, companies, technologies or links.`
 };
 
-const SECTION_LABELS: Record<SupportedLanguage, { links: string; context: string; question: string }> = {
-	es: { links: 'IDS DE LINK PERMITIDOS', context: 'CONTEXTO', question: 'PREGUNTA DEL VISITANTE' },
-	en: { links: 'ALLOWED LINK IDS', context: 'CONTEXT', question: "VISITOR'S QUESTION" }
+const SECTION_LABELS: Record<
+	SupportedLanguage,
+	{ links: string; context: string; question: string; suggestions: string }
+> = {
+	es: {
+		links: 'IDS DE LINK PERMITIDOS',
+		context: 'CONTEXTO',
+		question: 'PREGUNTA DEL VISITANTE',
+		suggestions: 'PREGUNTAS SUGERIDAS'
+	},
+	en: {
+		links: 'ALLOWED LINK IDS',
+		context: 'CONTEXT',
+		question: "VISITOR'S QUESTION",
+		suggestions: 'SUGGESTED QUESTIONS'
+	}
 };
 
 export interface PromptInput {
@@ -73,6 +93,8 @@ export interface PromptInput {
 	chunks: readonly CorpusChunk[];
 	/** The only ids the model is permitted to emit. */
 	allowedLinks: readonly LinkDestination[];
+	/** Follow-up candidates; the model picks one by id. May be empty. */
+	suggestions?: readonly Suggestion[];
 }
 
 /** Build the system prompt. The visitor's query is NOT part of it. */
@@ -87,13 +109,23 @@ export function buildSystemPrompt(input: PromptInput): string {
 
 	const context = input.chunks.map((c) => `[${c.title}]\n${c.text}`).join('\n\n');
 
-	return [
+	const sections = [
 		input.packFragments.join('\n\n'),
 		GROUNDING_RULES[input.lang],
 		FORMAT_RULES[input.lang],
-		`${labels.links}:\n${linkList}`,
-		`${labels.context}:\n${context}`
-	].join('\n\n');
+		`${labels.links}:\n${linkList}`
+	];
+
+	// Omitted entirely when there is nothing to choose from, so the model is not
+	// invited to invent an id against an empty list.
+	if (input.suggestions?.length) {
+		const list = input.suggestions.map((s) => `- ${s.id}: ${s.text}`).join('\n');
+		sections.push(`${labels.suggestions}:\n${list}`);
+	}
+
+	sections.push(`${labels.context}:\n${context}`);
+
+	return sections.join('\n\n');
 }
 
 /**

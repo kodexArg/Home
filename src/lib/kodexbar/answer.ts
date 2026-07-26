@@ -5,6 +5,7 @@ import { getPack } from './packs';
 import { retrieve, type RetrievalResult } from './retrieval';
 import { buildSystemPrompt, buildUserPrompt, FAILURE, OUT_OF_SCOPE } from './systemPrompt';
 import { parseModelJson, scrubAnswerText } from './scrub';
+import { candidatesFor, resolveSuggestion } from './suggestions';
 
 /**
  * The answering pipeline (adr-10).
@@ -50,9 +51,10 @@ function toAnswer(
 	links: LinkDestination[],
 	language: SupportedLanguage,
 	matched: boolean,
-	score?: number
+	score?: number,
+	suggestion?: string
 ): KodexAnswer {
-	return { text, links, language, matched, score };
+	return { text, links, language, matched, score, suggestion };
 }
 
 export interface AnswerOptions {
@@ -97,6 +99,7 @@ export async function answerQuery(
 		.filter((f): f is string => Boolean(f));
 
 	const allowedLinks = allowedLinksFor(retrieval.chunks);
+	const suggestions = candidatesFor(retrieval.chunks, lang);
 
 	let raw: string | undefined;
 	try {
@@ -104,7 +107,13 @@ export async function answerQuery(
 			messages: [
 				{
 					role: 'system',
-					content: buildSystemPrompt({ lang, packFragments, chunks: retrieval.chunks, allowedLinks })
+					content: buildSystemPrompt({
+						lang,
+						packFragments,
+						chunks: retrieval.chunks,
+						allowedLinks,
+						suggestions
+					})
 				},
 				{ role: 'user', content: buildUserPrompt(query, lang) }
 			],
@@ -135,5 +144,10 @@ export async function answerQuery(
 	const offered = new Set(allowedLinks.map((d) => d.id));
 	const links = resolveLinkIds(parsed.linkIds).filter((d) => offered.has(d.id));
 
-	return toAnswer(text, links, lang, true, retrieval.topScore);
+	// The placeholder text comes from the registry, never from the model — the
+	// model only chose which entry. An unknown id falls back to the strongest
+	// candidate rather than to nothing.
+	const suggestion = resolveSuggestion(parsed.nextId, suggestions);
+
+	return toAnswer(text, links, lang, true, retrieval.topScore, suggestion);
 }

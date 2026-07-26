@@ -53,6 +53,12 @@ export interface ChatSessionSnapshot {
 	language: ChatLanguage;
 	/** Milliseconds left on the cooldown gate; 0 when a submit is accepted. */
 	cooldownRemainingMs: number;
+	/**
+	 * Follow-up question to propose in the input placeholder, or '' when there
+	 * is nothing fresh to suggest. Always authored text from the server's
+	 * registry — safe to render, and safe to type into the field on TAB.
+	 */
+	suggestion: string;
 }
 
 export interface ChatSessionOptions {
@@ -119,7 +125,8 @@ const defaultBackend: KodexBarPort = {
 			links: Array.isArray(data.links) ? data.links : [],
 			language: data.language ?? language,
 			matched: Boolean(data.matched),
-			score: data.score
+			score: data.score,
+			suggestion: typeof data.suggestion === 'string' ? data.suggestion : undefined
 		};
 	}
 };
@@ -137,6 +144,16 @@ export class ChatSession {
 	private thinking = false;
 	private lang: ChatLanguage;
 	private lastAcceptedAt = 0;
+	private currentSuggestion = '';
+	/**
+	 * Suggestions already put in front of this visitor.
+	 *
+	 * The server is stateless, so it cannot know what it has proposed before and
+	 * will happily return the same follow-up twice. Repeating a placeholder the
+	 * visitor has already seen (or already asked) reads as the thing being
+	 * broken, so a repeat is dropped rather than shown again.
+	 */
+	private readonly offeredSuggestions = new Set<string>();
 
 	constructor(options: ChatSessionOptions = {}) {
 		this.backend = options.backend ?? defaultBackend;
@@ -171,8 +188,25 @@ export class ChatSession {
 			history: [...this.lines],
 			isThinking: this.thinking,
 			language: this.lang,
-			cooldownRemainingMs: this.cooldownRemainingMs()
+			cooldownRemainingMs: this.cooldownRemainingMs(),
+			suggestion: this.currentSuggestion
 		};
+	}
+
+	/**
+	 * Take the server's follow-up if it is worth showing.
+	 *
+	 * Clears the current suggestion whenever there is nothing fresh, so the view
+	 * falls back to its resting placeholder instead of holding a stale question.
+	 */
+	private adoptSuggestion(suggestion: string | undefined): void {
+		const next = suggestion?.trim() ?? '';
+		if (!next || this.offeredSuggestions.has(next)) {
+			this.currentSuggestion = '';
+			return;
+		}
+		this.offeredSuggestions.add(next);
+		this.currentSuggestion = next;
 	}
 
 	setLanguage(language: ChatLanguage): void {
@@ -207,6 +241,7 @@ export class ChatSession {
 		try {
 			const answer = await this.backend.ask(trimmed, this.lang);
 			await this.delay(this.responseDelayMs);
+			this.adoptSuggestion(answer.suggestion);
 			this.append({
 				role: 'assistant',
 				kind: 'answer',
