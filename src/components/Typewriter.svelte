@@ -23,7 +23,14 @@
 		wordPauseMs = DEFAULT_WORD_PAUSE_MS,
 		typoProbability = DEFAULT_TYPO_PROBABILITY,
 		typoHesitationMs = DEFAULT_TYPO_HESITATION_MS,
-		random = Math.random
+		random = Math.random,
+		/*
+		 * Fired once the full text is on screen — including immediately under
+		 * reduced motion, where there is no animation to wait for. Callers use
+		 * it to hold back anything that must not appear before the sentence is
+		 * finished (the link chips).
+		 */
+		ondone = () => {}
 	} = $props();
 
 	let visible = $state('');
@@ -50,6 +57,7 @@
 		if (prefersReducedMotion()) {
 			// Non-negotiable: reduced motion means the full text appears instantly.
 			visible = target;
+			ondone();
 			return;
 		}
 
@@ -67,6 +75,7 @@
 		function step() {
 			if (i >= steps.length) {
 				timerId = null;
+				ondone();
 				return;
 			}
 			const s = steps[i];

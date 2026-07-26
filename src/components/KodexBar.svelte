@@ -48,6 +48,19 @@
 	// flourish into a delay the visitor has to sit through.
 	let firstAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
 
+	// Links must never appear before the sentence they belong to. The typed
+	// line therefore withholds its chips until Typewriter says it is finished;
+	// every other line has nothing to wait for.
+	let typedLineDone = $state(false);
+
+	function linksVisible(index) {
+		return index !== firstAnswerIndex || typedLineDone;
+	}
+
+	// The language control is a pre-conversation affordance. Once the visitor
+	// has asked something they have already chosen, so it gets out of the way.
+	let showLanguageToggle = $derived(history.length === 0);
+
 	function commitQuery(query) {
 		if (!isSubmittable(query)) return;
 		currentInput = '';
@@ -59,13 +72,6 @@
 		return url.startsWith('http') ? url.replace(/^https?:\/\//, '').replace(/\/$/, '') : url;
 	}
 </script>
-
-<!-- The language control is pinned to the viewport, not stacked above the log.
-     Inside the column it rode on top of the scrollback and was pushed off the
-     top of the screen as soon as the conversation grew past a couple of turns. -->
-<div class="top-controls">
-	<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
-</div>
 
 <div class="chat-container" role="region" aria-label="KodexBar">
 	<!-- Terminal Scrollback Stack -->
@@ -79,12 +85,12 @@
 					<div class="answer-block">
 						<span class="bot-text">
 							{#if i === firstAnswerIndex}
-								<Typewriter text={line.text} />
+								<Typewriter text={line.text} ondone={() => (typedLineDone = true)} />
 							{:else}
 								{line.text}
 							{/if}
 						</span>
-						{#if line.links.length > 0}
+						{#if line.links.length > 0 && linksVisible(i)}
 							<div class="links">
 								{#each line.links as link (link.id)}
 									<span class="link-container">
@@ -130,6 +136,13 @@
 		{/if}
 	</div>
 
+	<!-- Sits between the log and the input, and only before the first query. -->
+	{#if showLanguageToggle}
+		<div class="bottom-controls">
+			<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
+		</div>
+	{/if}
+
 	<!-- Pip-Boy SyV Input Bar -->
 	<div class="input-bar-wrapper">
 		<SyvInput
@@ -157,14 +170,10 @@
 		gap: 0.75rem;
 	}
 
-	/* Pinned to the viewport so it survives a long conversation. */
-	.top-controls {
-		position: fixed;
-		top: 1.4rem;
-		right: 1.8rem;
-		z-index: 4;
+	.bottom-controls {
 		display: flex;
 		justify-content: flex-end;
+		width: 100%;
 	}
 
 	.stack {
@@ -172,33 +181,23 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		align-items: flex-start;
-		max-height: calc(100vh - 180px);
-		overflow-y: auto;
 		gap: 0.75rem;
 		padding-right: 0.5rem;
 
-		/* Old turns dissolve upward instead of piling up. The newest exchange —
-		   the only one that matters — stays fully legible at the bottom; anything
-		   past the midpoint fades out and is gone by the top of the log. */
-		-webkit-mask-image: linear-gradient(
-			to top,
-			#000 0%,
-			#000 48%,
-			rgba(0, 0, 0, 0.45) 72%,
-			rgba(0, 0, 0, 0.12) 88%,
-			transparent 100%
-		);
-		mask-image: linear-gradient(
-			to top,
-			#000 0%,
-			#000 48%,
-			rgba(0, 0, 0, 0.45) 72%,
-			rgba(0, 0, 0, 0.12) 88%,
-			transparent 100%
-		);
+		/* A FIXED height, not max-height. The mask below is expressed in
+		   percentages, so the box it applies to has to be a stable slice of the
+		   viewport — otherwise a two-turn conversation shrinks the box and the
+		   gradient lands on lines that are still near the bottom of the page.
+		   With justify-content:flex-end the content hugs the input regardless. */
+		height: calc(100vh - 180px);
+		overflow-y: auto;
 
-		/* The mask hides the scrollbar's usefulness anyway, and a visible track
-		   fights the dissolve. */
+		/* Old turns dissolve on the way up. Fully legible across the bottom
+		   half; fades from the midpoint and gone by the top quarter. */
+		-webkit-mask-image: linear-gradient(to top, #000 0%, #000 50%, transparent 75%);
+		mask-image: linear-gradient(to top, #000 0%, #000 50%, transparent 75%);
+
+		/* A visible track fights the dissolve. */
 		scrollbar-width: none;
 	}
 
