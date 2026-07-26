@@ -1,4 +1,4 @@
-export const MAX_ANSWER_CHARS = 600;
+export const MAX_ANSWER_CHARS = 900;
 export const MAX_PLACEHOLDER_CHARS = 90;
 
 const BARE_OR_PROTOCOL_URL = /\b(?:https?:\/\/|www\.)[^\s<>()[\]{}'"]+/gi;

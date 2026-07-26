@@ -80,13 +80,21 @@ An earlier draft left this open: KodexBar exists to make reaching Gabriel easy, 
 
 If that friction proves wrong, the fix is not an exemption — it is reconsidering §1.
 
-## Not implemented — the talkier answer
+## Implemented — the talkier answer, after the eval set
 
 The proposal's §6 raised `MAX_ANSWER_CHARS` from 600 to 900, `MAX_OUTPUT_TOKENS` from 320 to 500, and relaxed `FORMAT_RULES` from "un solo párrafo, breve" to two-to-four sentences, on the reasoning that with links no longer carrying the payload the prose has to.
 
-**None of it was built, and it should not be until there is an eval set.** The proposal named the risk itself: an 8B model given a larger token budget over thin retrieved context is precisely the condition under which a small model starts inventing, and "more verbose" and "only about what it knows" pull against each other. The gate and the matcher are verifiable by unit test; verbosity is not. The prerequisite is a fixture of real questions checked for claims absent from the retrieved chunks.
+It was deferred until there was an eval set, because the proposal named the risk itself: an 8B model given a larger token budget over thin retrieved context is precisely the condition under which a small model starts inventing, and "more verbose" and "only about what it knows" pull against each other. The gate and the matcher are verifiable by unit test; verbosity is not. The prerequisite was a fixture of real questions checked for claims absent from the retrieved chunks.
 
-Recorded here as a decision deferred, not a decision dropped.
+That harness is `scripts/grounding-eval/`, run by `bun run eval:grounding` against a dev server with remote bindings — never inside `bun test`, which must not depend on a live model. It asks 24 fixture questions in both languages, extracts every year, figure and proper noun from each answer, and reports the ones that appear in no retrieved chunk.
+
+**Measured, then shipped.** 24 questions, 221 claims checked, zero fabrications. Seven tokens were flagged and all seven trace to the extractor, not the model:
+
+* `Cavedal` (×4) — the surname reaches the model through the cv pack's `systemPromptFragment`, which `groundingCheck.ts` does not include when it builds the context text. Grounded in committed text, invisible to the checker.
+* `Additionally` (×2) — a sentence-initial discourse marker. The Spanish stopword set has `ademas`; the English set has `also` but not `additionally`.
+* `Arg.` (×1) — the capitalized-word pattern starts a match at any uppercase letter, so it bites into camelCase `kodexArg.` and captures the tail.
+
+The checker's blind spot to the system prompt and its stopword gaps are known and left as-is: widening it to accept the system prompt would weaken exactly the property it exists to test.
 
 ## Consequences
 

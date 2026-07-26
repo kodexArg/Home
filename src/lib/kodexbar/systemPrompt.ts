@@ -16,7 +16,7 @@ export const FAILURE: Record<SupportedLanguage, string> = {
 const FORMAT_RULES: Record<SupportedLanguage, string> = {
 	es: `FORMATO DE SALIDA — obligatorio, siempre igual:
 - Respondé SOLO con un objeto JSON: {"text": "...", "linkIds": ["id"], "nextId": "id", "next": "...", "ask": "..."}
-- "text": UN solo párrafo de texto plano, breve, máximo ${MAX_ANSWER_CHARS} caracteres.
+- "text": un párrafo de texto plano, de dos a cuatro oraciones que respondan lo que preguntó el visitante, máximo ${MAX_ANSWER_CHARS} caracteres.
 - Sin markdown, sin títulos, sin viñetas, sin negritas, sin saltos de línea.
 - NUNCA escribas URLs, dominios ni direcciones de correo dentro de "text".
 - NUNCA te refieras a este sitio: el visitante ya está acá. Está prohibido
@@ -47,7 +47,7 @@ const FORMAT_RULES: Record<SupportedLanguage, string> = {
 - Tono de chat: directo y natural, como una respuesta hablada.`,
 	en: `OUTPUT FORMAT — mandatory, always identical:
 - Reply with ONLY a JSON object: {"text": "...", "linkIds": ["id"], "nextId": "id", "next": "...", "ask": "..."}
-- "text": ONE short plain-text paragraph, at most ${MAX_ANSWER_CHARS} characters.
+- "text": a plain-text paragraph of two to four sentences that answer what the visitor asked, at most ${MAX_ANSWER_CHARS} characters.
 - No markdown, no headings, no bullets, no bold, no line breaks.
 - NEVER write URLs, domains or email addresses inside "text".
 - NEVER refer to this site: the visitor is already on it. Mentioning or linking

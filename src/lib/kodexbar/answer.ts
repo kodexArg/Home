@@ -14,7 +14,7 @@ import {
 } from './suggestions';
 
 export const GENERATION_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8';
-export const MAX_OUTPUT_TOKENS = 320;
+export const MAX_OUTPUT_TOKENS = 500;
 export const TEMPERATURE = 0.3;
 
 export function allowedLinksFor(chunks: readonly { related: string[] }[]): LinkDestination[] {
