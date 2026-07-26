@@ -52,13 +52,10 @@
 	let placeholder = $derived(proposal || (language === 'es' ? '¿Sí?' : 'Yes?'));
 
 	// TAB is invisible, so it needs saying — but only while it would do something.
-	let inputHint = $derived(
-		proposal && currentInput.trim() === ''
-			? language === 'es'
-				? 'TAB para completar'
-				: 'TAB to complete'
-			: undefined
-	);
+	// The moment anything is typed the proposal is unreachable, so the line goes
+	// with it: it fades in, and disappears without a transition.
+	let showTabHint = $derived(Boolean(proposal) && currentInput.trim() === '');
+	let tabHintLabel = $derived(language === 'es' ? 'TAB para completar' : 'TAB to complete');
 
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
@@ -164,10 +161,12 @@
 
 	<!-- Pip-Boy SyV Input Bar -->
 	<div class="input-bar-wrapper">
+		{#if showTabHint}
+			<span class="tab-hint">{tabHintLabel}</span>
+		{/if}
 		<SyvInput
 			label={undefined}
 			{placeholder}
-			hint={inputHint}
 			acceptOnTab={proposal}
 			bind:value={currentInput}
 			onCommit={commitQuery}
@@ -328,6 +327,40 @@
 
 	.input-bar-wrapper {
 		width: 100%;
+	}
+
+	/* Sits above the field, at the edge of legibility. It is a whisper about a
+	   key, not a label — it should be findable when looked for and unnoticed
+	   otherwise. Fades in only; removal is instant, because the affordance it
+	   describes is already gone by then. */
+	.tab-hint {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 9.5px;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--warm-400);
+		opacity: 0.28;
+		padding-left: 0.8125rem;
+		margin-bottom: 0.3rem;
+		user-select: none;
+		pointer-events: none;
+		animation: hint-in 1.4s var(--ease-candle, ease-out) both;
+	}
+
+	@keyframes hint-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 0.28;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tab-hint {
+			animation: none;
+		}
 	}
 
 	@keyframes rise {
