@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "deploy": "wrangler deploy",
     "test": "bun test",
-    "index:corpus": "bun run scripts/index-corpus.ts"
+    "index:corpus": "bun run scripts/index-corpus.ts",
+    "eval:grounding": "bun run scripts/grounding-eval/runGroundingEval.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.4",
