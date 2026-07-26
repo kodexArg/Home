@@ -36,6 +36,19 @@
 	let visible = $state('');
 	let timerId = null;
 
+	/*
+	 * The text this instance has already typed out.
+	 *
+	 * Deliberately a plain `let`, not `$state`: it must not be reactive, or
+	 * writing it would re-trigger the very effect that reads it.
+	 *
+	 * Without this guard the animation restarts whenever the effect below
+	 * re-runs, and the effect re-runs on parent re-renders it has no business
+	 * caring about — appending a new chat line retyped the first answer from
+	 * scratch. A typewriter is idempotent for a given string: it types it once.
+	 */
+	let played = null;
+
 	function prefersReducedMotion() {
 		return (
 			typeof window !== 'undefined' &&
@@ -93,6 +106,9 @@
 	}
 
 	$effect(() => {
+		// Same string as last time? Nothing to do — leave the finished text alone.
+		if (played === text) return;
+		played = text;
 		play(text);
 		return () => clearTimer();
 	});
