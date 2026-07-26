@@ -1,8 +1,9 @@
 import type { CorpusChunk, KnowledgePack } from '../types';
 import type { SupportedLanguage } from '../../ui/language';
 import { CV_PACK } from './cv';
+import { IDENTITY_PACK } from './identity';
 
-export const PACKS: readonly KnowledgePack[] = [CV_PACK];
+export const PACKS: readonly KnowledgePack[] = [CV_PACK, IDENTITY_PACK];
 
 const BY_ID = new Map(PACKS.map((p) => [p.id, p]));
 

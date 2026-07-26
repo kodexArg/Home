@@ -1,40 +1,21 @@
-/**
- * bun run index:corpus
- *
- * Rebuilds the Vectorize index from the registered knowledge packs by calling
- * the dev-only endpoint at /api/admin/index-corpus.
- *
- * Why a running dev server instead of a standalone script: `env.AI` and
- * `env.VECTOR_INDEX` are Worker bindings and do not exist in a plain Bun
- * process. Driving them from `astro dev` (which binds to the real remote
- * index) keeps indexing token-free — see the endpoint's header comment.
- *
- * Usage:
- *   1. bun run dev
- *   2. bun run index:corpus
- */
+const DEV_SERVER_BASE_URL = process.env.KODEXBAR_DEV_URL ?? 'http://localhost:4321';
+const INDEX_CORPUS_ENDPOINT = `${DEV_SERVER_BASE_URL}/api/admin/index-corpus`;
 
-const BASE = process.env.KODEXBAR_DEV_URL ?? 'http://localhost:4321';
-const ENDPOINT = `${BASE}/api/admin/index-corpus`;
-
-const reachable = await fetch(BASE, { method: 'GET' })
+const devServerReachable = await fetch(DEV_SERVER_BASE_URL, { method: 'GET' })
 	.then(() => true)
 	.catch(() => false);
 
-if (!reachable) {
-	console.error(`✗ No dev server at ${BASE}.`);
+if (!devServerReachable) {
+	console.error(`✗ No dev server at ${DEV_SERVER_BASE_URL}.`);
 	console.error('  Start it first with:  bun run dev');
 	process.exit(1);
 }
 
-console.log(`→ Indexing corpus via ${ENDPOINT}`);
+console.log(`→ Indexing corpus via ${INDEX_CORPUS_ENDPOINT}`);
 
-const response = await fetch(ENDPOINT, {
+const response = await fetch(INDEX_CORPUS_ENDPOINT, {
 	method: 'POST',
-	// Astro's CSRF protection rejects any non-GET whose Origin does not match
-	// the host, and fetch() from Bun sends none. Without this the endpoint
-	// answers 403 before the route ever runs.
-	headers: { Origin: BASE, 'Content-Type': 'application/json' }
+	headers: { Origin: DEV_SERVER_BASE_URL, 'Content-Type': 'application/json' }
 });
 
 if (response.status === 404) {

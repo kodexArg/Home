@@ -79,6 +79,19 @@ The model answers **only** from chunks retrieved from the corpus. The corpus is 
 * Adding a pack is an ordinary change. Adding a pack whose content is not authored by kodexArg — third-party documents, scraped material, user submissions — is an architectural change requiring an ADR amendment, because it breaks the "chunk text is trusted" premise this section rests on.
 * Private repositories and third-party production systems MUST NOT appear in `DESTINATIONS`. They may be described in corpus prose. KodexBar can talk about work it cannot link to; this is intended.
 
+### 3b. Personal identity is its own pack, behind its own gate
+
+Facts about Gabriel Cavedal as a person — full legal name, birth date, place of origin — live in the `identity` pack, not in `cv`. They are published deliberately, by their own subject, and that consent is the only thing that makes them publishable at all.
+
+The separation is a control, not filing. A single pack means a single `minScore`, and the `cv` gate sits at 0.45 because career questions arrive phrased a hundred ways. Identity facts do not need that latitude: they are asked directly or not at all. `identity` therefore gates at **0.62**, which is what keeps a birth date from riding along as collateral context for a question about Django. Retrieval expansion cannot smuggle them in either — `related` edges are followed within the retrieved set, and nothing in `cv` points into `identity`.
+
+Consequences that bind:
+
+* The pack's prompt fragment requires these values be repeated **exactly**, never approximated, rounded or inferred past what the chunk carries. A wrong birth date asserted confidently is worse than no answer.
+* Age is **derived from the birth date at request time**, never written into chunk text as a number. A literal age is a fact with an expiry date, and the site would go on asserting it with full confidence after it stopped being true.
+* Widening this pack's scope — adding a document number, an address, anything a third party could use to impersonate him — is not an ordinary corpus edit. It is an amendment to this section.
+* Lowering `identity`'s `minScore` towards `cv`'s is likewise an amendment. The number is the control.
+
 ### 4. Output shape is enforced in code, not requested in the prompt
 
 `KodexAnswer.text` is one plain paragraph. The system prompt asks for it; the server **guarantees** it:
@@ -120,7 +133,9 @@ The icon sits outside the `<a>` with `pointer-events: none` to prevent click-jac
 
 ### 8. Links are offered, not given
 
-An answer never hands over links unasked. When `answerQuery` resolves one or more destinations, `/api/ask` withholds them: the ids are parked in KV under `offer:<client-id>:<conversation-scope>` with a 5-minute TTL, the response carries `links: []` and `offer: true`, and the interface renders *"Show links?"* where the links would have gone. The next turn is read for consent; on a yes the parked ids are re-resolved through `resolveLinkIds()` and sent.
+**The rule is [ADR 12 §1](adr-12-kodexbar-link-consent.md): a response never carries both an answer and a link.** That ADR owns the decision and its cost; this section records the enforcement.
+
+When `answerQuery` resolves one or more destinations, `/api/ask` withholds them: the ids are parked in KV under `offer:<client-id>:<conversation-scope>` with a 5-minute TTL, and the response carries `links: []` and `offer: true` — a flag with no addresses in it, so the destinations are absent from the wire rather than merely unrendered. The next turn is read for consent; on a yes the parked ids are re-resolved through `resolveLinkIds()` and sent.
 
 `clientId` is Cloudflare's `CF-Connecting-IP` (falling back to `X-Forwarded-For`, then a fixed local value) — set at the edge, not client-supplied, and unspoofable by the request itself. The conversation scope is a UUID the browser generates and sends; it is sanitised and truncated server-side and can only *narrow* the key. It cannot fabricate an offer — a read returns only what this server wrote — and it stops two visitors behind one NAT from answering each other's "Show links?".
 
@@ -166,6 +181,7 @@ Any PR touching `src/lib/kodexbar/`, `src/pages/api/ask.ts`, `src/lib/chat/`, or
 - [ ] The retrieval gate still short-circuits below `minScore` without calling the LLM (§2).
 - [ ] The gate is still server-side and not overridable by request parameters (§2).
 - [ ] No untrusted input reaches the corpus or the index (§3).
+- [ ] The `identity` pack still gates strictly above `cv`, still derives age rather than stating it, and gained no new class of personal data without an amendment (§3b).
 - [ ] Every new `DESTINATIONS` entry was verified reachable, public and live (§5).
 - [ ] Output post-processing still strips formatting and URL-shaped text (§4).
 - [ ] Server-side rate limiting still present and independent of the client cooldown (§7).

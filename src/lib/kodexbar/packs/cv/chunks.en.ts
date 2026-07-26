@@ -65,18 +65,8 @@ const DEFS: ChunkDef[] = [
 			under BDD/TDD discipline. He is a Django and Django REST Framework expert and runs production
 			platforms on AWS and Cloudflare. He presents professionally as an AI Solutions Architect and
 			Fractional CTO, and is based in Mendoza, Argentina.`,
-		related: ['cv', 'linkedin', 'edad-gabriel'],
+		related: ['cv', 'linkedin'],
 		tags: ['profile', 'who is', 'bio', 'gabriel cavedal', 'kodexarg', 'architect', 'fractional cto', 'ai solutions architect', 'about him', 'background']
-	},
-	{
-		id: 'edad-gabriel',
-		title: 'How old is Gabriel Cavedal, his age, when was he born',
-		text: `How old is Gabriel? What is his age? When was he born? His public CV does not publish
-			a birth date or age, so KodexBar does not have that exact figure to give. What it can
-			confirm: his first documented technical role was in 2002, at Casino Buenos Aires, and he has
-			been a working IT professional for more than two decades since.`,
-		related: ['perfil', 'exp-casino-bsas'],
-		tags: ['age', 'how old is he', 'how old', 'birth date', 'when was he born', 'his age', 'gabriel age', 'born']
 	},
 	{
 		id: 'contacto',

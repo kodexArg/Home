@@ -67,18 +67,8 @@ const DEFS: ChunkDef[] = [
 			disciplina BDD/TDD. Es experto en Django y Django REST Framework, y mantiene plataformas en
 			producción sobre AWS y Cloudflare. Se presenta profesionalmente como AI Solutions Architect
 			y Fractional CTO. Vive en Mendoza, Argentina.`,
-		related: ['cv', 'linkedin', 'edad-gabriel'],
+		related: ['cv', 'linkedin'],
 		tags: ['perfil', 'quien es', 'bio', 'gabriel cavedal', 'kodexarg', 'arquitecto', 'fractional cto', 'ai solutions architect', 'presentacion']
-	},
-	{
-		id: 'edad-gabriel',
-		title: 'Cuántos años tiene Gabriel Cavedal, qué edad tiene, cuándo nació',
-		text: `¿Cuántos años tiene Gabriel? ¿Qué edad tiene? ¿Cuándo nació? Su CV público no publica
-			fecha de nacimiento ni edad, así que KodexBar no tiene ese dato exacto para dar. Lo que sí
-			se puede confirmar: su primer rol técnico documentado fue en 2002, en Casino Buenos Aires, y
-			desde entonces lleva más de dos décadas de trayectoria continua como profesional de IT.`,
-		related: ['perfil', 'exp-casino-bsas'],
-		tags: ['edad', 'cuantos años tiene', 'que edad tiene', 'cuando nacio', 'fecha de nacimiento', 'nacimiento', 'edad de gabriel', 'age', 'how old', 'birth date']
 	},
 	{
 		id: 'contacto',

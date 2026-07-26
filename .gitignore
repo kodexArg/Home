@@ -12,3 +12,4 @@ dist/
 # .obsidian/ is deliberately NOT ignored. docs/ is an Obsidian vault and its
 # configuration is part of how the documentation reads — see adr-11. Do not
 # add it here as a "cleanup"; dropping it is an ADR amendment, not a tidy-up.
+.claude/

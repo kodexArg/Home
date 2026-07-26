@@ -92,7 +92,7 @@ const ES: Omit<Suggestion, 'lang'>[] = [
 	{
 		id: 'edad',
 		text: '¿Cuántos años tiene Gabriel?',
-		after: ['perfil', 'edad-gabriel']
+		after: ['perfil', 'nombre-legal', 'nacimiento-edad']
 	}
 ];
 

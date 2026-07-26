@@ -6,7 +6,7 @@ import {
 	candidatesFor,
 	resolveSuggestion
 } from '../src/lib/kodexbar/suggestions';
-import { getChunk } from '../src/lib/kodexbar/packs';
+import { allChunks, getChunk } from '../src/lib/kodexbar/packs';
 import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
 import type { CorpusChunk } from '../src/lib/kodexbar/types';
 
@@ -40,11 +40,14 @@ describe('suggestion registry integrity', () => {
 		}
 	});
 
-	it('resolves every `after` id to a real chunk', () => {
+	it('resolves every `after` id to a real chunk in some registered pack', () => {
+		const localIdsByLanguage = new Set(
+			allChunks().map((chunk) => `${chunk.id.split(':')[1]}:${chunk.lang}`)
+		);
 		const dangling: string[] = [];
 		for (const s of SUGGESTIONS) {
 			for (const ref of s.after) {
-				if (!getChunk(`cv:${ref}:${s.lang}`)) dangling.push(`${s.lang}/${s.id} -> ${ref}`);
+				if (!localIdsByLanguage.has(`${ref}:${s.lang}`)) dangling.push(`${s.lang}/${s.id} -> ${ref}`);
 			}
 		}
 		expect(dangling).toEqual([]);
