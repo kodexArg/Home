@@ -1,22 +1,6 @@
 import type { CorpusChunk } from './types';
 import type { SupportedLanguage } from '../ui/language';
 
-/**
- * Suggested next questions — the placeholder's content.
- *
- * The input's placeholder proposes the question a visitor is most likely to
- * want next, and TAB types it in. Because TAB puts the text one keystroke away
- * from being submitted as the visitor's own query, the suggestion is UI chrome
- * in the sense of adr-09 §4: it is never model-authored free text.
- *
- * Instead this follows the same shape as links (adr-10): the prompt offers the
- * model a short list of authored candidates, the model returns an *id*, and the
- * server resolves it here. A hallucinated id resolves to nothing and the
- * deterministic first candidate is used, so the placeholder can only ever show
- * a question written in this file.
- */
-
-/** Shown before the first exchange, when there is no context to go on. */
 export const OPENING_SUGGESTION: Record<SupportedLanguage, string> = {
 	es: '¿Quién es kodexArg?',
 	en: "Who's kodexArg?"
@@ -25,25 +9,12 @@ export const OPENING_SUGGESTION: Record<SupportedLanguage, string> = {
 export interface Suggestion {
 	id: string;
 	lang: SupportedLanguage;
-	/** The question, rendered verbatim as the placeholder. */
 	text: string;
-	/**
-	 * Local chunk ids (no pack/lang prefix) whose answer leads naturally here.
-	 * A suggestion is a candidate when the retrieved set intersects this list.
-	 */
 	after: string[];
 }
 
-/** Most candidates the model is ever shown. Keeps the prompt small. */
 export const MAX_CANDIDATES = 4;
 
-/**
- * Authored candidates, mirrored across languages by id.
- *
- * `after` is hand-picked rather than derived from `related`: the chunk graph
- * answers "what is the evidence for this claim", which is a different question
- * from "what would a visitor ask next".
- */
 const ES: Omit<Suggestion, 'lang'>[] = [
 	{
 		id: 'contacto',
@@ -102,6 +73,26 @@ const ES: Omit<Suggestion, 'lang'>[] = [
 		id: 'kodexbar',
 		text: '¿Para qué sirve KodexBar?',
 		after: ['kodexarg-org', 'proj-home-kodexbar', 'proj-design-system']
+	},
+	{
+		id: 'orientacion',
+		text: '¿Qué es este sitio y dónde estoy?',
+		after: ['kodexbar-funcion', 'sitio-orientacion', 'proj-home-kodexbar', 'kodexarg-org']
+	},
+	{
+		id: 'ayuda',
+		text: '¿Qué le puedo preguntar?',
+		after: ['kodexbar-funcion', 'que-le-puedo-preguntar', 'sitio-orientacion']
+	},
+	{
+		id: 'origen',
+		text: '¿Quién está detrás de este sitio?',
+		after: ['perfil', 'kodexarg-org', 'quien-esta-detras-del-sitio', 'sitio-orientacion']
+	},
+	{
+		id: 'edad',
+		text: '¿Cuántos años tiene Gabriel?',
+		after: ['perfil', 'edad-gabriel']
 	}
 ];
 
@@ -116,7 +107,11 @@ const EN: Omit<Suggestion, 'lang'>[] = [
 	{ id: 'calidad', text: 'How does he keep code quality up?', after: ES[7].after },
 	{ id: 'formacion', text: 'What is his background?', after: ES[8].after },
 	{ id: 'coveris', text: 'What is Coveris?', after: ES[9].after },
-	{ id: 'kodexbar', text: 'What is KodexBar for?', after: ES[10].after }
+	{ id: 'kodexbar', text: 'What is KodexBar for?', after: ES[10].after },
+	{ id: 'orientacion', text: 'What is this site and where am I?', after: ES[11].after },
+	{ id: 'ayuda', text: 'What can I ask you?', after: ES[12].after },
+	{ id: 'origen', text: 'Who is behind this site?', after: ES[13].after },
+	{ id: 'edad', text: 'How old is Gabriel?', after: ES[14].after }
 ];
 
 export const SUGGESTIONS: readonly Suggestion[] = [
@@ -124,18 +119,10 @@ export const SUGGESTIONS: readonly Suggestion[] = [
 	...EN.map((s) => ({ ...s, lang: 'en' as const }))
 ];
 
-/** Strip `pack:local:lang` down to `local`. */
 function localIdOf(chunkId: string): string {
 	return chunkId.split(':')[1] ?? '';
 }
 
-/**
- * Candidate follow-ups for a retrieved context, best-effort ordered.
- *
- * Ordering is by how many retrieved chunks point at the suggestion, so the
- * follow-up the context supports most strongly comes first — which is also the
- * deterministic fallback when the model declines to choose.
- */
 export function candidatesFor(
 	chunks: readonly CorpusChunk[],
 	lang: SupportedLanguage
@@ -146,19 +133,12 @@ export function candidatesFor(
 	return SUGGESTIONS.filter((s) => s.lang === lang)
 		.map((s) => ({ suggestion: s, weight: s.after.filter((id) => present.has(id)).length }))
 		.filter((entry) => entry.weight > 0)
-		// Never propose the question the visitor effectively just had answered.
 		.filter((entry) => !present.has(entry.suggestion.id))
 		.sort((a, b) => b.weight - a.weight)
 		.slice(0, MAX_CANDIDATES)
 		.map((entry) => entry.suggestion);
 }
 
-/**
- * Resolve a model-emitted suggestion id against the candidates it was offered.
- *
- * Returns the first candidate when the id is missing or unknown: the feature
- * degrades to deterministic instead of degrading to empty.
- */
 export function resolveSuggestion(
 	id: unknown,
 	candidates: readonly Suggestion[]

@@ -1,19 +1,6 @@
 import type { KodexAnswer, LinkDestination } from '../kodexbar/types';
 import { DEFAULT_LANGUAGE, type SupportedLanguage } from '../ui/language';
 
-/**
- * Headless chat session — owns the conversation state and the submit flow.
- *
- * No framework and no DOM code: plain TypeScript, unit-testable without Svelte
- * and without a browser. The Svelte component is a pure presentation layer that
- * drives `submit()` and renders `snapshot()`.
- *
- * adr-09 note: an `AnswerLine` only ever carries `links` taken verbatim from a
- * `KodexAnswer`, whose entries the server resolved against the destination
- * allowlist. `text` is server-scrubbed plain text and MUST be rendered as text,
- * never as HTML or Markdown.
- */
-
 export type ChatLanguage = SupportedLanguage;
 
 export interface UserLine {
@@ -21,26 +8,23 @@ export interface UserLine {
 	text: string;
 }
 
-/** Client-side notices: cooldown, transport failure. Never model output. */
 export interface StatusLine {
 	role: 'assistant';
 	kind: 'status';
 	text: string;
 }
 
-/** A reply from KodexBar: one paragraph, plus zero or more allowlisted links. */
 export interface AnswerLine {
 	role: 'assistant';
 	kind: 'answer';
 	text: string;
 	links: LinkDestination[];
-	/** False when the retrieval gate declined the query. */
 	matched: boolean;
+	offerPrompt: string;
 }
 
 export type ChatLine = UserLine | StatusLine | AnswerLine;
 
-/** Minimal port of the backend the session depends on. Injected in tests. */
 export interface KodexBarPort {
 	ask(query: string, language: ChatLanguage): Promise<KodexAnswer>;
 }
@@ -51,22 +35,13 @@ export interface ChatSessionSnapshot {
 	history: ChatLine[];
 	isThinking: boolean;
 	language: ChatLanguage;
-	/** Milliseconds left on the cooldown gate; 0 when a submit is accepted. */
 	cooldownRemainingMs: number;
-	/**
-	 * Follow-up question to propose in the input placeholder, or '' when there
-	 * is nothing fresh to suggest. Always authored text from the server's
-	 * registry — safe to render, and safe to type into the field on TAB.
-	 */
 	suggestion: string;
 }
 
 export interface ChatSessionOptions {
-	/** Backend used to answer queries. Defaults to POSTing /api/ask. */
 	backend?: KodexBarPort;
-	/** Clock source. Injected so the cooldown is testable without waiting. */
 	now?: () => number;
-	/** Delay function used for the cosmetic pause. Injected for tests. */
 	delay?: (ms: number) => Promise<void>;
 	cooldownMs?: number;
 	responseDelayMs?: number;
@@ -78,41 +53,40 @@ export interface ChatSessionOptions {
 const COPY = {
 	es: {
 		cooldown: (seconds: number) => `Esperá ${seconds}s antes de enviar otra consulta.`,
-		failure: 'No pude conectarme. Probá de nuevo en un momento.'
+		failure: 'No pude conectarme. Probá de nuevo en un momento.',
+		offer: '¿Ver los links?'
 	},
 	en: {
 		cooldown: (seconds: number) => `Wait ${seconds}s before sending another query.`,
-		failure: "I couldn't connect. Please try again in a moment."
+		failure: "I couldn't connect. Please try again in a moment.",
+		offer: 'Show links?'
 	}
 } as const;
 
 export const DEFAULT_COOLDOWN_MS = 3000;
 export const DEFAULT_RESPONSE_DELAY_MS = 200;
 
-/**
- * True when a query is worth sending. Exposed so the view can decide whether
- * to clear its input box without re-implementing the rule.
- */
 export function isSubmittable(query: string): boolean {
 	return query.trim().length > 0;
 }
 
 const defaultDelay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-/**
- * Default backend: POST /api/ask.
- *
- * A non-OK response still carries a well-formed `KodexAnswer` body — the
- * endpoint guarantees that on every path — so 429 and 4xx render as ordinary
- * assistant lines rather than as errors. Only a transport failure or an
- * unparseable body throws.
- */
+function randomConversationId(): string {
+	return `c${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+}
+
+const TAB_SCOPED_CONVERSATION_ID = ((): string => {
+	const uuid = globalThis.crypto?.randomUUID?.();
+	return uuid ?? randomConversationId();
+})();
+
 const defaultBackend: KodexBarPort = {
 	async ask(query, language) {
 		const response = await fetch('/api/ask', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ query, language })
+			body: JSON.stringify({ query, language, conversation: TAB_SCOPED_CONVERSATION_ID })
 		});
 
 		const data = (await response.json()) as KodexAnswer;
@@ -126,7 +100,8 @@ const defaultBackend: KodexBarPort = {
 			language: data.language ?? language,
 			matched: Boolean(data.matched),
 			score: data.score,
-			suggestion: typeof data.suggestion === 'string' ? data.suggestion : undefined
+			suggestion: typeof data.suggestion === 'string' ? data.suggestion : undefined,
+			offer: Boolean(data.offer)
 		};
 	}
 };
@@ -145,15 +120,7 @@ export class ChatSession {
 	private lang: ChatLanguage;
 	private lastAcceptedAt = 0;
 	private currentSuggestion = '';
-	/**
-	 * Suggestions already put in front of this visitor.
-	 *
-	 * The server is stateless, so it cannot know what it has proposed before and
-	 * will happily return the same follow-up twice. Repeating a placeholder the
-	 * visitor has already seen (or already asked) reads as the thing being
-	 * broken, so a repeat is dropped rather than shown again.
-	 */
-	private readonly offeredSuggestions = new Set<string>();
+	private readonly suggestionsAlreadyShownToVisitor = new Set<string>();
 
 	constructor(options: ChatSessionOptions = {}) {
 		this.backend = options.backend ?? defaultBackend;
@@ -193,20 +160,18 @@ export class ChatSession {
 		};
 	}
 
-	/**
-	 * Take the server's follow-up if it is worth showing.
-	 *
-	 * Clears the current suggestion whenever there is nothing fresh, so the view
-	 * falls back to its resting placeholder instead of holding a stale question.
-	 */
-	private adoptSuggestion(suggestion: string | undefined): void {
+	private adoptSuggestionIfFreshAndUnseen(suggestion: string | undefined): void {
 		const next = suggestion?.trim() ?? '';
-		if (!next || this.offeredSuggestions.has(next)) {
+		if (!next || this.suggestionsAlreadyShownToVisitor.has(next)) {
 			this.currentSuggestion = '';
 			return;
 		}
-		this.offeredSuggestions.add(next);
+		this.suggestionsAlreadyShownToVisitor.add(next);
 		this.currentSuggestion = next;
+	}
+
+	private withholdSuggestionWhileLinkOfferIsPending(): void {
+		this.currentSuggestion = '';
 	}
 
 	setLanguage(language: ChatLanguage): void {
@@ -241,13 +206,20 @@ export class ChatSession {
 		try {
 			const answer = await this.backend.ask(trimmed, this.lang);
 			await this.delay(this.responseDelayMs);
-			this.adoptSuggestion(answer.suggestion);
+
+			if (answer.offer) {
+				this.withholdSuggestionWhileLinkOfferIsPending();
+			} else {
+				this.adoptSuggestionIfFreshAndUnseen(answer.suggestion);
+			}
+
 			this.append({
 				role: 'assistant',
 				kind: 'answer',
 				text: answer.text,
 				links: answer.links,
-				matched: answer.matched
+				matched: answer.matched,
+				offerPrompt: answer.offer ? COPY[this.lang].offer : ''
 			});
 		} catch (error) {
 			this.onError(error);

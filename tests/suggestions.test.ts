@@ -41,7 +41,6 @@ describe('suggestion registry integrity', () => {
 	});
 
 	it('resolves every `after` id to a real chunk', () => {
-		// A typo here is silent: the suggestion simply never becomes a candidate.
 		const dangling: string[] = [];
 		for (const s of SUGGESTIONS) {
 			for (const ref of s.after) {
@@ -76,7 +75,6 @@ describe('candidatesFor', () => {
 	});
 
 	it('never proposes a question the retrieved context already answered', () => {
-		// `contacto` was retrieved, so "¿Cómo puedo contactarlo?" is redundant.
 		const ids = candidatesFor([chunk('contacto')], 'es').map((s) => s.id);
 		expect(ids).not.toContain('contacto');
 	});
@@ -106,7 +104,6 @@ describe('resolveSuggestion', () => {
 	});
 
 	it('falls back to the strongest candidate for an unknown id', () => {
-		// The model inventing an id must not cost the visitor the affordance.
 		expect(resolveSuggestion('not-a-real-id', candidates)).toBe(candidates[0].text);
 		expect(resolveSuggestion('', candidates)).toBe(candidates[0].text);
 		expect(resolveSuggestion(undefined, candidates)).toBe(candidates[0].text);

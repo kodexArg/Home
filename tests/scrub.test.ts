@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { MAX_ANSWER_CHARS, parseModelJson, scrubAnswerText } from '../src/lib/kodexbar/scrub';
 
-/**
- * These assert the adr-09 §4 control: output shape is enforced in code, not
- * requested in the prompt. Every case here is "the model ignored its
- * instructions" — that is the whole point of the module.
- */
 describe('scrubAnswerText', () => {
 	it('collapses multi-paragraph output into one line', () => {
 		const out = scrubAnswerText('Primera línea.\n\nSegunda línea.\nTercera.');
@@ -34,8 +29,7 @@ describe('scrubAnswerText', () => {
 		expect(out).not.toInclude('https');
 	});
 
-	it('strips bare URLs, bare domains and email addresses', () => {
-		// Links travel in links[], never in prose — adr-09 §1.
+	it('strips bare URLs, bare domains and email addresses so links never leak into prose', () => {
 		expect(scrubAnswerText('Entrá a https://github.com/kodexArg ya')).not.toInclude('github.com');
 		expect(scrubAnswerText('Está en cv.kodexarg.com hoy')).not.toInclude('kodexarg.com');
 		expect(scrubAnswerText('Escribile a gcavedal@gmail.com pronto')).not.toInclude('@gmail');
@@ -75,9 +69,7 @@ describe('parseModelJson', () => {
 		expect(out?.text).toBe('hola');
 	});
 
-	it('parses JSON buried in surrounding prose', () => {
-		// Small models narrate. Extracting the first balanced object beats
-		// trusting JSON.parse on the whole string.
+	it('extracts the first balanced JSON object rather than trusting JSON.parse on the whole reply', () => {
 		const out = parseModelJson('Claro, acá va: {"text":"hola","linkIds":["cv"]} ¡Listo!');
 		expect(out).toEqual({ text: 'hola', linkIds: ['cv'] });
 	});
@@ -97,8 +89,7 @@ describe('parseModelJson', () => {
 		expect(parseModelJson('{"linkIds":["cv"]}')).toEqual({ text: '', linkIds: ['cv'] });
 	});
 
-	it('returns null when there is no usable JSON', () => {
-		// The caller must NOT fall back to rendering raw text — adr-09 §1.
+	it('returns null instead of a fallback the caller could render raw when there is no usable JSON', () => {
 		expect(parseModelJson('Lo siento, no puedo ayudarte con eso.')).toBeNull();
 		expect(parseModelJson('{"text": roto')).toBeNull();
 		expect(parseModelJson('')).toBeNull();

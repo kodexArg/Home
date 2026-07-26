@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Product** | Personal home page for **kodexArg**, fronted by **KodexBar** |
-| **URL (target)** | `https://home.kodexarg.com` |
+| **URL** | `https://kodexarg.com` (`www.kodexarg.com` and `home.kodexarg.com` alias it) |
 | **Repo** | `kodexArg/Home` (this tree) |
 | **Status** | Active — v2.0 (supersedes v1.0 "personal router") |
 | **Owner** | kodexArg / Gabriel Cavedal |
@@ -66,6 +66,8 @@ Mobile-first width; max content ~720px for the console.
 3. The server embeds, retrieves, gates, and — if the gate opens — generates.
 4. The reply renders as **one paragraph of plain text**, optionally followed by link chips.
 5. Link rendering: icon is non-clickable (`pointer-events: none`), link text is selectable and hyperlinked.
+6. When the answer has links to give, they are withheld: the reply shows *"¿Ver los links?" / "Show links?"* where the chips would have gone, and the server holds the ids for up to 5 minutes ([ADR 09 §8](adr-09-kodexbar-security.md)). The visitor's next turn is read for consent — a plain "sí"/"yes" reveals them, a "no" dismisses the offer, anything else is answered as an ordinary new question.
+7. The input's placeholder proposes the question a visitor is most likely to ask next (chosen by the model from a short authored list, resolved server-side); TAB types it into the field in one keystroke. Before the first exchange the placeholder shows a fixed opener instead. No proposal is offered while a link offer (step 6) is pending, since the resting placeholder is already asking that yes/no question.
 
 There is no "did you mean?" step. v1.0's `Confirm` outcome with its candidate grid is removed: a model that can write a sentence can disambiguate in that sentence.
 
@@ -103,12 +105,14 @@ The third case never reaches a model.
 ### 4.1 Pipeline
 
 ```
-Query → rate limit → embed (bge-m3) → Vectorize (topK 5, filter lang)
+Query → rate limit → pending-offer check (consent classifier if one is open)
+      → embed (bge-m3) → Vectorize (topK 5, filter lang)
       → gate: score < minScore ? fixed decline (no LLM)
       → expand related chunks
-      → generate (llama-3.1-8b-instruct-fp8) → { text, linkIds[] }
-      → resolve ids vs allowlist + scrub formatting
-      → KodexAnswer { text, links[], language, matched }
+      → generate (llama-3.1-8b-instruct-fp8) → { text, linkIds[], nextId? }
+      → resolve ids vs allowlist + resolve nextId vs candidates + scrub formatting
+      → KodexAnswer { text, links[], language, matched, suggestion?, offer? }
+      → if links present: park them in KV, respond with links: [], offer: true
 ```
 
 Retrieval is deterministic — cosine similarity and a fixed threshold. The model writes the paragraph; it does not decide where the answer comes from.
@@ -116,13 +120,20 @@ Retrieval is deterministic — cosine similarity and a fixed threshold. The mode
 ### 4.2 Contracts
 
 ```ts
-interface RawModelAnswer { text: string; linkIds: string[] }   // from the model
+interface RawModelAnswer {
+  text: string          // from the model
+  linkIds: string[]      // ids, never URLs — resolved server-side
+  nextId?: string        // id of a suggested follow-up, resolved server-side
+}
 
 interface KodexAnswer {
   text: string                  // one plain paragraph, scrubbed server-side
   links: LinkDestination[]      // resolved from linkIds; unknown ids dropped
   language: 'es' | 'en'
   matched: boolean              // false = gate closed, model not called
+  score?: number                 // top retrieval score, for observability
+  suggestion?: string            // authored follow-up text for the placeholder
+  offer?: boolean                // true = links withheld pending consent (§3.2 step 6)
 }
 ```
 
@@ -146,8 +157,10 @@ Configured in `src/lib/kodexbar/destinations.ts`. **Membership rule: public and 
 | Kind | Count | Examples |
 |---|---|---|
 | `contact` | 4 | `email` (`mailto:gcavedal@gmail.com`), `linkedin`, `telegram`, `platzi` |
-| `site` | 6 | `home`, `cv`, `docs`, `syv-design-system`, `eurotrip-live`, `github` |
+| `site` | 5 | `cv`, `docs`, `syv-design-system`, `eurotrip-live`, `github` |
 | `repo` | 27 | `engram`, `welpdesk`, `dj-indoor-monitor`, `openclaw`, … |
+
+There is no `home` entry: `kodexarg.com` is where every visitor already is when they read a KodexBar answer, so it is never a useful link to offer, and the system prompt separately forbids the model from mentioning or linking any of `kodexarg.com` / `www.kodexarg.com` / `home.kodexarg.com` in its answer text (see [ADR 09 §10](adr-09-kodexbar-security.md)).
 
 Private work (Coveris, `syv-mcp-tools`, SROA, the Grupo ALVS production platforms) lives in the corpus with **no destination**. KodexBar describes it and offers no link — intended, not a gap.
 
@@ -209,6 +222,8 @@ No client-side inference. Chrome Built-in AI / Gemini Nano is removed — the co
 | UX-5 | Out-of-scope queries get a fixed, polite decline naming what KodexBar *can* answer. |
 | UX-6 | Keyboard-only usable; caret and focus rings in SyV candle-orange tokens. |
 | UX-7 | Language follows the ES|EN toggle; the corpus is filtered to that language. |
+| UX-8 | Links are offered, not given: an answer with links shows *"¿Ver los links?" / "Show links?"* and waits for consent before revealing them ([ADR 09 §8](adr-09-kodexbar-security.md)). |
+| UX-9 | The placeholder proposes the visitor's likely next question; TAB accepts it into the field. The proposal is authored, never model-free-text, and never shown while a link offer is pending. |
 
 ---
 

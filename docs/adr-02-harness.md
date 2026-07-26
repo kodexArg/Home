@@ -15,9 +15,6 @@ The **Harness** represents the authoritative security, validation, and execution
 ### 1. Importance of `PRD.md` as Single Source of Truth (SSOT)
 [PRD.md](file:///home/kodex/kodexArg/Home/docs/PRD.md) serves as the primary product contract. No feature, routing behavior, or edge capability may be introduced into production without being specified in `PRD.md`. The harness enforces that code implementations reflect the PRD guidelines without scope creep.
 
-### 2. Soft Links to `docs/rules/*` for Active Agent Governance
-To activate architectural decision records and harness rules with operational force during development, records in `docs/*` can be symlinked/soft-linked to `docs/rules/*` (or active agent instruction paths such as `AGENTS.md` and workspace rules). This ensures agentic coding tools strictly enforce harness constraints automatically.
-
 ---
 
 ## Edge Harness Capabilities & Security Rules
@@ -36,4 +33,4 @@ This ADR remains **Open for Extension** under the Open/Closed Principle. As new 
 ### Harness Rule Extensions (Append Below)
 
 * *[Extension 2026-07-24]*: Native Cloudflare Workers AI & Vectorize bindings attached to edge runtime via `wrangler.jsonc`.
-* *[Extension 2026-07-24]*: Closed-action outcome validation (`outcome: 'Action'` vs `NO_MATCH`) enforced on edge responses.
+* *[Retired 2026-07-26]*: The `outcome: 'Action'` / `NO_MATCH` edge-response validation extension recorded here belonged to the multi-tier router replaced by KodexBar (see [ADR 09](adr-09-kodexbar-security.md), [ADR 10](adr-10-kodexbar-architecture.md)). That enumeration no longer exists in the codebase; the rule has no referent and is retired rather than amended.

@@ -1,17 +1,4 @@
 <script>
-	/*
-	 * LanguageToggle — segmented ES | EN control.
-	 *
-	 * Presentation only: renders the language it is given and reports the one the
-	 * visitor picked. Persistence, browser-preference seeding and `<html lang>`
-	 * sync all live in ../lib/ui/language.ts.
-	 *
-	 * ARIA: the options are mutually exclusive, so this is a radiogroup of radios
-	 * with a roving tabindex — one tab stop for the group, arrows move between
-	 * options. Each option carries its own `lang` plus its endonym as accessible
-	 * name ("Español" / "English"), so a screen reader announces it in that
-	 * language and reports which one is checked.
-	 */
 	import { LANGUAGE_GROUP_LABEL, LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '../lib/ui/language';
 
 	let { language = 'es', onSelect = () => {} } = $props();

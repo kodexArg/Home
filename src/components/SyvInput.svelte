@@ -1,8 +1,4 @@
 <script>
-	/*
-	 * SyvInput — Pip-Boy / typewriter text field (borderless, platen baseline rule, cell grid on focus).
-	 * Based on the SyV Design System (Subordinación y Valor).
-	 */
 	let {
 		label = undefined,
 		placeholder = '¿Sí?',
@@ -10,25 +6,18 @@
 		onCommit = () => {},
 		invalid = false,
 		hint = undefined,
-		/** When true the field is a flexible textarea that grows with its content. */
 		autogrow = false,
-		/**
-		 * Text TAB types into the field. The proposal is only ever *typed*, never
-		 * submitted — Enter stays the visitor's, so they can edit or discard it.
-		 */
 		acceptOnTab = ''
 	} = $props();
 
 	let inputEl;
 
-	// TAB is the browser's focus control before it is ours, so it is only
-	// borrowed in the one state where nothing is lost: a forward TAB, on an empty
-	// field, with something to propose. Once the visitor has typed anything — or
-	// when there is no proposal — TAB moves focus as it always did, so the field
-	// can never trap a keyboard user.
-	let canAcceptSuggestion = $derived(Boolean(acceptOnTab) && value.trim() === '');
+	function tabCanBeSafelyBorrowedForSuggestion(proposal, currentValue) {
+		return Boolean(proposal) && currentValue.trim() === '';
+	}
 
-	// Keep the flexible field exactly as tall as its content (capped in CSS).
+	let canAcceptSuggestion = $derived(tabCanBeSafelyBorrowedForSuggestion(acceptOnTab, value));
+
 	$effect(() => {
 		value;
 		if (!autogrow || !inputEl) return;
@@ -36,10 +25,7 @@
 		inputEl.style.height = `${inputEl.scrollHeight}px`;
 	});
 
-	function acceptSuggestion() {
-		value = acceptOnTab;
-		// Caret to the end, so the accepted text reads as something the visitor
-		// just typed and can keep editing.
+	function moveCaretToEndSoAcceptedTextReadsAsFreshlyTyped() {
 		requestAnimationFrame(() => {
 			if (!inputEl) return;
 			inputEl.focus();
@@ -48,16 +34,27 @@
 		});
 	}
 
+	function acceptSuggestion() {
+		value = acceptOnTab;
+		moveCaretToEndSoAcceptedTextReadsAsFreshlyTyped();
+	}
+
+	function isBackwardTabNavigation(e) {
+		return e.key === 'Tab' && e.shiftKey;
+	}
+
+	function isSoftNewlineInGrowingField(e) {
+		return e.key === 'Enter' && autogrow && e.shiftKey;
+	}
+
 	function handleKeyDown(e) {
-		// Shift+Tab is backwards navigation and is never intercepted.
-		if (e.key === 'Tab' && !e.shiftKey && canAcceptSuggestion) {
+		if (e.key === 'Tab' && !isBackwardTabNavigation(e) && canAcceptSuggestion) {
 			e.preventDefault();
 			acceptSuggestion();
 			return;
 		}
 
-		// Shift+Enter keeps a soft newline in the flexible field; Enter commits.
-		if (e.key === 'Enter' && !(autogrow && e.shiftKey)) {
+		if (e.key === 'Enter' && !isSoftNewlineInGrowingField(e)) {
 			e.preventDefault();
 			if (onCommit) {
 				onCommit(value);
@@ -152,9 +149,8 @@
 		box-sizing: border-box;
 		line-height: 1.5;
 		background-color: rgba(255, 255, 255, 0.02);
-		
-		/* rest: platen baseline rule */
-		background-image: linear-gradient(var(--ink-600), var(--ink-600));
+		--syv-input-baseline-rule-color: var(--ink-600);
+		background-image: linear-gradient(var(--syv-input-baseline-rule-color), var(--syv-input-baseline-rule-color));
 		background-repeat: no-repeat;
 		background-size: calc(100% - 28px) 1.5px;
 		background-position: 14px calc(100% - 8px);
@@ -185,18 +181,17 @@
 	.syv-input:focus {
 		outline: none;
 		background-color: rgba(255, 106, 26, 0.05);
-		
-		/* ribbon engaged: line turns candle orange, monospace cell grid types in */
+		--syv-input-focus-ribbon-color: var(--orange-500);
+		--syv-input-focus-cell-grid-color: rgba(255, 106, 26, 0.08);
 		background-image:
-			linear-gradient(var(--orange-500), var(--orange-500)),
-			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1px), rgba(255, 106, 26, 0.08) calc(1ch - 1px) 1ch);
+			linear-gradient(var(--syv-input-focus-ribbon-color), var(--syv-input-focus-ribbon-color)),
+			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1px), var(--syv-input-focus-cell-grid-color) calc(1ch - 1px) 1ch);
 		background-repeat: no-repeat, repeat-x;
 		background-size: calc(100% - 28px) 1.5px, 1ch 100%;
 		background-position: 14px calc(100% - 8px), 14px 0;
 		box-shadow: inset 0 -10px 16px -12px var(--orange-glow);
 	}
 
-	/* flexible field: same skin, grows with its content instead of scrolling sideways */
 	.syv-input--grow {
 		display: block;
 		resize: none;

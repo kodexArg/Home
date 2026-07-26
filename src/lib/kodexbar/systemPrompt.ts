@@ -3,32 +3,11 @@ import type { SupportedLanguage } from '../ui/language';
 import type { Suggestion } from './suggestions';
 import { MAX_ANSWER_CHARS } from './scrub';
 
-/**
- * Prompt composition.
- *
- * The base prompt owns the output contract; packs contribute scope and tone
- * (adr-10). Nothing here is a security boundary on its own — every rule stated
- * below is independently enforced in code (adr-09 §1, §4). The prompt exists to
- * make the model's first attempt correct, not to be the thing that stops it.
- *
- * The self-reference rule is the one place where that split is uneven, so it is
- * worth being precise about what is guaranteed and what is merely asked:
- *
- *   - As a LINK it cannot happen. The `home` destination was deleted, so no id
- *     resolves to this origin, and destinations.test.ts fails if one is added.
- *   - As a DOMAIN in prose it cannot happen. `scrubAnswerText()` deletes
- *     anything domain-shaped, which covers all three of our own hostnames.
- *   - As WORDS ("andá a la home") it is prompt-only. There is no way to strip
- *     that without mangling legitimate prose, so this is genuinely best-effort.
- */
-
-/** Fixed reply when the retrieval gate closes. Never model-authored. */
 export const OUT_OF_SCOPE: Record<SupportedLanguage, string> = {
 	es: 'No tengo información sobre eso. Puedo contarte sobre Gabriel Cavedal, su experiencia, sus proyectos y cómo contactarlo.',
 	en: "I don't have information about that. I can tell you about Gabriel Cavedal, his experience, his projects and how to reach him."
 };
 
-/** Fixed reply when the model fails or returns unusable output. */
 export const FAILURE: Record<SupportedLanguage, string> = {
 	es: 'Se me complicó procesar eso. Probá de nuevo en un momento.',
 	en: 'I had trouble processing that. Please try again in a moment.'
@@ -110,53 +89,43 @@ const SECTION_LABELS: Record<
 
 export interface PromptInput {
 	lang: SupportedLanguage;
-	/** Scope/tone fragments from the packs that contributed chunks. */
 	packFragments: readonly string[];
 	chunks: readonly CorpusChunk[];
-	/** The only ids the model is permitted to emit. */
 	allowedLinks: readonly LinkDestination[];
-	/** Follow-up candidates; the model picks one by id. May be empty. */
 	suggestions?: readonly Suggestion[];
 }
 
-/** Build the system prompt. The visitor's query is NOT part of it. */
+function formatAllowedLinkList(input: PromptInput): string {
+	if (input.allowedLinks.length) {
+		return input.allowedLinks.map((d) => `- ${d.id}: ${d.name}`).join('\n');
+	}
+	return input.lang === 'es' ? '(ninguno — devolvé "linkIds": [])' : '(none — return "linkIds": [])';
+}
+
+function formatContext(chunks: readonly CorpusChunk[]): string {
+	return chunks.map((c) => `[${c.title}]\n${c.text}`).join('\n\n');
+}
+
 export function buildSystemPrompt(input: PromptInput): string {
 	const labels = SECTION_LABELS[input.lang];
-
-	const linkList = input.allowedLinks.length
-		? input.allowedLinks.map((d) => `- ${d.id}: ${d.name}`).join('\n')
-		: input.lang === 'es'
-			? '(ninguno — devolvé "linkIds": [])'
-			: '(none — return "linkIds": [])';
-
-	const context = input.chunks.map((c) => `[${c.title}]\n${c.text}`).join('\n\n');
 
 	const sections = [
 		input.packFragments.join('\n\n'),
 		GROUNDING_RULES[input.lang],
 		FORMAT_RULES[input.lang],
-		`${labels.links}:\n${linkList}`
+		`${labels.links}:\n${formatAllowedLinkList(input)}`
 	];
 
-	// Omitted entirely when there is nothing to choose from, so the model is not
-	// invited to invent an id against an empty list.
 	if (input.suggestions?.length) {
 		const list = input.suggestions.map((s) => `- ${s.id}: ${s.text}`).join('\n');
 		sections.push(`${labels.suggestions}:\n${list}`);
 	}
 
-	sections.push(`${labels.context}:\n${context}`);
+	sections.push(`${labels.context}:\n${formatContext(input.chunks)}`);
 
 	return sections.join('\n\n');
 }
 
-/**
- * Build the user turn.
- *
- * The visitor's text is confined to this message and never reaches the system
- * prompt, the corpus or the index (adr-09 §3). Keeping the boundary at the
- * message level is what lets the system prompt stay fully trusted.
- */
 export function buildUserPrompt(query: string, lang: SupportedLanguage): string {
 	return `${SECTION_LABELS[lang].question}: ${query}`;
 }

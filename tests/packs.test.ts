@@ -5,11 +5,6 @@ import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
 
 const chunks = allChunks();
 
-/**
- * Corpus integrity. A broken `related` edge or a duplicate id degrades
- * retrieval silently, which is the worst failure mode this system has —
- * everything still "works", just worse.
- */
 describe('corpus integrity', () => {
 	it('registers at least one pack', () => {
 		expect(PACKS.length).toBeGreaterThan(0);
@@ -43,8 +38,6 @@ describe('corpus integrity', () => {
 	});
 
 	it('normalises whitespace in chunk text', () => {
-		// defineChunks collapses the source template literals; retrieval and the
-		// prompt both assume single-line text.
 		for (const chunk of chunks) {
 			expect(chunk.text).not.toInclude('\n');
 			expect(chunk.text).not.toInclude('  ');
@@ -52,11 +45,6 @@ describe('corpus integrity', () => {
 	});
 
 	it('contains no URL, domain or email literal in chunk text', () => {
-		// Grounding data must be compatible with the output contract. The model
-		// copies literals out of its context, and scrubAnswerText then deletes
-		// them (adr-09 §4) — which leaves a truncated sentence like "Su correo
-		// es". Values the output layer may not render must not be in the corpus;
-		// they travel in links[] instead.
 		const offenders: string[] = [];
 		const patterns = [
 			/\bhttps?:\/\/\S+/i,
@@ -96,7 +84,6 @@ describe('corpus integrity', () => {
 	});
 
 	it('answers the questions the product promises', () => {
-		// The PRD commits to email, skills-by-technology and project links.
 		const es = chunks.filter((c) => c.lang === 'es');
 		expect(es.some((c) => c.tags.includes('mail') || c.tags.includes('correo'))).toBe(true);
 		expect(es.some((c) => c.tags.includes('aws'))).toBe(true);
@@ -105,11 +92,6 @@ describe('corpus integrity', () => {
 	});
 
 	it('can describe itself and its purpose in every language', () => {
-		// "¿Qué es?" / "¿para qué sirve?" must land somewhere. Without a chunk
-		// authored for it the query only reaches `proj-home-kodexbar`, whose text
-		// is about the stack — so the gate answers with a stack description or
-		// declines outright. The contact edge is part of the commitment: the
-		// purpose is to reach Gabriel, so the answer has to be able to offer it.
 		for (const lang of SUPPORTED_LANGUAGES) {
 			const chunk = getChunk(`cv:kodexbar-funcion:${lang}`);
 			expect(chunk).toBeDefined();
@@ -128,7 +110,6 @@ describe('gate thresholds', () => {
 	});
 
 	it('fails closed for an unknown pack', () => {
-		// An orphaned index entry must never pass the gate — cosine tops out at 1.
 		expect(minScoreFor('does-not-exist')).toBeGreaterThan(1);
 	});
 });
@@ -160,7 +141,6 @@ describe('expandRelated', () => {
 	});
 
 	it('expands only one hop', () => {
-		// Depth is bounded on purpose: pull the evidence, not the whole graph.
 		const seed = getChunk('cv:skill-backend:es')!;
 		const expanded = expandRelated([seed], 'es');
 		const direct = new Set([seed.id, ...seed.related.map((r) => `cv:${r}:es`)]);

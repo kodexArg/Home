@@ -1,32 +1,6 @@
 import { defineChunks, type ChunkDef } from '../defineChunks';
 
-/**
- * Spanish corpus for the `cv` pack.
- *
- * Extracted from cv.kodexarg.com — the one-page CV frontmatter (`es/index.astro`)
- * and the long-form `/full/` components (AboutMe, ShortWorkEsperience,
- * SemanticSkills, ShortProjects, QaExperience, ShortEducation). Spanish is the
- * richer of the two languages because `/full/` exists only in Spanish; see
- * adr-10 "Consequences".
- *
- * Authoring rules:
- *  - Third person. KodexBar talks *about* Gabriel, not as him.
- *  - Self-contained. A chunk is retrieved alone and must make sense alone.
- *  - `related` names DESTINATIONS ids only where a public, live link exists.
- *    Private work (Coveris, syv-mcp-tools, SROA, plataformas de Grupo ALVS)
- *    deliberately carries no link — see adr-09 §3.
- */
 const DEFS: ChunkDef[] = [
-	// =======================================================================
-	// KodexBar — identidad y propósito
-	//
-	// Las preguntas "¿qué es?", "¿cuál es su función?" y "¿para qué sirve?"
-	// llegan cortas y abstractas. Este chunk existe para que tengan un destino
-	// propio: `proj-home-kodexbar` describe el stack, y su centroide vive en
-	// "vectorize / workers ai / astro", lejos de una pregunta por el propósito.
-	// Las tres formas de la pregunta están en el título y en el texto a
-	// propósito — los `tags` no se embeben (ver index-corpus.ts).
-	// =======================================================================
 	{
 		id: 'kodexbar-funcion',
 		title: 'Qué es KodexBar, cuál es su función y para qué sirve',
@@ -40,10 +14,49 @@ const DEFS: ChunkDef[] = [
 		related: ['email', 'linkedin', 'telegram', 'cv', 'contacto', 'disponibilidad'],
 		tags: ['que es', 'que es esto', 'que sos', 'quien sos', 'cual es tu funcion', 'cual es su funcion', 'para que sirve', 'para que servis', 'que hace', 'funcion', 'proposito', 'kodexbar', 'este asistente', 'esta barra', 'este sitio', 'contacto']
 	},
-
-	// =======================================================================
-	// Perfil y contacto
-	// =======================================================================
+	{
+		id: 'sitio-orientacion',
+		title: 'Qué es este sitio, dónde estoy, en qué página estoy',
+		text: `¿Qué es este sitio? ¿Dónde estoy? Estás en kodexArg, la home personal de Gabriel
+			Cavedal en internet: un único cuadro de consulta que responde quién es, qué hizo, qué sabe
+			hacer y dónde está el resto de su ecosistema. No es su CV ni su código ni su sistema de
+			diseño — es la puerta de entrada a todo eso. El currículum interactivo completo vive en el
+			sitio del CV, en español e inglés. Sus repositorios públicos, herramientas y frameworks de
+			agentes están en su organización de GitHub. La documentación técnica y los ADRs del propio
+			kodexArg viven en su portal de docs. El sistema de diseño que le da su estética, con la
+			paleta presentation orange y la mecánica de input estilo Pip-Boy, es el SyV Design System.
+			Si preguntás algo y no es sobre Gabriel, KodexBar te va a decir que no puede ayudarte con
+			eso en vez de inventar una respuesta.`,
+		related: ['cv', 'github', 'docs', 'syv-design-system', 'kodexbar-funcion', 'kodexarg-org'],
+		tags: ['que es este sitio', 'donde estoy', 'que es esta pagina', 'que es esto', 'que es kodexarg', 'home', 'pagina de inicio', 'sitio', 'ecosistema', 'a donde me manda', 'entrada']
+	},
+	{
+		id: 'que-le-puedo-preguntar',
+		title: 'Qué le puedo preguntar, qué puedo preguntarte, sobre qué me podés ayudar',
+		text: `¿Qué le puedo preguntar a KodexBar? ¿Qué puedo preguntar acá? ¿Sobre qué me podés
+			ayudar? Se puede preguntar por Gabriel Cavedal en cualquier ángulo: su perfil y quién es,
+			cómo contactarlo y si está disponible para trabajar, su trayectoria laboral completa —Grupo
+			ALVS, el Casino de Mendoza, Casino Buenos Aires—, sus habilidades técnicas por tecnología
+			(Python, Django, AWS, Cloudflare, Linux, redes, IA y agentes, frontend, liderazgo), sus
+			proyectos publicados y privados, su formación y certificaciones, los idiomas que habla, y
+			qué es kodexArg como organización. También se puede preguntar por KodexBar mismo: qué es,
+			para qué sirve y quién lo hizo. Todo lo que no está en ese temario, KodexBar lo declina en
+			vez de inventarlo.`,
+		related: ['perfil', 'contacto', 'disponibilidad', 'exp-alvs', 'skill-backend', 'skill-cloud-devops', 'skill-ia-agentes', 'proj-home-kodexbar', 'educacion', 'idiomas', 'kodexarg-org', 'kodexbar-funcion'],
+		tags: ['que puedo preguntar', 'que le puedo preguntar', 'que te puedo preguntar', 'sobre que me puede ayudar', 'que sabes', 'que sabes responder', 'de que hablas', 'ayuda', 'help', 'temario', 'que preguntas hace']
+	},
+	{
+		id: 'quien-esta-detras-del-sitio',
+		title: 'Quién está detrás de este sitio, quién lo hizo, quién es kodexArg',
+		text: `¿Quién está detrás de este sitio? ¿Quién lo hizo? ¿Quién es kodexArg? Gabriel Cavedal
+			es quien diseñó, construyó y opera kodexArg entero, incluido este mismo asistente. Es
+			arquitecto de infraestructura y software y lo publica bajo su marca personal kodexArg, que
+			agrupa su dominio, sus subdominios y su organización de GitHub. No hay un equipo detrás: es
+			su proyecto personal, construido con el mismo método spec-driven y las mismas flotas de
+			agentes de IA que usa en su trabajo de consultoría.`,
+		related: ['perfil', 'kodexarg-org', 'cv', 'github'],
+		tags: ['quien esta detras', 'quien hizo esto', 'quien lo hizo', 'quien lo construyo', 'quien esta atras de esto', 'quien creo esto', 'de quien es esto', 'autor', 'creador']
+	},
 	{
 		id: 'perfil',
 		title: 'Perfil profesional',
@@ -54,8 +67,18 @@ const DEFS: ChunkDef[] = [
 			disciplina BDD/TDD. Es experto en Django y Django REST Framework, y mantiene plataformas en
 			producción sobre AWS y Cloudflare. Se presenta profesionalmente como AI Solutions Architect
 			y Fractional CTO. Vive en Mendoza, Argentina.`,
-		related: ['cv', 'linkedin'],
+		related: ['cv', 'linkedin', 'edad-gabriel'],
 		tags: ['perfil', 'quien es', 'bio', 'gabriel cavedal', 'kodexarg', 'arquitecto', 'fractional cto', 'ai solutions architect', 'presentacion']
+	},
+	{
+		id: 'edad-gabriel',
+		title: 'Cuántos años tiene Gabriel Cavedal, qué edad tiene, cuándo nació',
+		text: `¿Cuántos años tiene Gabriel? ¿Qué edad tiene? ¿Cuándo nació? Su CV público no publica
+			fecha de nacimiento ni edad, así que KodexBar no tiene ese dato exacto para dar. Lo que sí
+			se puede confirmar: su primer rol técnico documentado fue en 2002, en Casino Buenos Aires, y
+			desde entonces lleva más de dos décadas de trayectoria continua como profesional de IT.`,
+		related: ['perfil', 'exp-casino-bsas'],
+		tags: ['edad', 'cuantos años tiene', 'que edad tiene', 'cuando nacio', 'fecha de nacimiento', 'nacimiento', 'edad de gabriel', 'age', 'how old', 'birth date']
 	},
 	{
 		id: 'contacto',
@@ -97,10 +120,6 @@ const DEFS: ChunkDef[] = [
 		related: ['platzi'],
 		tags: ['educacion', 'estudios', 'titulo', 'universidad', 'formacion', 'certificaciones', 'platzi', 'cursos', 'donde estudio', 'autodidacta']
 	},
-
-	// =======================================================================
-	// Experiencia laboral
-	// =======================================================================
 	{
 		id: 'exp-alvs',
 		title: 'Technical Lead en Grupo ALVS (2016 — presente)',
@@ -123,7 +142,7 @@ const DEFS: ChunkDef[] = [
 			casino, y construyó los clusters de servidores RHEL que sostuvieron toda la operación:
 			sistemas de juego con 700 tragamonedas en red, dashboards de BI y analítica con machine
 			learning. Fueron once años de operación continua sin downtime.`,
-		related: ['cv', 'skill-linux'],
+		related: ['cv', 'skill-linux', 'proj-casino-mendoza', 'proj-ml-tragamonedas'],
 		tags: ['experiencia', 'casino', 'casino de mendoza', 'jefe de sistemas', 'rhel', 'linux', 'clusters', 'tragamonedas', 'slots', 'historia laboral']
 	},
 	{
@@ -135,10 +154,6 @@ const DEFS: ChunkDef[] = [
 		related: ['cv'],
 		tags: ['experiencia', 'casino buenos aires', 'tecnico', 'primer trabajo', 'inicio de carrera', 'historia laboral']
 	},
-
-	// =======================================================================
-	// Habilidades
-	// =======================================================================
 	{
 		id: 'skill-backend',
 		title: 'Backend: Python, Django, DRF, PostgreSQL',
@@ -171,7 +186,7 @@ const DEFS: ChunkDef[] = [
 			Opera flotas de Raspberry Pi y ESP32 con telemetría en producción. También hace
 			videovigilancia con detección por IA y telefonía SIP/PBX. Es la base sobre la que monta todo
 			lo demás: pocas personas que diseñan arquitectura cloud también saben cablear la red.`,
-		related: ['dj-indoor-monitor', 'rpi-door-access-rfid', 'kdx-pi-signage', 'kdx-pi-cam', 'camera-alert-to-telegram', 'raspberry-pi-temperature-to-telegram', 'proj-kcbd'],
+		related: ['dj-indoor-monitor', 'rpi-door-access-rfid', 'kdx-pi-signage', 'kdx-pi-cam', 'camera-alert-to-telegram', 'raspberry-pi-temperature-to-telegram', 'proj-kcbd', 'proj-enlace-vpn'],
 		tags: ['redes', 'networking', 'infraestructura', 'iot', 'vpn', 'ipsec', 'mikrotik', 'fortigate', 'unifi', 'vlan', 'dns', 'dhcp', 'snmp', 'raspberry pi', 'esp32', 'sensores', 'telemetria', 'videovigilancia', 'camaras', 'sip', 'pbx', 'telefonia']
 	},
 	{
@@ -233,10 +248,6 @@ const DEFS: ChunkDef[] = [
 		related: ['exp-alvs', 'proj-coveris-dominio'],
 		tags: ['liderazgo', 'equipos', 'gestion', 'management', 'negocio', 'arquitectura de soluciones', 'fractional cto', 'procesos', 'automatizacion', 'proveedores', 'presupuesto', 'bi', 'power bi', 'analitica', 'toma de decisiones']
 	},
-
-	// =======================================================================
-	// Proyectos — Coveris (privado, sin link)
-	// =======================================================================
 	{
 		id: 'proj-coveris-aws',
 		title: 'Coveris — arquitectura AWS',
@@ -270,10 +281,6 @@ const DEFS: ChunkDef[] = [
 		related: ['skill-liderazgo', 'skill-qa-metodo', 'proj-coveris-aws'],
 		tags: ['coveris', 'dominio', 'medicos', 'clinico', 'salud', 'reglas de negocio', 'expertos', 'traduccion de dominio', 'diferenciador']
 	},
-
-	// =======================================================================
-	// Proyectos — resto
-	// =======================================================================
 	{
 		id: 'proj-alvs-cloud',
 		title: 'Plataforma Cloud de Grupo ALVS',
@@ -406,10 +413,45 @@ const DEFS: ChunkDef[] = [
 		related: ['syv-design-system', 'skill-fullstack'],
 		tags: ['syv', 'design system', 'diseno', 'sistema de diseno', 'paleta', 'colores', 'presentation orange', 'tokens', 'pipboy', 'componentes', 'accesibilidad', 'subordinacion y valor']
 	},
-
-	// =======================================================================
-	// kodexArg — la organización y sus repositorios
-	// =======================================================================
+	{
+		id: 'proj-enlace-vpn',
+		title: 'Cuádruple enlace VPN entre sitios y nube',
+		text: `Gabriel diseñó la arquitectura de enlace entre tres sitios on-premise y la nube —
+			primero Azure, después AWS— con acceso remoto L2TP para usuarios, usando MikroTik e IPsec.
+			Es un proyecto histórico de infraestructura de redes, previo a su etapa cloud-first actual.
+			No tiene repositorio público asociado.`,
+		related: ['skill-infra-iot', 'exp-casino-mendoza'],
+		tags: ['vpn', 'enlace vpn', 'mikrotik', 'ipsec', 'l2tp', 'azure', 'aws', 'multi-sitio', 'redes', 'historico']
+	},
+	{
+		id: 'proj-cartelera-legacy',
+		title: 'Sistema de cartelería digital y mapa térmico (Casino de Mendoza)',
+		text: `Gabriel construyó un sistema IoT de publicidades en TV sobre una flota de Raspberry Pi
+			con repositorio central de contenido, para el Casino de Mendoza. Después reaprovechó esa
+			misma infraestructura para armar un mapa térmico en tiempo real de las salas del casino, con
+			sensores DHT11 y DHT22, backend Django y visualización con ChartJS. Estuvo operativo durante
+			años. El repositorio de este proyecto es privado.`,
+		related: ['skill-infra-iot', 'exp-casino-mendoza', 'proj-casino-mendoza'],
+		tags: ['cartelera digital', 'signage', 'raspberry pi', 'mapa termico', 'dht11', 'dht22', 'django', 'chartjs', 'casino de mendoza', 'sensores', 'proyecto historico']
+	},
+	{
+		id: 'proj-trading-bot',
+		title: 'Bot de trading algorítmico',
+		text: `Gabriel construyó un puente entre indicadores de TradingView y órdenes long/short
+			ejecutadas en Binance, usando Flask, python-binance, pandas, Pine Script y webhooks. Es un
+			proyecto personal de trading algorítmico; el repositorio es privado.`,
+		related: ['skill-backend', 'skill-ia-agentes'],
+		tags: ['trading', 'trading bot', 'tradingview', 'binance', 'algoritmico', 'flask', 'pandas', 'pine script', 'webhooks', 'bot de trading']
+	},
+	{
+		id: 'proj-ml-tragamonedas',
+		title: 'Machine learning sobre datos de tragamonedas',
+		text: `Sobre la base de datos de juego del Casino de Mendoza, Gabriel construyó modelos de
+			clasificación y analítica predictiva con Python, pandas, TensorFlow, matplotlib y PostgreSQL.
+			Es parte del mismo trabajo que sostuvo los dashboards de BI de esa etapa.`,
+		related: ['skill-linux', 'exp-casino-mendoza', 'proj-casino-mendoza'],
+		tags: ['machine learning', 'ml', 'tragamonedas', 'slots', 'tensorflow', 'pandas', 'matplotlib', 'analitica predictiva', 'clasificacion', 'casino de mendoza']
+	},
 	{
 		id: 'kodexarg-org',
 		title: 'Qué es kodexArg',

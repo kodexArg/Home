@@ -1,28 +1,6 @@
 import { defineChunks, type ChunkDef } from '../defineChunks';
 
-/**
- * English corpus for the `cv` pack.
- *
- * Extracted from the English one-page CV (`cv.kodexarg.com`, `index.astro`).
- * Deliberately thinner than the Spanish set: the long-form `/full/` CV exists
- * only in Spanish, so the detailed skill breakdowns and the QA/method essay
- * have no English source. Reaching parity is a content task, not an
- * architectural one — see adr-10 "Consequences".
- *
- * Chunk ids intentionally mirror the Spanish ones where the subject matches,
- * so `related` edges stay meaningful across languages.
- */
 const DEFS: ChunkDef[] = [
-	// =======================================================================
-	// KodexBar — identity and purpose
-	//
-	// "What is this?", "what is its function?" and "what is it for?" arrive
-	// short and abstract. This chunk gives them a target of their own:
-	// `proj-home-kodexbar` describes the stack, and its centroid sits in
-	// "vectorize / workers ai / astro", far from a question about purpose. All
-	// three phrasings are in the title and the body deliberately — `tags` are
-	// not embedded (see index-corpus.ts).
-	// =======================================================================
 	{
 		id: 'kodexbar-funcion',
 		title: 'What KodexBar is, what its function is and what it is for',
@@ -36,10 +14,47 @@ const DEFS: ChunkDef[] = [
 		related: ['email', 'linkedin', 'telegram', 'cv', 'contacto', 'disponibilidad'],
 		tags: ['what is this', 'what are you', 'who are you', 'what is your function', 'what is its function', 'what is it for', 'what does it do', 'function', 'purpose', 'kodexbar', 'this assistant', 'this bar', 'this site', 'contact']
 	},
-
-	// =======================================================================
-	// Profile and contact
-	// =======================================================================
+	{
+		id: 'sitio-orientacion',
+		title: 'What this site is, where am I, what page is this',
+		text: `What is this site? Where am I? You are on kodexArg, Gabriel Cavedal's personal home on
+			the internet: a single query box that answers who he is, what he has done, what he can do
+			and where the rest of his ecosystem lives. It is not his CV, not his code, not his design
+			system — it is the front door to all of that. His full interactive résumé lives on the CV
+			site, in Spanish and English. His public repositories, tools and agent frameworks live in his
+			GitHub organization. kodexArg's own technical documentation and ADRs live in its docs portal.
+			The design system giving this page its look, with the presentation orange palette and Pip-Boy
+			input mechanics, is the SyV Design System. If a question is not about Gabriel, KodexBar will
+			say it cannot help instead of inventing an answer.`,
+		related: ['cv', 'github', 'docs', 'syv-design-system', 'kodexbar-funcion', 'kodexarg-org'],
+		tags: ['what is this site', 'where am i', 'what is this page', 'what is this', 'what is kodexarg', 'home', 'homepage', 'site', 'ecosystem', 'where does this send me', 'entry point']
+	},
+	{
+		id: 'que-le-puedo-preguntar',
+		title: 'What can I ask you, what can I ask KodexBar, what can you help with',
+		text: `What can I ask you? What can I ask KodexBar? What can you help with? Ask about Gabriel
+			Cavedal from any angle: his profile and who he is, how to reach him and whether he is
+			available for work, his full career — Grupo ALVS, Casino de Mendoza, Casino Buenos Aires —
+			his technical skills by technology (Python, Django, AWS, Cloudflare, Linux, networking, AI
+			and agents, frontend, leadership), his public and private projects, his education and
+			certifications, the languages he speaks, and what kodexArg is as an organization. You can
+			also ask about KodexBar itself: what it is, what it is for and who built it. Anything outside
+			that scope, KodexBar declines rather than invents.`,
+		related: ['perfil', 'contacto', 'disponibilidad', 'exp-alvs', 'skill-backend', 'skill-cloud-devops', 'skill-ia-agentes', 'proj-home-kodexbar', 'educacion', 'idiomas', 'kodexarg-org', 'kodexbar-funcion'],
+		tags: ['what can i ask', 'what can i ask you', 'what should i ask', 'what can you help with', 'what do you know', 'what can you answer', 'help', 'topics', 'what questions can i ask']
+	},
+	{
+		id: 'quien-esta-detras-del-sitio',
+		title: 'Who is behind this site, who made this, who is kodexArg',
+		text: `Who is behind this site? Who made this? Who is kodexArg? Gabriel Cavedal designed,
+			built and operates all of kodexArg, including this very assistant. He is an infrastructure
+			and software architect and publishes it under his personal brand kodexArg, which covers his
+			domain, its subdomains and his GitHub organization. There is no team behind it — it is his
+			personal project, built with the same spec-driven method and the same fleets of AI agents he
+			uses in his consulting work.`,
+		related: ['perfil', 'kodexarg-org', 'cv', 'github'],
+		tags: ['who is behind this', 'who made this', 'who built this', 'who created this', 'who runs this site', 'author', 'creator', 'who is behind kodexarg']
+	},
 	{
 		id: 'perfil',
 		title: 'Professional profile',
@@ -50,8 +65,18 @@ const DEFS: ChunkDef[] = [
 			under BDD/TDD discipline. He is a Django and Django REST Framework expert and runs production
 			platforms on AWS and Cloudflare. He presents professionally as an AI Solutions Architect and
 			Fractional CTO, and is based in Mendoza, Argentina.`,
-		related: ['cv', 'linkedin'],
+		related: ['cv', 'linkedin', 'edad-gabriel'],
 		tags: ['profile', 'who is', 'bio', 'gabriel cavedal', 'kodexarg', 'architect', 'fractional cto', 'ai solutions architect', 'about him', 'background']
+	},
+	{
+		id: 'edad-gabriel',
+		title: 'How old is Gabriel Cavedal, his age, when was he born',
+		text: `How old is Gabriel? What is his age? When was he born? His public CV does not publish
+			a birth date or age, so KodexBar does not have that exact figure to give. What it can
+			confirm: his first documented technical role was in 2002, at Casino Buenos Aires, and he has
+			been a working IT professional for more than two decades since.`,
+		related: ['perfil', 'exp-casino-bsas'],
+		tags: ['age', 'how old is he', 'how old', 'birth date', 'when was he born', 'his age', 'gabriel age', 'born']
 	},
 	{
 		id: 'contacto',
@@ -85,15 +110,14 @@ const DEFS: ChunkDef[] = [
 		title: 'Education and certification',
 		text: `Gabriel attended technical school at ENET N°1 «Ing. Pablo Nogués» in Mendoza. He began
 			Electromechanical Engineering at UNSL in San Luis and Graphic Design in Villa Mercedes, both
-			left incomplete. He maintains continuous certification through Platzi across AI, backend,
-			cloud and DevOps. His technical education is largely self-taught and grounded in practice.`,
+			left incomplete. He maintains continuous certification through Platzi covering AI and data
+			science (algorithmic complexity, computational statistics, linear algebra and probabilistic
+			thinking with Python), backend (Django, Python, SQL, Scrapy), DevOps and cloud (AWS, EC2,
+			Docker, Git and GitHub), and frontend (Svelte, clean code with JavaScript). His technical
+			education is largely self-taught and grounded in practice.`,
 		related: ['platzi'],
 		tags: ['education', 'studies', 'degree', 'university', 'training', 'certification', 'platzi', 'courses', 'self-taught']
 	},
-
-	// =======================================================================
-	// Experience
-	// =======================================================================
 	{
 		id: 'exp-alvs',
 		title: 'Technical Lead at Grupo ALVS (2016 — present)',
@@ -115,7 +139,7 @@ const DEFS: ChunkDef[] = [
 			end and built the RHEL server clusters that ran the entire operation: gaming systems with 700
 			networked slot machines, BI dashboards and machine-learning analytics. Eleven years of
 			continuous operation with zero downtime.`,
-		related: ['cv', 'skill-linux'],
+		related: ['cv', 'skill-linux', 'proj-casino-mendoza', 'proj-ml-tragamonedas'],
 		tags: ['experience', 'casino', 'head of systems', 'rhel', 'linux', 'clusters', 'slot machines', 'work history']
 	},
 	{
@@ -127,19 +151,17 @@ const DEFS: ChunkDef[] = [
 		related: ['cv'],
 		tags: ['experience', 'casino buenos aires', 'technician', 'first job', 'early career', 'work history']
 	},
-
-	// =======================================================================
-	// Skills
-	// =======================================================================
 	{
 		id: 'skill-backend',
 		title: 'Backend: Python, Django, DRF, PostgreSQL',
 		text: `Backend is Gabriel's strongest specialty. He works with Python, Django 5, Django REST
 			Framework, FastAPI and PostgreSQL, building complete Django applications — helpdesk systems,
-			payment workflows, B2B portals — and using DRF for SaaS products and IoT telemetry. He
-			considers himself a Django and DRF expert.`,
+			payment workflows, B2B portals — and using DRF for SaaS products and IoT telemetry. He runs
+			async queues and tasks with Redis and Celery, and uses FastAPI or Flask for automations and
+			webhooks. On PostgreSQL he does data modeling, tuning and backup/recovery. He considers
+			himself a Django and DRF expert.`,
 		related: ['welpdesk', 'dj-indoor-monitor', 'astro-drf-aws', 'dj-apprunner-template', 'proj-welp', 'proj-coveris-aws'],
-		tags: ['backend', 'python', 'django', 'drf', 'django rest framework', 'fastapi', 'postgresql', 'postgres', 'sql', 'database', 'api']
+		tags: ['backend', 'python', 'django', 'drf', 'django rest framework', 'fastapi', 'flask', 'postgresql', 'postgres', 'celery', 'redis', 'sql', 'database', 'api']
 	},
 	{
 		id: 'skill-cloud-devops',
@@ -147,61 +169,70 @@ const DEFS: ChunkDef[] = [
 		text: `Gabriel designs and operates production cloud infrastructure. On AWS he works with ECS
 			Fargate, Amplify, App Runner, Lambda, RDS, S3, CloudFront and Cognito, defining infrastructure
 			as code with CloudFormation and wiring CI/CD through GitHub Actions with OIDC and no static
-			credentials. On Cloudflare he uses Pages, Workers, D1 and R2. AWS is his primary platform and
-			carries Grupo ALVS's entire operation.`,
+			credentials. On Cloudflare he uses Pages, Workers, D1 and R2. He also manages cost with Cost
+			Explorer, budgets and optimization. AWS is his primary platform and carries Grupo ALVS's
+			entire operation.`,
 		related: ['dj-apprunner-template', 'astro-drf-aws', 'n8n-apprunner', 'lambda-update-route53', 'cf-ng-eurotrip2026', 'proj-alvs-cloud', 'proj-coveris-aws', 'exp-alvs'],
-		tags: ['aws', 'cloud', 'devops', 'cloudflare', 'fargate', 'ecs', 'lambda', 'rds', 's3', 'cognito', 'apprunner', 'amplify', 'cloudformation', 'iac', 'ci/cd', 'github actions', 'oidc', 'docker', 'workers']
+		tags: ['aws', 'cloud', 'devops', 'cloudflare', 'fargate', 'ecs', 'lambda', 'rds', 's3', 'cloudfront', 'cognito', 'apprunner', 'amplify', 'cloudformation', 'iac', 'ci/cd', 'github actions', 'oidc', 'docker', 'workers', 'd1', 'r2', 'cost management']
 	},
 	{
 		id: 'skill-infra-iot',
 		title: 'Infrastructure, networking and IoT',
-		text: `Gabriel came up through the physical layer and still works there: networking, IPsec VPN
-			and remote access, MikroTik, and fleets of Raspberry Pi and ESP32 devices running telemetry in
-			production, plus AI-assisted video surveillance. It is the foundation everything else sits
-			on — few people who design cloud architecture can also wire the network.`,
-		related: ['dj-indoor-monitor', 'rpi-door-access-rfid', 'kdx-pi-signage', 'kdx-pi-cam', 'camera-alert-to-telegram', 'raspberry-pi-temperature-to-telegram', 'proj-kcbd'],
-		tags: ['networking', 'infrastructure', 'iot', 'vpn', 'ipsec', 'mikrotik', 'raspberry pi', 'esp32', 'sensors', 'telemetry', 'surveillance', 'cameras']
+		text: `Gabriel came up through the physical layer and still works there. He runs MikroTik
+			RouterOS, FortiGate and UniFi; site-to-site IPsec VPN and L2TP remote access; VLANs, DHCP,
+			DNS and SNMP monitoring. He operates fleets of Raspberry Pi and ESP32 devices running
+			telemetry in production, plus AI-assisted video surveillance and SIP/PBX telephony. It is the
+			foundation everything else sits on — few people who design cloud architecture can also wire
+			the network.`,
+		related: ['dj-indoor-monitor', 'rpi-door-access-rfid', 'kdx-pi-signage', 'kdx-pi-cam', 'camera-alert-to-telegram', 'raspberry-pi-temperature-to-telegram', 'proj-kcbd', 'proj-enlace-vpn'],
+		tags: ['networking', 'infrastructure', 'iot', 'vpn', 'ipsec', 'mikrotik', 'fortigate', 'unifi', 'vlan', 'dns', 'dhcp', 'snmp', 'raspberry pi', 'esp32', 'sensors', 'telemetry', 'surveillance', 'cameras', 'sip', 'pbx', 'telephony']
 	},
 	{
 		id: 'skill-linux',
 		title: 'Linux and systems administration',
 		text: `Gabriel has administered Linux for two decades, on Debian and RHEL, including a decade
-			of production RHEL clustering and high availability. He currently runs self-hosted agentic
-			systems on his own infrastructure.`,
+			of production RHEL clustering with zero downtime. He works with Nginx, SSL/TLS and reverse
+			proxying; monitors with Grafana, Zabbix and PRTG; and virtualizes with Docker, Oracle VM and
+			VMware. He currently runs self-hosted agentic systems on his own infrastructure.`,
 		related: ['blocky', 'exp-casino-mendoza', 'proj-casino-mendoza'],
-		tags: ['linux', 'sysadmin', 'debian', 'rhel', 'red hat', 'servers', 'cluster', 'high availability', 'self-hosted']
+		tags: ['linux', 'sysadmin', 'debian', 'rhel', 'red hat', 'servers', 'cluster', 'high availability', 'nginx', 'ssl', 'tls', 'proxy', 'grafana', 'zabbix', 'prtg', 'monitoring', 'docker', 'vmware', 'virtualization', 'self-hosted']
 	},
 	{
 		id: 'skill-fullstack',
 		title: 'Full stack and frontend',
-		text: `On the frontend Gabriel works with Angular, Astro, Svelte and HTMX, and designs REST
-			APIs contract-first. He deploys through AWS Amplify, Fargate, ECS/ECR and Cloudflare Pages.
-			He is not a pure frontend specialist — he arrives at the frontend from architecture and picks
-			the stack the system needs.`,
+		text: `On the frontend Gabriel works with Angular 21 using signals and PrimeNG, Astro with SSR
+			and Svelte 5 islands over Tailwind v4, and HTMX on top of Django templates, designing REST
+			APIs contract-first. He deploys through AWS Amplify, Fargate and Cloudflare Pages. He is not a
+			pure frontend specialist — he arrives at the frontend from architecture and picks the stack
+			the system needs.`,
 		related: ['template-angular-21-csr-primeng', 'astro-drf-aws', 'cf-ng-eurotrip2026', 'astro-cv', 'syv-design-system', 'proj-sroa'],
-		tags: ['frontend', 'full stack', 'angular', 'astro', 'svelte', 'htmx', 'rest', 'api', 'contract-first', 'ui']
+		tags: ['frontend', 'full stack', 'angular', 'primeng', 'astro', 'svelte', 'htmx', 'tailwind', 'ssr', 'signals', 'rest', 'api', 'contract-first', 'ui']
 	},
 	{
 		id: 'skill-ia-agentes',
 		title: 'AI, agents and MCP',
-		text: `This is Gabriel's current focus: multi-agent orchestration, MCP servers and clients
-			(several public on GitHub), Claude Code, n8n and RAG. He builds autonomous issue-triage agents
-			and subagent hierarchies organised by effort level. He leads AI adoption at Grupo ALVS,
-			including hands-on staff training.`,
-		related: ['engram', 'openclaw', 'odysseus', 'python-telegram-bot-mcp', 'proj-mcp-tools', 'proj-coveris-metodo'],
-		tags: ['ai', 'artificial intelligence', 'agents', 'agentic', 'mcp', 'model context protocol', 'claude', 'claude code', 'llm', 'rag', 'multi-agent', 'orchestration', 'n8n', 'prompt engineering']
+		text: `This is Gabriel's current focus. He builds MCP (Model Context Protocol) servers and
+			clients, several public on GitHub. He works with Claude Code, Antigravity SDK and Pydantic AI.
+			He develops autonomous issue-triage and issue-fixing agents, and subagent hierarchies
+			organised by effort level (Opus, Sonnet, Haiku). He also uses n8n, RAG and prompt engineering,
+			and generates images with ComfyUI, Stable Diffusion and Flux. He leads AI adoption at Grupo
+			ALVS, including hands-on staff training.`,
+		related: ['engram', 'openclaw', 'odysseus', 'python-telegram-bot-mcp', 'comfyui-1', 'proj-mcp-tools', 'proj-coveris-metodo'],
+		tags: ['ai', 'artificial intelligence', 'agents', 'agentic', 'mcp', 'model context protocol', 'claude', 'claude code', 'llm', 'rag', 'multi-agent', 'orchestration', 'n8n', 'prompt engineering', 'pydantic ai', 'comfyui', 'stable diffusion', 'flux', 'image generation']
 	},
 	{
 		id: 'skill-qa-metodo',
 		title: 'QA and method: spec-driven development',
-		text: `Gabriel's method is spec-driven development: specifications and ADRs as the single
-			source of truth, contract-first APIs with test-verified coverage, BDD/TDD discipline, and
-			docs-as-code. His argument is that when agents write most of the code, quality moves to the
-			specifications, the contracts and the review. He applies the same process as an external
-			reviewer of third-party projects: architecture audits, code review and technical debt
-			assessment.`,
+		text: `Gabriel went deep on quality assurance applied to AI-assisted development. His
+			argument is that when agents write most of the code, quality moves to the specifications, the
+			contracts and the review. His method: specifications and ADRs as the single source of truth,
+			contract-first APIs with test-verified coverage, BDD/TDD, and multi-agent audit pipelines with
+			models in an Opus/Sonnet/Haiku hierarchy cross-reviewing code, specs and documentation. He
+			applies the same process as an external reviewer of third-party projects: architecture audits,
+			code review and technical debt assessment. He documents with docs-as-code, using mkdocs
+			Material as living documentation.`,
 		related: ['qa-reports', 'docs', 'proj-coveris-metodo'],
-		tags: ['qa', 'quality', 'testing', 'tests', 'tdd', 'bdd', 'spec-driven', 'specifications', 'adr', 'contract-first', 'code review', 'audit', 'technical debt', 'method', 'docs-as-code']
+		tags: ['qa', 'quality', 'testing', 'tests', 'tdd', 'bdd', 'spec-driven', 'specifications', 'adr', 'contract-first', 'code review', 'audit', 'technical debt', 'method', 'docs-as-code', 'mkdocs', 'documentation']
 	},
 	{
 		id: 'skill-liderazgo',
@@ -209,21 +240,19 @@ const DEFS: ChunkDef[] = [
 		text: `Gabriel leads multidisciplinary, multi-company IT teams and works routinely with
 			non-technical domain experts — clinicians, management, operations — translating their rules
 			into systems. He handles solutions architecture, business process automation, vendor and
-			budget management, and BI for decision-making.`,
+			budget management, and BI and analytics for decision-making, including Power BI dashboards. He
+			offers himself as a solutions architect and Fractional CTO.`,
 		related: ['exp-alvs', 'proj-coveris-dominio'],
-		tags: ['leadership', 'teams', 'management', 'business', 'solutions architecture', 'fractional cto', 'process automation', 'vendor management', 'budget', 'bi']
+		tags: ['leadership', 'teams', 'management', 'business', 'solutions architecture', 'fractional cto', 'process automation', 'vendor management', 'budget', 'bi', 'power bi', 'decision making']
 	},
-
-	// =======================================================================
-	// Projects
-	// =======================================================================
 	{
 		id: 'proj-coveris-aws',
 		title: 'Coveris — AWS architecture',
 		text: `Coveris is a hospital capacity planning SaaS and the project where Gabriel demonstrates
-			the most depth on AWS. The MVP runs on AWS Amplify, ECS Fargate and RDS, with Cognito for
-			authentication, over an Angular 21 and Django/DRF stack. The architectural design is entirely
-			his. The repository is private, so there is no public link.`,
+			the most depth on AWS. The MVP runs on AWS Amplify for the frontend, ECS Fargate for the
+			services and RDS PostgreSQL, with Cognito for authentication, over an Angular 21 with PrimeNG
+			and Django 5.2 with DRF stack. The architectural design is entirely his. The repository is
+			private, so there is no public link.`,
 		related: ['skill-cloud-devops', 'skill-backend', 'proj-coveris-metodo', 'proj-coveris-dominio'],
 		tags: ['coveris', 'aws', 'saas', 'healthcare', 'hospital', 'capacity planning', 'fargate', 'amplify', 'rds', 'cognito', 'angular', 'django', 'private project']
 	},
@@ -263,10 +292,11 @@ const DEFS: ChunkDef[] = [
 		text: `Gabriel maintains public and private MCP servers — persistent terminal, Telegram Bot
 			API, a content validation pipeline — along with autonomous issue-triage and issue-fixing
 			agents and a private multi-agent orchestration control plane with an effort-tiered subagent
-			hierarchy. Some of it is public in the kodexArg GitHub organization; the orchestration control
+			hierarchy. He works with Python, Pydantic AI, the Anthropic SDK, Antigravity SDK, Claude Code
+			and n8n. Some of it is public in the kodexArg GitHub organization; the orchestration control
 			plane is private.`,
 		related: ['python-telegram-bot-mcp', 'engram', 'openclaw', 'github', 'skill-ia-agentes'],
-		tags: ['mcp', 'agents', 'agentic', 'mcp servers', 'telegram', 'triage', 'issues', 'orchestration', 'multi-agent', 'anthropic', 'claude code', 'n8n', 'automation']
+		tags: ['mcp', 'agents', 'agentic', 'mcp servers', 'telegram', 'triage', 'issues', 'orchestration', 'multi-agent', 'pydantic ai', 'anthropic', 'claude code', 'n8n', 'automation']
 	},
 	{
 		id: 'proj-welp',
@@ -372,10 +402,45 @@ const DEFS: ChunkDef[] = [
 		related: ['syv-design-system', 'skill-fullstack'],
 		tags: ['syv', 'design system', 'design', 'palette', 'colors', 'presentation orange', 'tokens', 'pipboy', 'components', 'accessibility']
 	},
-
-	// =======================================================================
-	// kodexArg — the organization
-	// =======================================================================
+	{
+		id: 'proj-enlace-vpn',
+		title: 'Quadruple VPN link between sites and the cloud',
+		text: `Gabriel designed the link architecture between three on-premise sites and the cloud —
+			first Azure, then AWS — with L2TP remote access for users, using MikroTik and IPsec. It is a
+			historical networking project, from before his current cloud-first era. It has no public
+			repository.`,
+		related: ['skill-infra-iot', 'exp-casino-mendoza'],
+		tags: ['vpn', 'vpn link', 'mikrotik', 'ipsec', 'l2tp', 'azure', 'aws', 'multi-site', 'networking', 'historical']
+	},
+	{
+		id: 'proj-cartelera-legacy',
+		title: 'Digital signage system and thermal map (Casino de Mendoza)',
+		text: `Gabriel built an IoT advertising system for TV screens on a Raspberry Pi fleet with a
+			central content repository, for the Casino de Mendoza. He later repurposed that same
+			infrastructure into a real-time thermal map of the casino floor, with DHT11 and DHT22 sensors,
+			a Django backend and ChartJS visualisation. It ran for years. The repository for this project
+			is private.`,
+		related: ['skill-infra-iot', 'exp-casino-mendoza', 'proj-casino-mendoza'],
+		tags: ['digital signage', 'signage', 'raspberry pi', 'thermal map', 'dht11', 'dht22', 'django', 'chartjs', 'casino de mendoza', 'sensors', 'historical project']
+	},
+	{
+		id: 'proj-trading-bot',
+		title: 'Algorithmic trading bot',
+		text: `Gabriel built a bridge between TradingView indicators and long/short orders executed on
+			Binance, using Flask, python-binance, pandas, Pine Script and webhooks. It is a personal
+			algorithmic trading project; the repository is private.`,
+		related: ['skill-backend', 'skill-ia-agentes'],
+		tags: ['trading', 'trading bot', 'tradingview', 'binance', 'algorithmic', 'flask', 'pandas', 'pine script', 'webhooks']
+	},
+	{
+		id: 'proj-ml-tragamonedas',
+		title: 'Machine learning on slot machine data',
+		text: `On top of the Casino de Mendoza's gaming database, Gabriel built classification models
+			and predictive analytics with Python, pandas, TensorFlow, matplotlib and PostgreSQL. It is
+			part of the same body of work that carried the BI dashboards from that era.`,
+		related: ['skill-linux', 'exp-casino-mendoza', 'proj-casino-mendoza'],
+		tags: ['machine learning', 'ml', 'slot machines', 'tensorflow', 'pandas', 'matplotlib', 'predictive analytics', 'classification', 'casino de mendoza']
+	},
 	{
 		id: 'kodexarg-org',
 		title: 'What kodexArg is',

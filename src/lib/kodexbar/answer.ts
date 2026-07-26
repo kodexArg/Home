@@ -7,34 +7,10 @@ import { buildSystemPrompt, buildUserPrompt, FAILURE, OUT_OF_SCOPE } from './sys
 import { parseModelJson, scrubAnswerText } from './scrub';
 import { candidatesFor, resolveSuggestion } from './suggestions';
 
-/**
- * The answering pipeline (adr-10).
- *
- * Deliberately separate from the endpoint so the whole flow is testable with a
- * fake `Env` and no network. The endpoint owns HTTP concerns — parsing, rate
- * limiting, status codes — and nothing else.
- */
-
-/**
- * Generation model. Swapping this is a quality/latency tradeoff and needs no
- * ADR amendment; swapping the *embedding* model does (adr-10).
- */
 export const GENERATION_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8';
-
-/** Short ceiling: the contract is one paragraph, so long generations are waste. */
 export const MAX_OUTPUT_TOKENS = 320;
-
-/** Low but non-zero — deterministic enough to be predictable, not robotic. */
 export const TEMPERATURE = 0.3;
 
-/**
- * Destination ids the model may cite, derived from the retrieved context.
- *
- * Only ids reachable from the chunks actually in the prompt are offered. This
- * keeps the prompt small and, more importantly, means the model is never shown
- * links unrelated to what it was given — it cannot cite the CV while answering
- * about Raspberry Pi.
- */
 export function allowedLinksFor(chunks: readonly { related: string[] }[]): LinkDestination[] {
 	const ids: string[] = [];
 	for (const chunk of chunks) {
@@ -45,7 +21,6 @@ export function allowedLinksFor(chunks: readonly { related: string[] }[]): LinkD
 	return resolveLinkIds(ids);
 }
 
-/** Assemble the final object. Kept in one place so every exit path is shaped alike. */
 function toAnswer(
 	text: string,
 	links: LinkDestination[],
@@ -58,16 +33,19 @@ function toAnswer(
 }
 
 export interface AnswerOptions {
-	/** Injected for tests; defaults to the real retrieval path. */
 	retriever?: typeof retrieve;
 }
 
-/**
- * Answer a query.
- *
- * Never throws and never returns model-authored prose unvalidated: every path
- * ends in either scrubbed model text, a fixed decline, or a fixed failure line.
- */
+function retrievalGatePassed(retrieval: RetrievalResult): boolean {
+	return retrieval.passed && retrieval.chunks.length > 0;
+}
+
+function packFragmentsFor(retrieval: RetrievalResult): string[] {
+	return [...new Set(retrieval.chunks.map((c) => c.pack))]
+		.map((id) => getPack(id)?.systemPromptFragment)
+		.filter((f): f is string => Boolean(f));
+}
+
 export async function answerQuery(
 	env: Env,
 	query: string,
@@ -84,8 +62,7 @@ export async function answerQuery(
 		return toAnswer(FAILURE[lang], [], lang, false);
 	}
 
-	// The gate. Below threshold the model is never called — adr-09 §2.
-	if (!retrieval.passed || retrieval.chunks.length === 0) {
+	if (!retrievalGatePassed(retrieval)) {
 		return toAnswer(OUT_OF_SCOPE[lang], [], lang, false, retrieval.topScore);
 	}
 
@@ -94,10 +71,7 @@ export async function answerQuery(
 		return toAnswer(FAILURE[lang], [], lang, false, retrieval.topScore);
 	}
 
-	const packFragments = [...new Set(retrieval.chunks.map((c) => c.pack))]
-		.map((id) => getPack(id)?.systemPromptFragment)
-		.filter((f): f is string => Boolean(f));
-
+	const packFragments = packFragmentsFor(retrieval);
 	const allowedLinks = allowedLinksFor(retrieval.chunks);
 	const suggestions = candidatesFor(retrieval.chunks, lang);
 
@@ -128,7 +102,6 @@ export async function answerQuery(
 
 	const parsed = parseModelJson(raw);
 	if (!parsed) {
-		// Unparseable output is discarded, never rendered raw — adr-09 §1.
 		console.warn('[kodexbar] model returned unparseable output.');
 		return toAnswer(FAILURE[lang], [], lang, false, retrieval.topScore);
 	}
@@ -138,15 +111,8 @@ export async function answerQuery(
 		return toAnswer(FAILURE[lang], [], lang, false, retrieval.topScore);
 	}
 
-	// Ids are resolved against the allowlist, then intersected with what was
-	// actually offered: a model that names a real-but-unoffered destination
-	// gets it dropped too.
-	const offered = new Set(allowedLinks.map((d) => d.id));
-	const links = resolveLinkIds(parsed.linkIds).filter((d) => offered.has(d.id));
-
-	// The placeholder text comes from the registry, never from the model — the
-	// model only chose which entry. An unknown id falls back to the strongest
-	// candidate rather than to nothing.
+	const offeredLinkIds = new Set(allowedLinks.map((d) => d.id));
+	const links = resolveLinkIds(parsed.linkIds).filter((d) => offeredLinkIds.has(d.id));
 	const suggestion = resolveSuggestion(parsed.nextId, suggestions);
 
 	return toAnswer(text, links, lang, true, retrieval.topScore, suggestion);

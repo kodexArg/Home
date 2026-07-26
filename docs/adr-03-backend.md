@@ -13,10 +13,10 @@
 ## Decision Outcome & Architecture
 
 ### 1. Production Backend Environment
-* **Platform:** Cloudflare Pages / Cloudflare Workers (`@astrojs/cloudflare` adapter).
-* **Target Deployment:** `https://home.kodexarg.com` deployed via GitHub Actions CI/CD.
-* **Execution Mode:** Hybrid / Server-side rendering (`output: "static"` with `prerender = false` on dynamic API endpoints like `/api/ask`).
-* **Bindings Access:** Native Cloudflare Worker `locals.runtime.env` exposing `env.AI` and `env.VECTOR_INDEX`.
+* **Platform:** Cloudflare Workers (`@astrojs/cloudflare` adapter).
+* **Target Deployment:** `https://kodexarg.com`, aliased at `www.kodexarg.com` and `home.kodexarg.com`, deployed via GitHub Actions CI/CD.
+* **Execution Mode:** Hybrid. Astro's default `output: "static"` prerenders `src/pages/index.astro`; API routes (`/api/ask`, the dev-only `/api/admin/index-corpus`) opt out per-file with `export const prerender = false` and run on request.
+* **Bindings Access:** Routes import `env` directly from `cloudflare:workers` and read `env.AI`, `env.VECTOR_INDEX` and `env.SESSION`. Types for these bindings are declared in [env.d.ts](file:///home/kodex/kodexArg/Home/src/env.d.ts).
 
 ### 2. Development Backend Environment
 * **Tooling:** **Bun** + Vite + Wrangler (`bun run dev`).

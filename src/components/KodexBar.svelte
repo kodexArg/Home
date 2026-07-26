@@ -1,16 +1,4 @@
 <script>
-	/*
-	 * KodexBar — presentation only.
-	 *
-	 * All conversation logic (history, cooldown, backend call, answer shape)
-	 * lives in ../lib/chat/chatSession.ts. This component drives session.submit()
-	 * and renders the lines it publishes.
-	 *
-	 * adr-09: `line.text` is server-scrubbed plain text and is rendered as text,
-	 * never with {@html}. Every href comes from `line.links`, whose entries the
-	 * server resolved against the destination allowlist — the model emits ids,
-	 * never URLs.
-	 */
 	import SyvInput from './SyvInput.svelte';
 	import LanguageToggle from './LanguageToggle.svelte';
 	import Typewriter from './Typewriter.svelte';
@@ -18,11 +6,8 @@
 	import { getLanguageStore } from '../lib/ui/language';
 	import { OPENING_SUGGESTION } from '../lib/kodexbar/suggestions';
 
-	// The language preference is owned by the shared store (persisted + mirrored
-	// onto <html lang>); the session is kept in sync from it.
 	const languageStore = getLanguageStore();
 
-	// View state: mirrors of the session snapshot + what is currently typed.
 	let history = $state([]);
 	let isThinking = $state(false);
 	let language = $state(languageStore.language);
@@ -39,42 +24,33 @@
 		}
 	});
 
-	// subscribe() pushes the current value immediately, so this also seeds the
-	// session for a visitor whose stored/browser language is not the default.
 	$effect(() => languageStore.subscribe((next) => session.setLanguage(next)));
 
-	// The question TAB will type in. Before the first exchange there is no context
-	// to reason from, so it is the fixed opener; afterwards it is whatever the
-	// answer proposed, which is authored text resolved server-side from an id.
-	let proposal = $derived(history.length === 0 ? OPENING_SUGGESTION[language] : suggestion);
+	function deriveTabProposal(conversationHistory, activeLanguage, latestSuggestion) {
+		return conversationHistory.length === 0 ? OPENING_SUGGESTION[activeLanguage] : latestSuggestion;
+	}
 
-	// With no proposal the field returns to the original neutral prompt.
-	let placeholder = $derived(proposal || (language === 'es' ? '¿Sí?' : 'Yes?'));
+	function deriveRestingPlaceholder(activeLanguage) {
+		return activeLanguage === 'es' ? '¿Sí?' : 'Yes?';
+	}
 
-	// TAB is invisible, so it needs saying — but only while it would do something.
-	// The moment anything is typed the proposal is unreachable, so the line goes
-	// with it: it fades in, and disappears without a transition.
+	let proposal = $derived(deriveTabProposal(history, language, suggestion));
+
+	let placeholder = $derived(proposal || deriveRestingPlaceholder(language));
+
 	let showTabHint = $derived(Boolean(proposal) && currentInput.trim() === '');
 	let tabHintLabel = $derived(language === 'es' ? 'TAB para completar' : 'TAB to complete');
 
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
-	// The typewriter is a first-impression effect, not a per-message one: only
-	// the opening answer types itself out. Replaying it on every reply turns a
-	// flourish into a delay the visitor has to sit through.
-	let firstAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
+	let openingAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
 
-	// Links must never appear before the sentence they belong to. The typed
-	// line therefore withholds its chips until Typewriter says it is finished;
-	// every other line has nothing to wait for.
-	let typedLineDone = $state(false);
+	let openingAnswerTypewriterDone = $state(false);
 
-	function linksVisible(index) {
-		return index !== firstAnswerIndex || typedLineDone;
+	function extrasVisibleForLine(index) {
+		return index !== openingAnswerIndex || openingAnswerTypewriterDone;
 	}
 
-	// The language control is a pre-conversation affordance. Once the visitor
-	// has asked something they have already chosen, so it gets out of the way.
 	let showLanguageToggle = $derived(history.length === 0);
 
 	function commitQuery(query) {
@@ -83,14 +59,24 @@
 		void session.submit(query);
 	}
 
+	function isHttpUrl(url) {
+		return url.startsWith('http');
+	}
+
 	function hostOf(url) {
-		// mailto: and other non-http schemes have no host worth showing.
-		return url.startsWith('http') ? url.replace(/^https?:\/\//, '').replace(/\/$/, '') : url;
+		return isHttpUrl(url) ? url.replace(/^https?:\/\//, '').replace(/\/$/, '') : url;
+	}
+
+	function isMailtoContactLink(link) {
+		return link.kind === 'contact' && link.url.startsWith('mailto:');
+	}
+
+	function linkTargetFor(link) {
+		return isMailtoContactLink(link) ? undefined : '_blank';
 	}
 </script>
 
 <div class="chat-container" role="region" aria-label="KodexBar">
-	<!-- Terminal Scrollback Stack -->
 	<div class="stack" role="log" aria-live="polite" aria-label="Historial de mensajes">
 		{#each history as line, i (i)}
 			<div class="line committed {line.role}">
@@ -100,17 +86,20 @@
 				{:else if line.kind === 'answer'}
 					<div class="answer-block">
 						<span class="bot-text">
-							{#if i === firstAnswerIndex}
-								<Typewriter text={line.text} ondone={() => (typedLineDone = true)} />
+							{#if i === openingAnswerIndex}
+								<Typewriter text={line.text} ondone={() => (openingAnswerTypewriterDone = true)} />
 							{:else}
 								{line.text}
 							{/if}
 						</span>
-						{#if line.links.length > 0 && linksVisible(i)}
+						{#if line.links.length === 0 && line.offerPrompt && extrasVisibleForLine(i)}
+							<div class="offer">{line.offerPrompt}</div>
+						{/if}
+						{#if line.links.length > 0 && extrasVisibleForLine(i)}
 							<div class="links">
 								{#each line.links as link (link.id)}
 									<span class="link-container">
-										<span class="link-icon" aria-hidden="true">
+										<span class="link-icon-inert-outside-anchor" aria-hidden="true">
 											<svg
 												width="13"
 												height="13"
@@ -128,7 +117,7 @@
 										<a
 											class="who"
 											href={link.url}
-											target={link.kind === 'contact' && link.url.startsWith('mailto:') ? undefined : '_blank'}
+											target={linkTargetFor(link)}
 											rel="noopener noreferrer"
 										>
 											{link.name} ({hostOf(link.url)})
@@ -152,14 +141,12 @@
 		{/if}
 	</div>
 
-	<!-- Sits between the log and the input, and only before the first query. -->
 	{#if showLanguageToggle}
 		<div class="bottom-controls">
 			<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
 		</div>
 	{/if}
 
-	<!-- Pip-Boy SyV Input Bar -->
 	<div class="input-bar-wrapper">
 		{#if showTabHint}
 			<span class="tab-hint">{tabHintLabel}</span>
@@ -204,20 +191,25 @@
 		gap: 0.75rem;
 		padding-right: 0.5rem;
 
-		/* A FIXED height, not max-height. The mask below is expressed in
-		   percentages, so the box it applies to has to be a stable slice of the
-		   viewport — otherwise a two-turn conversation shrinks the box and the
-		   gradient lands on lines that are still near the bottom of the page.
-		   With justify-content:flex-end the content hugs the input regardless. */
-		height: calc(100vh - 180px);
+		--kodexbar-stack-reserved-input-bar-height: 180px;
+		height: calc(100vh - var(--kodexbar-stack-reserved-input-bar-height));
 		overflow-y: auto;
 
-		/* Old turns dissolve on the way up. Fully legible across the bottom
-		   half; fades from the midpoint and gone by the top quarter. */
-		-webkit-mask-image: linear-gradient(to top, #000 0%, #000 50%, transparent 75%);
-		mask-image: linear-gradient(to top, #000 0%, #000 50%, transparent 75%);
+		--kodexbar-scrollback-fade-start: 50%;
+		--kodexbar-scrollback-fade-end: 75%;
+		-webkit-mask-image: linear-gradient(
+			to top,
+			#000 0%,
+			#000 var(--kodexbar-scrollback-fade-start),
+			transparent var(--kodexbar-scrollback-fade-end)
+		);
+		mask-image: linear-gradient(
+			to top,
+			#000 0%,
+			#000 var(--kodexbar-scrollback-fade-start),
+			transparent var(--kodexbar-scrollback-fade-end)
+		);
 
-		/* A visible track fights the dissolve. */
 		scrollbar-width: none;
 	}
 
@@ -245,8 +237,6 @@
 		color: var(--cream-100);
 	}
 
-	/* Each query opens a new exchange, so it carries the breathing room that
-	   separates one turn from the previous answer. The first line needs none. */
 	.line.user {
 		padding-top: 1.6rem;
 	}
@@ -279,7 +269,6 @@
 		animation: pulse 1s infinite alternate;
 	}
 
-	/* One paragraph, then its citations. Never a card grid. */
 	.answer-block {
 		display: flex;
 		flex-direction: column;
@@ -293,14 +282,19 @@
 		gap: 0.25rem;
 	}
 
+	.offer {
+		color: var(--orange-400);
+		font-size: 0.82rem;
+		opacity: 0.72;
+	}
+
 	.link-container {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.3rem;
 	}
 
-	/* Icon sits outside the <a> and is inert — adr-09 §6 (click-jacking). */
-	.link-icon {
+	.link-icon-inert-outside-anchor {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -329,10 +323,6 @@
 		width: 100%;
 	}
 
-	/* Sits above the field, at the edge of legibility. It is a whisper about a
-	   key, not a label — it should be findable when looked for and unnoticed
-	   otherwise. Fades in only; removal is instant, because the affordance it
-	   describes is already gone by then. */
 	.tab-hint {
 		display: block;
 		font-family: var(--font-mono);
@@ -340,7 +330,8 @@
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
 		color: var(--warm-400);
-		opacity: 0.28;
+		--kodexbar-tab-hint-whisper-opacity: 0.28;
+		opacity: var(--kodexbar-tab-hint-whisper-opacity);
 		padding-left: 0.8125rem;
 		margin-bottom: 0.3rem;
 		user-select: none;
@@ -353,7 +344,7 @@
 			opacity: 0;
 		}
 		to {
-			opacity: 0.28;
+			opacity: var(--kodexbar-tab-hint-whisper-opacity);
 		}
 	}
 

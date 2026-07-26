@@ -46,13 +46,16 @@ Compose prompt ................... base system prompt
       │                            + retrieved chunks
       ▼
 Generate ......................... @cf/meta/llama-3.1-8b-instruct-fp8
-      │                            → { text, linkIds[] }
+      │                            → { text, linkIds[], nextId? }
       ▼
 Resolve + scrub .................. resolveLinkIds() vs DESTINATIONS
+      │                            resolveSuggestion() vs this turn's candidates
       │                            strip formatting & URL-shaped text
       ▼
-KodexAnswer { text, links[], language, matched }
+KodexAnswer { text, links[], language, matched, suggestion? }
 ```
+
+`nextId` follows the same shape as `linkIds`: the model picks an id from a short authored list (the placeholder's follow-up candidates, `src/lib/kodexbar/suggestions.ts`), the server resolves it, and an unknown id falls back to the strongest deterministic candidate rather than to model text. See [ADR 09 §9](adr-09-kodexbar-security.md). The system prompt additionally forbids the model from mentioning or linking `kodexarg.com` / `www.kodexarg.com` / `home.kodexarg.com` — the visitor asking is already on one of them (ADR 09 §10).
 
 Retrieval is deterministic: cosine similarity and a fixed threshold. The LLM only writes the final paragraph, over context the server chose. Where the answer *comes from* is not a model decision.
 
@@ -115,6 +118,15 @@ Adding a knowledge domain is therefore: author the pack, register it, reindex. N
 
 `minScore` is per-pack because pack density varies: a tightly written pack can afford a stricter gate than a sparse one. The gate is also the scope control (ADR 09 §2) — a query that matches nothing in any registered pack never reaches the model.
 
+### Reindexing — operational notes
+
+`bun run index:corpus` (`scripts/index-corpus.ts`) does not talk to Workers AI or Vectorize directly — both are Worker bindings, unavailable in a plain Bun process. Instead it POSTs to the dev-only `/api/admin/index-corpus` endpoint on a running `bun run dev` server, which holds the real bindings. Two consequences of that shape:
+
+* The script sends an explicit `Origin` header matching the dev server's own URL. Astro's CSRF protection rejects any non-GET request whose `Origin` does not match the host, and Bun's `fetch()` sends no `Origin` by default — without this the endpoint would answer 403 before the route ever ran.
+* The endpoint is gated to `import.meta.env.DEV` (404 outside a dev build), which is what lets it skip an API token: it is unreachable in production, so it is not an attack surface and not a denial-of-wallet lever there.
+
+The endpoint embeds each chunk's `title` and `text` together (not `text` alone) — the title often carries the subject the body only implies — in batches of 25, because both Workers AI and Vectorize reject very large single calls. It **upserts**, not inserts or replaces: chunk ids are stable, so re-running after an edit is idempotent. It does **not** remove chunks deleted from a pack — retrieval defensively drops stale index ids it can no longer resolve to a chunk (`retrieve()` in `retrieval.ts`), but a pack that has lost chunks needs the index recreated to be truly clean, not just reindexed.
+
 ### Initial packs
 
 | Pack | Content | Links |
@@ -145,7 +157,14 @@ Private work (Coveris, `syv-mcp-tools`, SROA, the Grupo ALVS platforms) exists i
 | Types, pack contract | `src/lib/kodexbar/types.ts` |
 | Link allowlist + `resolveLinkIds()` | `src/lib/kodexbar/destinations.ts` |
 | Corpus packs | `src/lib/kodexbar/packs/` |
-| Retrieval | `src/lib/cloudflare/vectorizeService.ts` |
+| Retrieval + embedding | `src/lib/kodexbar/retrieval.ts` |
+| Answering pipeline | `src/lib/kodexbar/answer.ts` |
+| System prompt | `src/lib/kodexbar/systemPrompt.ts` |
+| Output scrub + JSON parsing | `src/lib/kodexbar/scrub.ts` |
+| Follow-up suggestions (`nextId`) | `src/lib/kodexbar/suggestions.ts` |
+| Rate limiting | `src/lib/kodexbar/rateLimit.ts` |
+| Link offer + consent handshake | `src/lib/kodexbar/offers.ts`, `src/lib/kodexbar/consent.ts` |
 | Endpoint | `src/pages/api/ask.ts` |
-| Indexing script | `scripts/index-corpus.ts` |
+| Dev-only indexing endpoint | `src/pages/api/admin/index-corpus.ts` |
+| Indexing script (drives the endpoint above) | `scripts/index-corpus.ts` |
 | UI | `src/components/KodexBar.svelte`, `src/lib/chat/chatSession.ts` |

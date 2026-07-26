@@ -1,7 +1,4 @@
 <script>
-	/*
-	 * Aurora — warm-orange atmosphere.
-	 */
 	const BASE_SPOTS = 2;
 	const RARE_THIRD_CHANCE = 0.18;
 	const RADIUS_MIN = 38;

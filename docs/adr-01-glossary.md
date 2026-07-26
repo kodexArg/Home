@@ -25,6 +25,8 @@ To prevent ambiguity, domain overlap, or inconsistent naming across components, 
 | **`CorpusChunk`** | One retrievable unit of context. `related` holds destination and chunk ids — this is the knowledge graph. | `src/lib/kodexbar/types.ts` |
 | **`RawModelAnswer`** | What the LLM is contractually required to return: `{ text, linkIds }`. Carries **ids, never URLs** — see ADR 09 §1. | `src/lib/kodexbar/types.ts` |
 | **`KodexAnswer`** | The validated reply rendered by the UI: one plain paragraph plus resolved `LinkDestination[]`. | `src/lib/kodexbar/types.ts` |
+| **`Suggestion`** | An authored follow-up question the model may propose as `nextId`. Resolved server-side; a hallucinated or missing id falls back to the strongest candidate, never to model text. | `src/lib/kodexbar/suggestions.ts` |
+| **`PendingOffer`** | A set of resolved link ids parked in KV `SESSION` after an answer withholds them, awaiting the visitor's consent on the next turn. | `src/lib/kodexbar/offers.ts` |
 | **`Harness`** | Edge-level security layer enforcing cooldowns, origin validation, session capabilities, and zero-trust bindings. | Cloudflare Worker runtime / API routes |
 | **`Pip-Boy Input`** | The typewriter style text field component ([SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte)) featuring platen baseline rule and cell grid on focus. | UI input box |
 

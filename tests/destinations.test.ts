@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { DESTINATIONS, getDestination, resolveLinkIds } from '../src/lib/kodexbar/destinations';
 
-/**
- * The allowlist is the only source of URLs in KodexBar (adr-09 §1, §5).
- * These tests guard its integrity and the resolution step that makes a
- * hallucinated link unrepresentable rather than merely unlikely.
- */
 describe('DESTINATIONS', () => {
 	it('has unique ids', () => {
 		const ids = DESTINATIONS.map((d) => d.id);
@@ -19,8 +14,6 @@ describe('DESTINATIONS', () => {
 	});
 
 	it('contains no domain known to be dead', () => {
-		// These three were served as live links until 2026-07-26 and do not
-		// resolve. Regression guard for the "public and live" rule (adr-09 §5).
 		const dead = ['payflow.kodexarg.com', 'helpdesk.kodexarg.com', 'kcbd.kodexarg.com'];
 		for (const host of dead) {
 			expect(DESTINATIONS.some((d) => d.url.includes(host))).toBe(false);
@@ -28,7 +21,6 @@ describe('DESTINATIONS', () => {
 	});
 
 	it('contains no repository known to be private', () => {
-		// Referenced by the CV but 404 on GitHub; they belong in the corpus, not here.
 		const priv = ['kdx-ng-coveris', 'syv-mcp-tools', 'mcp-singleton-terminal-py'];
 		for (const repo of priv) {
 			expect(DESTINATIONS.some((d) => d.url.includes(repo))).toBe(false);
@@ -50,10 +42,6 @@ describe('DESTINATIONS', () => {
 });
 
 describe('self-referential destinations', () => {
-	// KodexBar renders its answers ON these origins. A visitor reading the answer
-	// is already there, so such an entry is never the most useful link — and when
-	// it is the only one a chunk offers, it is the link that gets shown. That is
-	// how "¿Quién es kodexArg?" came to link to itself instead of to the CV.
 	const OWN_ORIGINS = ['kodexarg.com', 'www.kodexarg.com', 'home.kodexarg.com'];
 
 	it('does not offer a link back to the site the answer is rendered on', () => {
@@ -72,7 +60,6 @@ describe('resolveLinkIds', () => {
 	});
 
 	it('drops unknown ids silently', () => {
-		// The guard that makes a hallucinated link impossible — adr-09 §1.
 		expect(resolveLinkIds(['cv', 'no-existe', 'email']).map((d) => d.id)).toEqual(['cv', 'email']);
 	});
 

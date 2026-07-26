@@ -1,28 +1,6 @@
 import type { LinkDestination } from './types';
 
-/**
- * Every link KodexBar is allowed to hand out.
- *
- * This list is the ONLY source of URLs in the system. The LLM answers with
- * ids; the server resolves them here. If it is not in this file, KodexBar
- * cannot link to it — by construction, not by prompt discipline.
- *
- * Membership rule: public and live. Verified 2026-07-26.
- *   - payflow.kodexarg.com, helpdesk.kodexarg.com and kcbd.kodexarg.com did
- *     not resolve; those entries were removed. The systems behind them are
- *     Grupo ALVS production platforms (payments, helpdesk, crop telemetry) —
- *     real work, but not kodexArg destinations. They live in the CV corpus
- *     instead, where KodexBar can describe them without offering a dead link.
- *   - The `welpdesk` entry now points at the public source repository, which
- *     is the part a visitor can actually open.
- *
- * Private repositories referenced by the CV (kdx-ng-coveris, syv-mcp-tools,
- * mcp-singleton-terminal-py) are deliberately absent: they return 404.
- */
 export const DESTINATIONS: LinkDestination[] = [
-  // =========================================================================
-  // 1. CONTACT — how to reach Gabriel Cavedal
-  // =========================================================================
   {
     id: 'email',
     kind: 'contact',
@@ -67,17 +45,6 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   },
 
-  // =========================================================================
-  // 2. LIVE WEB APPLICATIONS & CORE ECOSYSTEM SERVICES
-  // =========================================================================
-  // The `home` entry was removed. It pointed at kodexarg.com — this very page.
-  // Every visitor reading a KodexBar answer is already there, so offering it is
-  // never the most useful link and sometimes the only one offered, which is how
-  // "¿Quién es kodexArg?" ended up linking to itself instead of to the CV.
-  //
-  // A destination is somewhere a visitor can be *sent*. This origin is where
-  // they already are, so it is not a destination at all. Guarded by a test in
-  // destinations.test.ts rather than by remembering.
   {
     id: 'cv',
     kind: 'site',
@@ -137,9 +104,6 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   },
 
-  // =========================================================================
-  // 3. PUBLIC REPOSITORIES - AI, AGENTS & MCP SERVERS
-  // =========================================================================
   {
     id: 'engram',
     kind: 'repo',
@@ -185,9 +149,6 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   },
 
-  // =========================================================================
-  // 4. PUBLIC REPOSITORIES - IOT, EMBEDDED & HARDWARE AUTOMATION
-  // =========================================================================
   {
     id: 'dj-indoor-monitor',
     kind: 'repo',
@@ -279,9 +240,6 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   },
 
-  // =========================================================================
-  // 5. PUBLIC REPOSITORIES - TEMPLATES & CLOUD INFRASTRUCTURE
-  // =========================================================================
   {
     id: 'template-angular-21-csr-primeng',
     kind: 'repo',
@@ -338,9 +296,6 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   },
 
-  // =========================================================================
-  // 6. PUBLIC REPOSITORIES - DEVELOPER TOOLS & SPECIALIZED PROJECTS
-  // =========================================================================
   {
     id: 'blocky',
     kind: 'repo',
@@ -451,16 +406,8 @@ export const DESTINATIONS: LinkDestination[] = [
   }
 ];
 
-/** Index by id — the resolution step for model-emitted linkIds. */
 const BY_ID = new Map(DESTINATIONS.map((d) => [d.id, d]));
 
-/**
- * Resolve model-emitted ids to real destinations.
- *
- * Unknown ids are dropped silently: this is the guard that makes a
- * hallucinated link impossible rather than merely unlikely. Order is
- * preserved and duplicates are collapsed.
- */
 export function resolveLinkIds(ids: readonly string[]): LinkDestination[] {
 	const seen = new Set<string>();
 	const out: LinkDestination[] = [];

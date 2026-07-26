@@ -9,8 +9,7 @@ import {
 import type { KodexAnswer } from '../src/lib/kodexbar/types';
 import { getDestination } from '../src/lib/kodexbar/destinations';
 
-/** Backend stub. Records calls and returns whatever the test supplies. */
-function stubBackend(answer: Partial<KodexAnswer> = {}) {
+function createRecordingStubBackend(answer: Partial<KodexAnswer> = {}) {
 	const calls: Array<{ query: string; language: ChatLanguage }> = [];
 	const port: KodexBarPort = {
 		async ask(query, language) {
@@ -27,8 +26,9 @@ function stubBackend(answer: Partial<KodexAnswer> = {}) {
 	return { port, calls };
 }
 
-/** Session with the clock and delay under test control. */
-function makeSession(options: Partial<Parameters<typeof createChatSession>[0]> = {}) {
+function createSessionWithControllableClock(
+	options: Partial<Parameters<typeof createChatSession>[0]> = {}
+) {
 	let clock = 100_000;
 	const session = new ChatSession({
 		now: () => clock,
@@ -53,8 +53,8 @@ describe('isSubmittable', () => {
 
 describe('submit', () => {
 	it('appends the user line and the answer line', async () => {
-		const { port } = stubBackend({ text: 'Es experto en Django.' });
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend({ text: 'Es experto en Django.' });
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		expect(await session.submit('¿sabe django?')).toBe('answered');
 
@@ -70,16 +70,16 @@ describe('submit', () => {
 	});
 
 	it('trims the query before sending it', async () => {
-		const { port, calls } = stubBackend();
-		const { session } = makeSession({ backend: port });
+		const { port, calls } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('   cv   ');
 		expect(calls[0].query).toBe('cv');
 	});
 
 	it('ignores an empty submit without touching history', async () => {
-		const { port, calls } = stubBackend();
-		const { session } = makeSession({ backend: port });
+		const { port, calls } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		expect(await session.submit('   ')).toBe('ignored');
 		expect(session.history).toHaveLength(0);
@@ -88,8 +88,8 @@ describe('submit', () => {
 
 	it('carries the links through verbatim', async () => {
 		const cv = getDestination('cv')!;
-		const { port } = stubBackend({ links: [cv] });
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend({ links: [cv] });
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('cv');
 		const line = session.history[1] as { links: typeof cv[] };
@@ -98,8 +98,8 @@ describe('submit', () => {
 	});
 
 	it('sends the active language', async () => {
-		const { port, calls } = stubBackend();
-		const { session } = makeSession({ backend: port, language: 'en' });
+		const { port, calls } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port, language: 'en' });
 
 		await session.submit('cv');
 		expect(calls[0].language).toBe('en');
@@ -108,8 +108,8 @@ describe('submit', () => {
 
 describe('cooldown', () => {
 	it('blocks a second submit inside the window', async () => {
-		const { port, calls } = stubBackend();
-		const { session } = makeSession({ backend: port, cooldownMs: 3000 });
+		const { port, calls } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port, cooldownMs: 3000 });
 
 		await session.submit('primera');
 		expect(await session.submit('segunda')).toBe('cooldown');
@@ -120,8 +120,8 @@ describe('cooldown', () => {
 	});
 
 	it('allows a submit once the window has passed', async () => {
-		const { port, calls } = stubBackend();
-		const { session, advance } = makeSession({ backend: port, cooldownMs: 3000 });
+		const { port, calls } = createRecordingStubBackend();
+		const { session, advance } = createSessionWithControllableClock({ backend: port, cooldownMs: 3000 });
 
 		await session.submit('primera');
 		advance(3001);
@@ -130,8 +130,8 @@ describe('cooldown', () => {
 	});
 
 	it('reports the remaining time', async () => {
-		const { port } = stubBackend();
-		const { session, advance } = makeSession({ backend: port, cooldownMs: 3000 });
+		const { port } = createRecordingStubBackend();
+		const { session, advance } = createSessionWithControllableClock({ backend: port, cooldownMs: 3000 });
 
 		await session.submit('primera');
 		expect(session.cooldownRemainingMs()).toBe(3000);
@@ -145,7 +145,7 @@ describe('cooldown', () => {
 describe('failures', () => {
 	it('shows a status line when the backend throws', async () => {
 		const errors: unknown[] = [];
-		const { session } = makeSession({
+		const { session } = createSessionWithControllableClock({
 			backend: {
 				async ask() {
 					throw new Error('network down');
@@ -162,8 +162,8 @@ describe('failures', () => {
 	});
 
 	it('clears the thinking flag on both paths', async () => {
-		const { port } = stubBackend();
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('cv');
 		expect(session.isThinking).toBe(false);
@@ -173,7 +173,7 @@ describe('failures', () => {
 describe('language', () => {
 	it('toggles and emits', () => {
 		const snapshots: string[] = [];
-		const { session } = makeSession({
+		const { session } = createSessionWithControllableClock({
 			language: 'es',
 			onChange: (s) => snapshots.push(s.language)
 		});
@@ -185,15 +185,15 @@ describe('language', () => {
 
 	it('does not emit when the language is unchanged', () => {
 		let emissions = 0;
-		const { session } = makeSession({ language: 'es', onChange: () => emissions++ });
+		const { session } = createSessionWithControllableClock({ language: 'es', onChange: () => emissions++ });
 
 		session.setLanguage('es');
 		expect(emissions).toBe(0);
 	});
 
 	it('uses the language in effect at submit time for the cooldown notice', async () => {
-		const { port } = stubBackend();
-		const { session } = makeSession({ backend: port, language: 'en', cooldownMs: 3000 });
+		const { port } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port, language: 'en', cooldownMs: 3000 });
 
 		await session.submit('first');
 		await session.submit('second');
@@ -204,8 +204,8 @@ describe('language', () => {
 
 describe('snapshot', () => {
 	it('returns a copy of history, not the live array', async () => {
-		const { port } = stubBackend();
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend();
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('cv');
 		const snap = session.snapshot();
@@ -217,23 +217,21 @@ describe('snapshot', () => {
 
 describe('follow-up suggestions', () => {
 	it('starts with nothing to propose', () => {
-		const { session } = makeSession();
+		const { session } = createSessionWithControllableClock();
 		expect(session.snapshot().suggestion).toBe('');
 	});
 
 	it('adopts the suggestion the answer carried', async () => {
-		const { port } = stubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
+		const { session } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('quién es');
 		expect(session.snapshot().suggestion).toBe('¿Cómo puedo contactarlo?');
 	});
 
-	it('drops a suggestion it has already shown', async () => {
-		// The server is stateless and will happily repeat itself; showing the same
-		// placeholder twice reads as a bug.
-		const { port } = stubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
-		const { session, advance } = makeSession({ backend: port });
+	it('drops a repeated suggestion from the stateless server instead of showing the same placeholder twice', async () => {
+		const { port } = createRecordingStubBackend({ suggestion: '¿Cómo puedo contactarlo?' });
+		const { session, advance } = createSessionWithControllableClock({ backend: port });
 
 		await session.submit('quién es');
 		advance(5000);
@@ -243,32 +241,113 @@ describe('follow-up suggestions', () => {
 	});
 
 	it('clears the suggestion when an answer carries none', async () => {
-		const { port } = stubBackend({ suggestion: '¿Qué es Coveris?' });
-		const { session, advance } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session, advance } = createSessionWithControllableClock({ backend: port });
 		await session.submit('primera');
 		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
 
-		const bare = stubBackend({ suggestion: undefined });
-		const { session: second } = makeSession({ backend: bare.port });
+		const bare = createRecordingStubBackend({ suggestion: undefined });
+		const { session: second } = createSessionWithControllableClock({ backend: bare.port });
 		await second.submit('primera');
 		expect(second.snapshot().suggestion).toBe('');
 		advance(0);
 	});
 
 	it('ignores whitespace-only suggestions', async () => {
-		const { port } = stubBackend({ suggestion: '   ' });
-		const { session } = makeSession({ backend: port });
+		const { port } = createRecordingStubBackend({ suggestion: '   ' });
+		const { session } = createSessionWithControllableClock({ backend: port });
 		await session.submit('algo');
 		expect(session.snapshot().suggestion).toBe('');
 	});
 
 	it('leaves the suggestion untouched on a cooldown rejection', async () => {
-		const { port } = stubBackend({ suggestion: '¿Qué es Coveris?' });
-		const { session } = makeSession({ backend: port, cooldownMs: 3000 });
+		const { port } = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session } = createSessionWithControllableClock({ backend: port, cooldownMs: 3000 });
 
 		await session.submit('primera');
 		await session.submit('demasiado rápido');
 
 		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+	});
+});
+
+describe('the link offer', () => {
+	it('carries the question in place of the links', async () => {
+		const { port } = createRecordingStubBackend({ text: 'kodexArg es la marca.', offer: true });
+		const { session } = createSessionWithControllableClock({ backend: port });
+
+		await session.submit('quién es kodexArg');
+
+		expect(session.history[1]).toMatchObject({
+			kind: 'answer',
+			links: [],
+			offerPrompt: '¿Ver los links?'
+		});
+	});
+
+	it('asks in the language of the exchange', async () => {
+		const { port } = createRecordingStubBackend({ offer: true });
+		const { session } = createSessionWithControllableClock({ backend: port, language: 'en' });
+
+		await session.submit("who's kodexArg");
+
+		expect(session.history[1]).toMatchObject({ offerPrompt: 'Show links?' });
+	});
+
+	it('leaves the prompt empty on an ordinary answer', async () => {
+		const { port } = createRecordingStubBackend({ links: [getDestination('cv')!] });
+		const { session } = createSessionWithControllableClock({ backend: port });
+
+		await session.submit('su cv');
+
+		expect(session.history[1]).toMatchObject({ offerPrompt: '' });
+	});
+
+	it('proposes nothing while the offer stands, since the resting placeholder already reads as the answer', async () => {
+		const { port } = createRecordingStubBackend({ offer: true, suggestion: '¿Qué es Coveris?' });
+		const { session } = createSessionWithControllableClock({ backend: port });
+
+		await session.submit('quién es kodexArg');
+
+		expect(session.snapshot().suggestion).toBe('');
+	});
+
+	it('clears a proposal it was already showing', async () => {
+		const first = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session, advance } = createSessionWithControllableClock({ backend: first.port });
+		await session.submit('primera');
+		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+
+		const offering = createRecordingStubBackend({ offer: true });
+		const { session: second } = createSessionWithControllableClock({ backend: offering.port });
+		await second.submit('primera');
+		expect(second.snapshot().suggestion).toBe('');
+		advance(0);
+	});
+
+	it('takes the follow-up back up once the offer resolves', async () => {
+		const { port } = createRecordingStubBackend({ suggestion: '¿Qué es Coveris?' });
+		const { session } = createSessionWithControllableClock({ backend: port });
+
+		await session.submit('sí');
+
+		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+	});
+
+	it('renders the revealed links as an ordinary answer', async () => {
+		const { port } = createRecordingStubBackend({
+			text: 'Ahí van.',
+			links: [getDestination('cv')!, getDestination('github')!]
+		});
+		const { session } = createSessionWithControllableClock({ backend: port });
+
+		await session.submit('sí');
+
+		expect(session.history[1]).toMatchObject({
+			kind: 'answer',
+			text: 'Ahí van.',
+			offerPrompt: ''
+		});
+		expect((session.history[1] as { links: unknown[] }).links).toHaveLength(2);
 	});
 });

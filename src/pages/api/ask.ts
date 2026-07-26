@@ -3,19 +3,14 @@ import { env } from 'cloudflare:workers';
 import type { KodexAnswer } from '../../lib/kodexbar/types';
 import type { SupportedLanguage } from '../../lib/ui/language';
 import { answerQuery } from '../../lib/kodexbar/answer';
+import { resolveLinkIds } from '../../lib/kodexbar/destinations';
 import { FAILURE, OUT_OF_SCOPE } from '../../lib/kodexbar/systemPrompt';
 import { checkRateLimit, clientIdFrom } from '../../lib/kodexbar/rateLimit';
+import { CONSENT_REPLY, classifyConsent } from '../../lib/kodexbar/consent';
+import { offerKeyFor, putOffer, takeOffer } from '../../lib/kodexbar/offers';
 
 export const prerender = false;
 
-/**
- * POST /api/ask — the single KodexBar endpoint.
- *
- * HTTP concerns only: validate, rate limit, delegate, serialise. The pipeline
- * lives in `answerQuery` so it can be tested without a request (adr-10).
- */
-
-/** Anything longer is not a question, it is a payload. */
 const MAX_QUERY_CHARS = 500;
 
 function json(body: KodexAnswer, init?: ResponseInit): Response {
@@ -33,8 +28,46 @@ function fixed(text: string, lang: SupportedLanguage, init?: ResponseInit): Resp
 	return json({ text, links: [], language: lang, matched: false }, init);
 }
 
+function rateLimitedReplyFor(lang: SupportedLanguage): string {
+	return lang === 'es'
+		? 'Estás yendo un poco rápido. Esperá unos segundos y volvé a preguntar.'
+		: "You're going a bit fast. Wait a few seconds and ask again.";
+}
+
+async function resolvePendingOfferReply(
+	pending: Awaited<ReturnType<typeof takeOffer>>,
+	env: Env,
+	query: string,
+	lang: SupportedLanguage
+): Promise<Response | null> {
+	if (!pending) return null;
+
+	const intent = await classifyConsent(env, query, lang);
+
+	if (intent === 'yes') {
+		return json({
+			text: CONSENT_REPLY.yes[lang],
+			links: resolveLinkIds(pending.ids),
+			language: lang,
+			matched: true,
+			suggestion: pending.suggestion
+		});
+	}
+
+	if (intent === 'no') {
+		return json({
+			text: CONSENT_REPLY.no[lang],
+			links: [],
+			language: lang,
+			matched: true,
+			suggestion: pending.suggestion
+		});
+	}
+
+	return null;
+}
+
 export const POST: APIRoute = async ({ request }) => {
-	// Language is resolved first so every error path can answer in it.
 	let lang: SupportedLanguage = 'es';
 
 	try {
@@ -45,7 +78,9 @@ export const POST: APIRoute = async ({ request }) => {
 			return fixed(FAILURE[lang], lang, { status: 400 });
 		}
 
-		const payload = body as { query?: unknown; language?: unknown } | null;
+		const payload = body as
+			| { query?: unknown; language?: unknown; conversation?: unknown }
+			| null;
 		lang = payload?.language === 'en' ? 'en' : 'es';
 
 		const query = typeof payload?.query === 'string' ? payload.query.trim() : '';
@@ -58,19 +93,34 @@ export const POST: APIRoute = async ({ request }) => {
 
 		const limit = await checkRateLimit(env, clientIdFrom(request));
 		if (!limit.allowed) {
-			const text =
-				lang === 'es'
-					? 'Estás yendo un poco rápido. Esperá unos segundos y volvé a preguntar.'
-					: "You're going a bit fast. Wait a few seconds and ask again.";
-			return fixed(text, lang, {
+			return fixed(rateLimitedReplyFor(lang), lang, {
 				status: 429,
 				headers: { 'Retry-After': String(limit.retryAfter) }
 			});
 		}
 
-		return json(await answerQuery(env, query, lang));
+		const offerKey = offerKeyFor(clientIdFrom(request), payload?.conversation);
+
+		const pending = await takeOffer(env, offerKey);
+		const pendingOfferReply = await resolvePendingOfferReply(pending, env, query, lang);
+		if (pendingOfferReply) return pendingOfferReply;
+
+		const answer = await answerQuery(env, query, lang);
+
+		if (answer.links.length > 0) {
+			const stored = await putOffer(env, offerKey, {
+				ids: answer.links.map((link) => link.id),
+				suggestion: answer.suggestion,
+				language: lang
+			});
+
+			if (stored) {
+				return json({ ...answer, links: [], suggestion: undefined, offer: true });
+			}
+		}
+
+		return json(answer);
 	} catch (err) {
-		// answerQuery does not throw; reaching here means something upstream did.
 		console.error('[kodexbar] /api/ask failed:', err);
 		return fixed(FAILURE[lang], lang, { status: 500 });
 	}

@@ -11,8 +11,7 @@ import {
 } from '../src/lib/ui/language';
 import type { LanguageStorage, SupportedLanguage } from '../src/lib/ui/language';
 
-/** In-memory Storage double that records writes. */
-function makeStorage(initial: Record<string, string> = {}) {
+function createRecordingInMemoryStorage(initial: Record<string, string> = {}) {
 	const data = new Map(Object.entries(initial));
 	const writes: Array<[string, string]> = [];
 	const storage: LanguageStorage = {
@@ -25,14 +24,13 @@ function makeStorage(initial: Record<string, string> = {}) {
 	return { storage, data, writes };
 }
 
-/** Document double: captures what would land on <html lang>. */
-function makeDocument() {
+function createDocumentThatCapturesAppliedLanguage() {
 	const applied: SupportedLanguage[] = [];
 	return { applied, applyLanguage: (language: SupportedLanguage) => applied.push(language) };
 }
 
 function store(options: Partial<ConstructorParameters<typeof LanguageStore>[0]> = {}) {
-	const doc = makeDocument();
+	const doc = createDocumentThatCapturesAppliedLanguage();
 	const s = new LanguageStore({
 		storage: null,
 		navigatorLanguages: [],
@@ -81,7 +79,7 @@ describe('detectLanguage', () => {
 
 describe('LanguageStore', () => {
 	it('seeds from the stored choice and stamps the document on construction', () => {
-		const { storage } = makeStorage({ [LANGUAGE_STORAGE_KEY]: 'en' });
+		const { storage } = createRecordingInMemoryStorage({ [LANGUAGE_STORAGE_KEY]: 'en' });
 		const { s, doc } = store({ storage });
 
 		expect(s.language).toBe('en');
@@ -89,7 +87,7 @@ describe('LanguageStore', () => {
 	});
 
 	it('seeds from the browser preference when nothing is stored, without persisting it', () => {
-		const { storage, writes } = makeStorage();
+		const { storage, writes } = createRecordingInMemoryStorage();
 		const { s } = store({ storage, navigatorLanguages: ['en-US'] });
 
 		expect(s.language).toBe('en');
@@ -97,7 +95,7 @@ describe('LanguageStore', () => {
 	});
 
 	it('persists an explicit choice and mirrors it onto the document', () => {
-		const { storage, writes, data } = makeStorage();
+		const { storage, writes, data } = createRecordingInMemoryStorage();
 		const { s, doc } = store({ storage });
 
 		s.set('en');
@@ -109,7 +107,7 @@ describe('LanguageStore', () => {
 	});
 
 	it('survives a reload by reading back what it wrote', () => {
-		const { storage } = makeStorage();
+		const { storage } = createRecordingInMemoryStorage();
 		const first = store({ storage });
 		first.s.set('en');
 
@@ -126,8 +124,8 @@ describe('LanguageStore', () => {
 		expect(s.toggle()).toBe('es');
 	});
 
-	it('ignores a no-op set and an unsupported value', () => {
-		const { storage, writes } = makeStorage();
+	it('ignores a no-op set and an unsupported value, so subscribers see only the immediate push', () => {
+		const { storage, writes } = createRecordingInMemoryStorage();
 		const { s, doc } = store({ storage });
 		const seen: SupportedLanguage[] = [];
 		s.subscribe((language) => seen.push(language));
@@ -138,7 +136,7 @@ describe('LanguageStore', () => {
 		expect(s.language).toBe('es');
 		expect(writes).toEqual([]);
 		expect(doc.applied).toEqual(['es']);
-		expect(seen).toEqual(['es']); // only the immediate subscribe push
+		expect(seen).toEqual(['es']);
 	});
 
 	it('pushes the current value on subscribe, then every change, until unsubscribed', () => {

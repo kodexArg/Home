@@ -1,4 +1,4 @@
-ok cód, ahora sí está funcionando bien# ADR 09: KodexBar — Grounded Prose Contract & Security Sensitivity
+# ADR 09: KodexBar — Grounded Prose Contract & Security Sensitivity
 
 * **Status:** Accepted (Critical Security Control)
 * **Date:** 2026-07-26
@@ -39,12 +39,16 @@ This is the load-bearing control of the entire design.
 The LLM is required to return `RawModelAnswer` ([types.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/types.ts)):
 
 ```ts
-interface RawModelAnswer { text: string; linkIds: string[] }
+interface RawModelAnswer { text: string; linkIds: string[]; nextId?: string }
 ```
+
+`nextId` is the same pattern applied to the follow-up placeholder — see §9. It is not a URL and does not widen this contract.
 
 * `linkIds` are **ids**, not URLs. They are resolved server-side by `resolveLinkIds()` against `DESTINATIONS` ([destinations.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/destinations.ts)).
 * An id absent from the allowlist is **dropped silently**. There is no fallback, no fuzzy match, no pass-through.
 * `text` MUST be scrubbed of anything URL-shaped before render (§4). A model that writes a link into its prose has it removed, not rendered.
+
+The allowlist check is applied twice, independently, before a link ever reaches the model's own answer: `allowedLinksFor()` first narrows the *offer* to ids reachable from the chunks actually placed in that turn's prompt (so a model answering about Raspberry Pi is never even shown the CV's ids), and `answerQuery` then intersects the model's emitted `linkIds` against that same offered set, dropping both invented ids and real-but-unoffered ones. A third re-resolution happens in `/api/ask` when a parked offer (§8) is revealed — never trusted raw out of KV.
 
 The consequence, which is the point: a rendered `href` can only ever originate from a `LinkDestination.url` literal committed to this repository. Hallucinating a link is not *unlikely* — it is *unrepresentable*. This holds regardless of what the model was persuaded to say.
 
@@ -63,13 +67,15 @@ Scope is enforced **before** inference, deterministically:
 
 This is a security control first and a cost control second. An off-topic or adversarial query that retrieves nothing never reaches a model, so there is no inference to inject into. It also caps denial-of-wallet exposure: junk traffic costs one embedding, not one embedding plus one completion.
 
+`retrieve()` fails **closed**: a missing `AI`/`VECTOR_INDEX` binding, a transport error, or an empty match set all resolve to `passed: false`, the same outcome as a query that legitimately scored below threshold. There is no fallback keyword matcher to catch what Vectorize misses — that mechanism belonged to the multi-tier router and was removed with it (ADR 04, ADR 10).
+
 The gate MUST remain server-side and MUST NOT be bypassable by any request parameter.
 
 ### 3. Grounding — closed, versioned corpus
 
 The model answers **only** from chunks retrieved from the corpus. The corpus is a set of `KnowledgePack`s committed to this repository and indexed into Vectorize by an explicit script; it is not user-writable and not model-writable.
 
-* Chunk text is **trusted** content (authored by kodexArg, reviewed in diff). The visitor's query is **untrusted** and is never written into a chunk, a destination, or the index.
+* Chunk text is **trusted** content (authored by kodexArg, reviewed in diff). The visitor's query is **untrusted** and is never written into a chunk, a destination, or the index. It is also never written into the system prompt: `buildSystemPrompt()` composes only pack fragments, grounding rules, format rules and retrieved chunks; the query is the sole content of `buildUserPrompt()`, kept on the user turn. This system/user split is the entire mechanism that keeps the visitor's words a request the model can be asked to weigh, never an instruction the system prompt itself carries.
 * Adding a pack is an ordinary change. Adding a pack whose content is not authored by kodexArg — third-party documents, scraped material, user submissions — is an architectural change requiring an ADR amendment, because it breaks the "chunk text is trusted" premise this section rests on.
 * Private repositories and third-party production systems MUST NOT appear in `DESTINATIONS`. They may be described in corpus prose. KodexBar can talk about work it cannot link to; this is intended.
 
@@ -83,6 +89,8 @@ The model answers **only** from chunks retrieved from the corpus. The corpus is 
 * truncate at a fixed maximum length.
 
 A prompt is a request. Post-processing is a control. Formatting rules MUST NOT rely on the prompt alone.
+
+`scrubAnswerText`'s processing order is load-bearing, not incidental: fenced/inline code is stripped before anything else so code-fence markers can't hide other patterns from later steps; Markdown links are unwrapped to their label (`[CV](https://…)` → `CV`) *before* URL-stripping runs, so a linked mention degrades to plain text instead of vanishing entirely; URL-stripping runs last precisely so it also catches whatever unwrapping just exposed. Changing this order is a behavioural change to the control, not a refactor.
 
 ### 5. Allowlist-only target validation
 
@@ -105,9 +113,46 @@ The icon sits outside the `<a>` with `pointer-events: none` to prevent click-jac
 
 ### 7. Abuse and cost controls
 
-* The 3-second client cooldown is a UX affordance, **not** a security control — it is trivially bypassed by calling the endpoint directly.
-* `/api/ask` MUST enforce server-side rate limiting (KV `SESSION` binding) independently of the client.
+* The 3-second client cooldown in `chatSession` is a UX affordance, **not** a security control — it is trivially bypassed by calling the endpoint directly. The server-side check below is the real control.
+* `/api/ask` MUST enforce server-side rate limiting (KV `SESSION` binding) independently of the client, via `checkRateLimit()`.
+* `checkRateLimit()` **fails open**: a missing `SESSION` binding or a KV error is treated as `allowed`, deliberately — a limiter that takes the whole site down on a KV hiccup is a worse outcome than one that briefly stops limiting. KV is also eventually consistent, so this is a coarse bound, not an exact one. The retrieval gate (§2) is the actual backstop on cost, since off-topic traffic never reaches the generation model regardless of rate limit state.
 * The endpoint MUST reject non-string, empty, and over-length queries before embedding.
+
+### 8. Links are offered, not given
+
+An answer never hands over links unasked. When `answerQuery` resolves one or more destinations, `/api/ask` withholds them: the ids are parked in KV under `offer:<client-id>:<conversation-scope>` with a 5-minute TTL, the response carries `links: []` and `offer: true`, and the interface renders *"Show links?"* where the links would have gone. The next turn is read for consent; on a yes the parked ids are re-resolved through `resolveLinkIds()` and sent.
+
+`clientId` is Cloudflare's `CF-Connecting-IP` (falling back to `X-Forwarded-For`, then a fixed local value) — set at the edge, not client-supplied, and unspoofable by the request itself. The conversation scope is a UUID the browser generates and sends; it is sanitised and truncated server-side and can only *narrow* the key. It cannot fabricate an offer — a read returns only what this server wrote — and it stops two visitors behind one NAT from answering each other's "Show links?".
+
+Consent classification is two layers, in order: a bilingual lexicon of exact yes/no replies (`sí`, `dale`, `yes`, `go ahead`, …), matched on the **whole normalised string, never as a substring or prefix** — so "yes but what about AWS?" is not consent, it is a new question that must reach the pipeline — resolved with zero network calls; then, only for replies the lexicon does not recognise, the generation model.
+
+This is a UX decision with security-relevant consequences, all of which MUST be preserved:
+
+1. **The offer is server state, not a request parameter.** The consent classifier is reachable only because *this server* wrote an offer on a previous turn. No field in the request body can unlock inference, so §2 holds exactly as before: a first-contact query still reaches a model only by passing the retrieval gate.
+2. **The classifier's output is an enum, never prose.** `classifyConsent()` returns `yes | no | other` and every failure path — no binding, transport error, unparseable reply — returns `other`, which falls through to the ordinary pipeline. A prompt-injected classification can therefore only cause a question to be answered; no classifier text can reach the page. The reply text on a resolved offer is fixed copy from `CONSENT_REPLY`.
+3. **Reveal re-validates.** KV content is treated as untrusted on read: non-string ids are dropped, and the surviving ids go through the same allowlist as any other link. A rendered `href` still originates only from a `LinkDestination.url` declared in this repository (§1).
+4. **Offers are consumed unconditionally on read**, regardless of what the next turn turns out to mean. `takeOffer()` deletes the KV entry the moment it reads it, so a stale "yes" three questions after the fact — once the offer has already been taken or expired — cannot reveal a forgotten answer's links; it just falls through to answering whatever was actually asked.
+
+Failure direction: if KV is unavailable the offer cannot be recorded, and the endpoint sends the links with the answer as it did before this handshake existed. Withholding links that nothing can later reveal would silently lose content; there is nothing to protect here, since every destination is public by §5.
+
+### 9. Suggested follow-ups are ids, not free text
+
+The input's placeholder proposes the question a visitor is most likely to ask next, and TAB types it into the field. Because TAB puts that text one keystroke away from being submitted as the visitor's own query, it is held to the same rule as §1: the model never writes it.
+
+* The model returns `nextId` — an id, never the question text — chosen from a short list of authored candidates (`SUGGESTIONS` in [suggestions.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/suggestions.ts)) offered to it in the prompt for that turn only.
+* `resolveSuggestion()` resolves `nextId` against that same candidate list. An id absent from it — hallucinated, stale, or simply missing — falls back to the strongest deterministic candidate, never to nothing and never to model text.
+* The placeholder can therefore only ever display a sentence authored and committed in `suggestions.ts`. This mirrors §1's guarantee for links: the failure mode of a bad model output is "shows a slightly less relevant authored question," not "shows arbitrary text."
+* No proposal is offered while a link offer is pending (§8) — the resting placeholder is already asking the yes/no question, and proposing a new one would collide with it.
+
+### 10. The model never refers to this page
+
+The visitor asking is already on `kodexarg.com`, `www.kodexarg.com` or `home.kodexarg.com`, so KodexBar must never send them there or dwell on the fact. This is enforced at three independent layers, of decreasing strength:
+
+1. **As a link — structurally impossible.** There is no `home` (or equivalent) entry in `DESTINATIONS`; it was deliberately deleted, and `destinations.test.ts` fails if one is reintroduced. §1 already makes a link to anywhere not in `DESTINATIONS` unrepresentable — this is that same guarantee applied to the site's own hostnames.
+2. **As a domain in prose — enforced in code.** `scrubAnswerText`'s `BARE_DOMAIN` pattern strips anything domain-shaped from `text` regardless of which domain it is (§4), which incidentally but reliably also catches the three self-hostnames if the model writes them out.
+3. **As words, with no domain shape ("andá a la home") — prompt-only, best-effort.** There is no code-level way to strip a phrase like that without risking damage to legitimate prose, so this layer is a system-prompt instruction and nothing more. A reviewer who finds KodexBar directing a visitor back to the page they are already on, in words rather than a domain, is looking at layer 3 doing its best rather than a hard guarantee — it is still worth treating as a defect to fix in the prompt or the corpus, not as acceptable behaviour.
+
+Other kodexArg subdomains (the CV, docs, design system, project sites) are unaffected by any of the three layers and remain normal citations.
 
 ---
 
@@ -124,6 +169,11 @@ Any PR touching `src/lib/kodexbar/`, `src/pages/api/ask.ts`, `src/lib/chat/`, or
 - [ ] Every new `DESTINATIONS` entry was verified reachable, public and live (§5).
 - [ ] Output post-processing still strips formatting and URL-shaped text (§4).
 - [ ] Server-side rate limiting still present and independent of the client cooldown (§7).
+- [ ] A pending link offer still comes from KV, never from the request body, and consuming it is unconditional (§8).
+- [ ] `classifyConsent()` still returns only `yes | no | other`, still fails to `other`, and its output is still never rendered (§8).
+- [ ] Revealed links still pass through `resolveLinkIds()` rather than being trusted from KV (§8).
+- [ ] `nextId` still resolves only against that turn's offered candidates; unknown ids still fall back to the deterministic first candidate, never to model text (§9).
+- [ ] All three self-reference layers hold: no `home`-equivalent entry in `DESTINATIONS`, `BARE_DOMAIN` in `scrubAnswerText` still strips the site's own hostnames, and the system prompt still instructs against naming them in words (§10).
 - [ ] `SyvInput` (`¿Sí?`) design tokens and keyboard accessibility preserved.
 
 ## Notes on the superseded ADR
