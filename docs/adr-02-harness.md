@@ -22,9 +22,9 @@ To activate architectural decision records and harness rules with operational fo
 
 ## Edge Harness Capabilities & Security Rules
 
-1. **Origin-Bound Endpoint Execution**: API routes (e.g. `/api/vector-route`) validate request headers and run strictly within the Cloudflare Pages/Worker environment.
-2. **Server-Side Cooldown Enforcement**: Rate limits and cooldown intervals are enforced authoritatively on the edge (never solely on the client).
-3. **Closed-Action Dispatch**: The backend/router never reflects arbitrary client-supplied URLs or raw redirection instructions. It returns typed `RouteResult` payloads tied to allowlisted destinations.
+1. **Origin-Bound Endpoint Execution**: API routes (e.g. `/api/ask`) validate request headers and run strictly within the Cloudflare Pages/Worker environment.
+2. **Server-Side Cooldown Enforcement**: Rate limits and cooldown intervals are enforced authoritatively on the edge (never solely on the client). The client-side cooldown is a UX affordance, not a control — see [ADR 09 §7](adr-09-kodexbar-security.md).
+3. **Closed-Link Dispatch**: The backend never reflects arbitrary client-supplied URLs, and the LLM cannot emit one: it returns destination **ids**, resolved server-side against the allowlist. Model prose is permitted; model URLs are structurally impossible — see [ADR 09 §1](adr-09-kodexbar-security.md).
 4. **Zero-Trust Environment Bindings**: Cloudflare Workers AI (`env.AI`) and Vectorize (`env.VECTOR_INDEX`) run via native internal bindings, eliminating external API tokens.
 
 ---

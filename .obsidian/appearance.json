@@ -4,6 +4,5 @@
   "showRibbon": true,
   "enabledCssSnippets": [
     "presentation-orange"
-  ],
-  "mode": "dark"
+  ]
 }

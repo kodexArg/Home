@@ -1,23 +1,19 @@
-import { globalAdaptiveRouter } from '../router/adaptiveRouter';
-import { presentResult } from '../router/presentResult';
-import type { RouteDestination, RouteResult, RouterOptions } from '../router/types';
+import type { KodexAnswer, LinkDestination } from '../kodexbar/types';
 import { DEFAULT_LANGUAGE, type SupportedLanguage } from '../ui/language';
 
 /**
  * Headless chat session — owns the conversation state and the submit flow.
  *
- * This module contains NO framework and NO DOM code: it is plain TypeScript so
- * it can be unit-tested without Svelte and without a browser. The Svelte
- * component is a pure presentation layer that drives `submit()` and renders
- * `snapshot()`.
+ * No framework and no DOM code: plain TypeScript, unit-testable without Svelte
+ * and without a browser. The Svelte component is a pure presentation layer that
+ * drives `submit()` and renders `snapshot()`.
  *
- * adr-09 note: line objects only ever carry a `destination`/`options` taken
- * verbatim from a `RouteResult`, so a rendered URL can only ever originate
- * from a `RouteDestination.url`. Prose comes from `presentResult()` (fixed
- * copy) or from the fixed copy table below — never from user input.
+ * adr-09 note: an `AnswerLine` only ever carries `links` taken verbatim from a
+ * `KodexAnswer`, whose entries the server resolved against the destination
+ * allowlist. `text` is server-scrubbed plain text and MUST be rendered as text,
+ * never as HTML or Markdown.
  */
 
-/** Alias of the shared UI language type so the two can never drift apart. */
 export type ChatLanguage = SupportedLanguage;
 
 export interface UserLine {
@@ -25,80 +21,62 @@ export interface UserLine {
 	text: string;
 }
 
+/** Client-side notices: cooldown, transport failure. Never model output. */
 export interface StatusLine {
 	role: 'assistant';
 	kind: 'status';
 	text: string;
 }
 
-export interface NavigateLine {
+/** A reply from KodexBar: one paragraph, plus zero or more allowlisted links. */
+export interface AnswerLine {
 	role: 'assistant';
-	kind: 'navigate';
-	opener: string;
-	abstract?: string;
-	destination: RouteDestination;
-	score?: number;
-	strategyName: string;
+	kind: 'answer';
+	text: string;
+	links: LinkDestination[];
+	/** False when the retrieval gate declined the query. */
+	matched: boolean;
 }
 
-export interface ConfirmLine {
-	role: 'assistant';
-	kind: 'confirm';
-	opener: string;
-	abstract?: string;
-	closer?: string;
-	destination?: RouteDestination;
-	options: RouteDestination[];
-	score?: number;
-	strategyName: string;
+export type ChatLine = UserLine | StatusLine | AnswerLine;
+
+/** Minimal port of the backend the session depends on. Injected in tests. */
+export interface KodexBarPort {
+	ask(query: string, language: ChatLanguage): Promise<KodexAnswer>;
 }
 
-export type ChatLine = UserLine | StatusLine | NavigateLine | ConfirmLine;
-
-/** Minimal port of the router the session depends on. */
-export interface ChatRouterPort {
-	route(query: string, options?: RouterOptions): Promise<RouteResult>;
-}
-
-export type SubmitOutcome = 'ignored' | 'cooldown' | 'routed';
+export type SubmitOutcome = 'ignored' | 'cooldown' | 'answered';
 
 export interface ChatSessionSnapshot {
 	history: ChatLine[];
-	isRouting: boolean;
+	isThinking: boolean;
 	language: ChatLanguage;
 	/** Milliseconds left on the cooldown gate; 0 when a submit is accepted. */
 	cooldownRemainingMs: number;
 }
 
 export interface ChatSessionOptions {
-	/** Router used to resolve queries. Defaults to the global adaptive router. */
-	router?: ChatRouterPort;
+	/** Backend used to answer queries. Defaults to POSTing /api/ask. */
+	backend?: KodexBarPort;
 	/** Clock source. Injected so the cooldown is testable without waiting. */
 	now?: () => number;
-	/** Delay function used for the cosmetic routing pause. Injected for tests. */
+	/** Delay function used for the cosmetic pause. Injected for tests. */
 	delay?: (ms: number) => Promise<void>;
-	/** Cooldown window between accepted submits. */
 	cooldownMs?: number;
-	/** Cosmetic "typing" pause applied after the router answers. */
 	responseDelayMs?: number;
-	/** Initial language. */
 	language?: ChatLanguage;
-	/** Called after every state mutation with a fresh snapshot. */
 	onChange?: (snapshot: ChatSessionSnapshot) => void;
-	/** Error sink, defaults to console.error. */
 	onError?: (error: unknown) => void;
 }
 
 const COPY = {
 	es: {
-		cooldown: (seconds: number) =>
-			`⏱️ Por favor espera ${seconds}s antes de enviar otra consulta (cooldown de 3s).`,
-		failure: 'Ocurrió un error procesando la consulta. Intente nuevamente.'
+		cooldown: (seconds: number) => `Esperá ${seconds}s antes de enviar otra consulta.`,
+		failure: 'No pude conectarme. Probá de nuevo en un momento.'
 	},
 	en: {
-		cooldown: (seconds: number) =>
-			`⏱️ Please wait ${seconds}s before sending another query (3s cooldown).`,
-		failure: 'An error occurred while processing your request. Please try again.'
+		cooldown: (seconds: number) => `Wait ${seconds}s before sending another query.`,
+		failure: "I couldn't connect. Please try again in a moment."
 	}
 } as const;
 
@@ -115,8 +93,39 @@ export function isSubmittable(query: string): boolean {
 
 const defaultDelay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Default backend: POST /api/ask.
+ *
+ * A non-OK response still carries a well-formed `KodexAnswer` body — the
+ * endpoint guarantees that on every path — so 429 and 4xx render as ordinary
+ * assistant lines rather than as errors. Only a transport failure or an
+ * unparseable body throws.
+ */
+const defaultBackend: KodexBarPort = {
+	async ask(query, language) {
+		const response = await fetch('/api/ask', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ query, language })
+		});
+
+		const data = (await response.json()) as KodexAnswer;
+		if (typeof data?.text !== 'string') {
+			throw new Error('Malformed response from /api/ask');
+		}
+
+		return {
+			text: data.text,
+			links: Array.isArray(data.links) ? data.links : [],
+			language: data.language ?? language,
+			matched: Boolean(data.matched),
+			score: data.score
+		};
+	}
+};
+
 export class ChatSession {
-	private readonly router: ChatRouterPort;
+	private readonly backend: KodexBarPort;
 	private readonly now: () => number;
 	private readonly delay: (ms: number) => Promise<void>;
 	private readonly cooldownMs: number;
@@ -125,34 +134,33 @@ export class ChatSession {
 	private readonly onError: (error: unknown) => void;
 
 	private lines: ChatLine[] = [];
-	private routing = false;
+	private thinking = false;
 	private lang: ChatLanguage;
 	private lastAcceptedAt = 0;
 
 	constructor(options: ChatSessionOptions = {}) {
-		this.router = options.router ?? globalAdaptiveRouter;
+		this.backend = options.backend ?? defaultBackend;
 		this.now = options.now ?? Date.now;
 		this.delay = options.delay ?? defaultDelay;
 		this.cooldownMs = options.cooldownMs ?? DEFAULT_COOLDOWN_MS;
 		this.responseDelayMs = options.responseDelayMs ?? DEFAULT_RESPONSE_DELAY_MS;
 		this.lang = options.language ?? DEFAULT_LANGUAGE;
 		this.onChange = options.onChange;
-		this.onError = options.onError ?? ((error) => console.error('Routing error:', error));
+		this.onError = options.onError ?? ((error) => console.error('KodexBar error:', error));
 	}
 
 	get history(): readonly ChatLine[] {
 		return this.lines;
 	}
 
-	get isRouting(): boolean {
-		return this.routing;
+	get isThinking(): boolean {
+		return this.thinking;
 	}
 
 	get language(): ChatLanguage {
 		return this.lang;
 	}
 
-	/** Milliseconds still to wait before a submit would be accepted. */
 	cooldownRemainingMs(): number {
 		const elapsed = this.now() - this.lastAcceptedAt;
 		return elapsed < this.cooldownMs ? this.cooldownMs - elapsed : 0;
@@ -161,7 +169,7 @@ export class ChatSession {
 	snapshot(): ChatSessionSnapshot {
 		return {
 			history: [...this.lines],
-			isRouting: this.routing,
+			isThinking: this.thinking,
 			language: this.lang,
 			cooldownRemainingMs: this.cooldownRemainingMs()
 		};
@@ -194,61 +202,26 @@ export class ChatSession {
 
 		this.lastAcceptedAt = this.now();
 		this.append({ role: 'user', text: trimmed });
-		this.setRouting(true);
+		this.setThinking(true);
 
 		try {
-			const result = await this.router.route(trimmed, { language: this.lang });
-
-			// Cosmetic typing/routing pause.
+			const answer = await this.backend.ask(trimmed, this.lang);
 			await this.delay(this.responseDelayMs);
-
-			this.append(...this.linesFor(result));
+			this.append({
+				role: 'assistant',
+				kind: 'answer',
+				text: answer.text,
+				links: answer.links,
+				matched: answer.matched
+			});
 		} catch (error) {
 			this.onError(error);
 			this.append({ role: 'assistant', kind: 'status', text: COPY[this.lang].failure });
 		} finally {
-			this.setRouting(false);
+			this.setThinking(false);
 		}
 
-		return 'routed';
-	}
-
-	/** Maps a RouteResult onto the renderable lines. Formatting stays in presentResult(). */
-	private linesFor(result: RouteResult): ChatLine[] {
-		const presented = presentResult(result);
-
-		if (result.outcome === 'Action' && result.action?.kind === 'navigate' && result.destination) {
-			return [
-				{
-					role: 'assistant',
-					kind: 'navigate',
-					opener: presented.opener,
-					abstract: presented.description,
-					destination: result.destination,
-					score: result.score,
-					strategyName: result.strategyName
-				}
-			];
-		}
-
-		if (result.outcome === 'Confirm' || result.action?.kind === 'confirm') {
-			const optionsList = result.options || (result.destination ? [result.destination] : []);
-			return [
-				{
-					role: 'assistant',
-					kind: 'confirm',
-					opener: presented.opener,
-					abstract: presented.description,
-					closer: presented.closer,
-					destination: result.destination || optionsList[0],
-					options: optionsList,
-					score: result.score,
-					strategyName: result.strategyName
-				}
-			];
-		}
-
-		return [{ role: 'assistant', kind: 'status', text: presented.opener }];
+		return 'answered';
 	}
 
 	private append(...lines: ChatLine[]): void {
@@ -256,8 +229,8 @@ export class ChatSession {
 		this.emit();
 	}
 
-	private setRouting(value: boolean): void {
-		this.routing = value;
+	private setThinking(value: boolean): void {
+		this.thinking = value;
 		this.emit();
 	}
 

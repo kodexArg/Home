@@ -19,7 +19,7 @@ To maintain clean separation of concerns, optimal bundle size, and developer pre
 
 2. **`*.svelte` Files (Mandatory for ALL Interactive Components)**:
    * Every UI element, stateful widget, input field, chat console, or animation island MUST be written as a Svelte 5 component (`src/components/*.svelte`).
-   * Examples: [LlmRouterChat.svelte](file:///home/kodex/kodexArg/Home/src/components/LlmRouterChat.svelte), [SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte), [Wordmark.svelte](file:///home/kodex/kodexArg/Home/src/components/Wordmark.svelte), [Aurora.svelte](file:///home/kodex/kodexArg/Home/src/components/Aurora.svelte).
+   * Examples: [KodexBar.svelte](file:///srv/dev/kodexArg/Home/src/components/KodexBar.svelte), [SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte), [Wordmark.svelte](file:///home/kodex/kodexArg/Home/src/components/Wordmark.svelte), [Aurora.svelte](file:///home/kodex/kodexArg/Home/src/components/Aurora.svelte).
    * Mounted in Astro pages using `client:only="svelte"` or `client:idle`.
 
 ## Rationale & Benefits

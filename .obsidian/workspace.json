@@ -1,0 +1,213 @@
+{
+  "main": {
+    "id": "d694d2c4afcc5609",
+    "type": "split",
+    "children": [
+      {
+        "id": "5b825ea91657d4e0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bebaee88cdf2ae8c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/adr-09-kodexbar-security.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "adr-09-kodexbar-security"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2444d3371c48e41d",
+    "type": "split",
+    "children": [
+      {
+        "id": "7540cc277bbc518a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fc590b93b162964e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "53d0b707f0b53a0d",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "8e02eb84f129a8de",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e2a4127a2d43a59a",
+    "type": "split",
+    "children": [
+      {
+        "id": "dc12331f10544f92",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bc47220f090357e1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/adr-09-kodexbar-security.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for adr-09-kodexbar-security"
+            }
+          },
+          {
+            "id": "3e16f6211e7ef45e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/adr-09-kodexbar-security.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from adr-09-kodexbar-security"
+            }
+          },
+          {
+            "id": "d526ff674b5a9e8a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "4fceab93f4b5df74",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "60371d376ce1ba80",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/adr-09-kodexbar-security.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of adr-09-kodexbar-security"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "bebaee88cdf2ae8c",
+  "lastOpenFiles": [
+    "src/lib/kodexbar/packs/defineChunks.ts",
+    "src/lib/kodexbar/packs/defineChunks.ts.tmp.102498.101454a4798b",
+    "src/lib/kodexbar/packs",
+    "docs/PRD.md.tmp.102498.58019c395cfd",
+    "docs/adr-04-database.md.tmp.102498.99276925757f",
+    "docs/adr-04-database.md.tmp.102498.440b3b89d335",
+    "docs/adr-03-backend.md.tmp.102498.a795b3cfe247",
+    "docs/adr-03-backend.md.tmp.102498.adace8b5200c",
+    "docs/adr-02-harness.md.tmp.102498.7e0e457ff47f",
+    "docs/adr-01-glossary.md.tmp.102498.79601d79d8d3",
+    "docs/adr-01-glossary.md.tmp.102498.b0083aa6c53f",
+    "docs/adr-10-llm-connection.md",
+    "docs/adr-10-kodexbar-architecture.md",
+    "docs/adr-09-kodexbar-security.md",
+    "docs/adr-09-chatui-router.md",
+    "docs/adr-08-environment-variables.md",
+    "docs/adr-07-componentization.md",
+    "docs/adr-06-design-system.md",
+    "docs/adr-05-frontend.md",
+    "docs/adr-04-database.md",
+    "docs/adr-03-backend.md",
+    "docs/adr-02-harness.md",
+    "docs/adr-01-glossary.md",
+    "docs/adr-00-template.md"
+  ]
+}
