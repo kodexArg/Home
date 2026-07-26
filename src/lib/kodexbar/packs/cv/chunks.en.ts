@@ -351,7 +351,7 @@ const DEFS: ChunkDef[] = [
 			assistant behind it: vector retrieval over Cloudflare Vectorize with embeddings and generation
 			on Cloudflare Workers AI, built with Astro 7 and Svelte 5 islands. It answers questions about
 			Gabriel Cavedal and hands out links to the public projects. It is this very system.`,
-		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
+		related: ['syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
 		tags: ['home', 'kodexbar', 'kodexarg', 'this site', 'this page', 'who are you', 'what are you', 'vectorize', 'workers ai', 'rag', 'astro', 'svelte', 'cloudflare']
 	},
 	{
@@ -383,7 +383,7 @@ const DEFS: ChunkDef[] = [
 			domain and its subdomains, and the GitHub organization of the same name, where he
 			publishes open-source repositories: developer tools, AI agent frameworks, IoT automation
 			scripts, cloud infrastructure templates and application source code.`,
-		related: ['github', 'home', 'docs', 'cv'],
+		related: ['cv', 'github'],
 		tags: ['kodexarg', 'organization', 'brand', 'github', 'open source', 'repositories', 'what is kodexarg', 'ecosystem']
 	},
 	{

@@ -70,17 +70,14 @@ export const DESTINATIONS: LinkDestination[] = [
   // =========================================================================
   // 2. LIVE WEB APPLICATIONS & CORE ECOSYSTEM SERVICES
   // =========================================================================
-  {
-    id: 'home',
-    kind: 'site',
-    name: 'kodexArg Home - KodexBar',
-    url: 'https://home.kodexarg.com',
-    description: 'Minimalist front door for the kodexArg ecosystem, powered by KodexBar: a single-tier assistant over Cloudflare Workers AI and Vectorize that answers questions about Gabriel Cavedal and hands out links. Built with Astro 7 and Svelte 5 islands.',
-    keywords: [
-      'home', 'inicio', 'portal', 'kodexbar', 'console', 'terminal',
-      'kodex', 'kodexarg', 'front door', 'pipboy', 'vector search', 'cloudflare vectorize'
-    ]
-  },
+  // The `home` entry was removed. It pointed at kodexarg.com — this very page.
+  // Every visitor reading a KodexBar answer is already there, so offering it is
+  // never the most useful link and sometimes the only one offered, which is how
+  // "¿Quién es kodexArg?" ended up linking to itself instead of to the CV.
+  //
+  // A destination is somewhere a visitor can be *sent*. This origin is where
+  // they already are, so it is not a destination at all. Guarded by a test in
+  // destinations.test.ts rather than by remembering.
   {
     id: 'cv',
     kind: 'site',

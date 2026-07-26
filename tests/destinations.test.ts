@@ -49,6 +49,23 @@ describe('DESTINATIONS', () => {
 	});
 });
 
+describe('self-referential destinations', () => {
+	// KodexBar renders its answers ON these origins. A visitor reading the answer
+	// is already there, so such an entry is never the most useful link — and when
+	// it is the only one a chunk offers, it is the link that gets shown. That is
+	// how "¿Quién es kodexArg?" came to link to itself instead of to the CV.
+	const OWN_ORIGINS = ['kodexarg.com', 'www.kodexarg.com', 'home.kodexarg.com'];
+
+	it('does not offer a link back to the site the answer is rendered on', () => {
+		const offenders = DESTINATIONS.filter((d) => {
+			const host = d.url.replace(/^https?:\/\//, '').replace(/[/?#].*$/, '').toLowerCase();
+			return OWN_ORIGINS.includes(host);
+		}).map((d) => `${d.id} -> ${d.url}`);
+
+		expect(offenders).toEqual([]);
+	});
+});
+
 describe('resolveLinkIds', () => {
 	it('resolves known ids in order', () => {
 		expect(resolveLinkIds(['github', 'cv']).map((d) => d.id)).toEqual(['github', 'cv']);

@@ -384,7 +384,7 @@ const DEFS: ChunkDef[] = [
 			generación en Cloudflare Workers AI, construido con Astro 7 e islas Svelte 5. Responde
 			preguntas sobre Gabriel Cavedal y entrega links a los proyectos públicos. Es este mismo
 			sistema.`,
-		related: ['home', 'syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
+		related: ['syv-design-system', 'skill-ia-agentes', 'skill-fullstack', 'kodexbar-funcion'],
 		tags: ['home', 'kodexbar', 'kodexarg', 'este sitio', 'esta pagina', 'quien sos', 'que sos', 'vectorize', 'workers ai', 'rag', 'astro', 'svelte', 'cloudflare']
 	},
 	{
@@ -417,7 +417,7 @@ const DEFS: ChunkDef[] = [
 			propio y sus subdominios, y la organización de GitHub del mismo nombre, donde publica
 			repositorios open source: herramientas para desarrolladores, frameworks de agentes de IA,
 			scripts de automatización IoT, plantillas de infraestructura cloud y código de aplicaciones.`,
-		related: ['github', 'home', 'docs', 'cv'],
+		related: ['cv', 'github'],
 		tags: ['kodexarg', 'organizacion', 'marca', 'github', 'open source', 'repositorios', 'que es kodexarg', 'ecosistema']
 	},
 	{
