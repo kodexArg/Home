@@ -43,6 +43,11 @@
 	let placeholder = $derived(language === 'es' ? '¿Sí?' : 'Yes?');
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
+	// The typewriter is a first-impression effect, not a per-message one: only
+	// the opening answer types itself out. Replaying it on every reply turns a
+	// flourish into a delay the visitor has to sit through.
+	let firstAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
+
 	function commitQuery(query) {
 		if (!isSubmittable(query)) return;
 		currentInput = '';
@@ -55,12 +60,14 @@
 	}
 </script>
 
-<div class="chat-container" role="region" aria-label="KodexBar">
-	<!-- Top bar with the segmented ES | EN language control -->
-	<div class="top-controls">
-		<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
-	</div>
+<!-- The language control is pinned to the viewport, not stacked above the log.
+     Inside the column it rode on top of the scrollback and was pushed off the
+     top of the screen as soon as the conversation grew past a couple of turns. -->
+<div class="top-controls">
+	<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
+</div>
 
+<div class="chat-container" role="region" aria-label="KodexBar">
 	<!-- Terminal Scrollback Stack -->
 	<div class="stack" role="log" aria-live="polite" aria-label="Historial de mensajes">
 		{#each history as line, i (i)}
@@ -70,7 +77,13 @@
 					<span class="user-text">{line.text}</span>
 				{:else if line.kind === 'answer'}
 					<div class="answer-block">
-						<span class="bot-text"><Typewriter text={line.text} /></span>
+						<span class="bot-text">
+							{#if i === firstAnswerIndex}
+								<Typewriter text={line.text} />
+							{:else}
+								{line.text}
+							{/if}
+						</span>
 						{#if line.links.length > 0}
 							<div class="links">
 								{#each line.links as link (link.id)}
@@ -144,10 +157,14 @@
 		gap: 0.75rem;
 	}
 
+	/* Pinned to the viewport so it survives a long conversation. */
 	.top-controls {
+		position: fixed;
+		top: 1.4rem;
+		right: 1.8rem;
+		z-index: 4;
 		display: flex;
 		justify-content: flex-end;
-		width: 100%;
 	}
 
 	.stack {
@@ -155,10 +172,38 @@
 		flex-direction: column;
 		justify-content: flex-end;
 		align-items: flex-start;
-		max-height: calc(100vh - 200px);
+		max-height: calc(100vh - 180px);
 		overflow-y: auto;
 		gap: 0.75rem;
 		padding-right: 0.5rem;
+
+		/* Old turns dissolve upward instead of piling up. The newest exchange —
+		   the only one that matters — stays fully legible at the bottom; anything
+		   past the midpoint fades out and is gone by the top of the log. */
+		-webkit-mask-image: linear-gradient(
+			to top,
+			#000 0%,
+			#000 48%,
+			rgba(0, 0, 0, 0.45) 72%,
+			rgba(0, 0, 0, 0.12) 88%,
+			transparent 100%
+		);
+		mask-image: linear-gradient(
+			to top,
+			#000 0%,
+			#000 48%,
+			rgba(0, 0, 0, 0.45) 72%,
+			rgba(0, 0, 0, 0.12) 88%,
+			transparent 100%
+		);
+
+		/* The mask hides the scrollbar's usefulness anyway, and a visible track
+		   fights the dissolve. */
+		scrollbar-width: none;
+	}
+
+	.stack::-webkit-scrollbar {
+		display: none;
 	}
 
 	.line {
@@ -179,6 +224,16 @@
 
 	.user {
 		color: var(--cream-100);
+	}
+
+	/* Each query opens a new exchange, so it carries the breathing room that
+	   separates one turn from the previous answer. The first line needs none. */
+	.line.user {
+		padding-top: 1.6rem;
+	}
+
+	.line.user:first-child {
+		padding-top: 0;
 	}
 
 	.prompt {
