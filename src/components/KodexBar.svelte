@@ -48,6 +48,22 @@
 
 	let inputRef;
 
+	let stackEl;
+	let scrollbackRunsPastTheTop = $state(false);
+
+	$effect(() => {
+		history;
+		isThinking;
+		if (!stackEl) return;
+		const measure = () => {
+			scrollbackRunsPastTheTop = stackEl.scrollHeight - stackEl.clientHeight > 1;
+		};
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(stackEl);
+		return () => observer.disconnect();
+	});
+
 	const A_TAP_HERE_WOULD_ONLY_RAISE_THE_KEYBOARD = '(hover: none) and (pointer: coarse)';
 
 	function clickLandedOnSomethingThatHandlesItself(target) {
@@ -105,7 +121,14 @@
 </script>
 
 <div class="chat-container" role="region" aria-label="KodexBar">
-	<div class="stack" role="log" aria-live="polite" aria-label="Historial de mensajes">
+	<div
+		class="stack"
+		class:stack--clipped={scrollbackRunsPastTheTop}
+		bind:this={stackEl}
+		role="log"
+		aria-live="polite"
+		aria-label="Historial de mensajes"
+	>
 		{#each history as line, i (i)}
 			<div class="line committed {line.role}">
 				{#if line.role === 'user'}
@@ -232,22 +255,23 @@
 		min-height: 0;
 		overflow-y: auto;
 
-		--kodexbar-scrollback-fade-start: 88%;
-		--kodexbar-scrollback-fade-end: 100%;
+		scrollbar-width: none;
+	}
+
+	.stack--clipped {
+		--kodexbar-scrollback-fade-start: calc(100% - 2.4rem);
 		-webkit-mask-image: linear-gradient(
 			to top,
 			#000 0%,
 			#000 var(--kodexbar-scrollback-fade-start),
-			transparent var(--kodexbar-scrollback-fade-end)
+			transparent 100%
 		);
 		mask-image: linear-gradient(
 			to top,
 			#000 0%,
 			#000 var(--kodexbar-scrollback-fade-start),
-			transparent var(--kodexbar-scrollback-fade-end)
+			transparent 100%
 		);
-
-		scrollbar-width: none;
 	}
 
 	.stack::-webkit-scrollbar {
