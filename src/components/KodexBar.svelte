@@ -232,8 +232,8 @@
 		min-height: 0;
 		overflow-y: auto;
 
-		--kodexbar-scrollback-fade-start: 50%;
-		--kodexbar-scrollback-fade-end: 75%;
+		--kodexbar-scrollback-fade-start: 88%;
+		--kodexbar-scrollback-fade-end: 100%;
 		-webkit-mask-image: linear-gradient(
 			to top,
 			#000 0%,
