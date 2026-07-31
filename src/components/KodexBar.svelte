@@ -152,15 +152,14 @@
 	{/if}
 
 	<div class="input-bar-wrapper">
-		{#if showTabHint}
-			<button
-				type="button"
-				class="tab-hint"
-				onclick={() => inputRef?.acceptSuggestionFromOutside()}
-			>
-				{tabHintLabel}
-			</button>
-		{/if}
+		<button
+			type="button"
+			class="tab-hint"
+			class:tab-hint--spent={!showTabHint}
+			onclick={() => inputRef?.acceptSuggestionFromOutside()}
+		>
+			{tabHintLabel}
+		</button>
 		<SyvInput
 			bind:this={inputRef}
 			label={undefined}
@@ -353,6 +352,10 @@
 		animation:
 			hint-in 1.4s var(--ease-candle, ease-out) both,
 			ember-breath 4.2s ease-in-out 1.4s infinite alternate;
+	}
+
+	.tab-hint--spent {
+		visibility: hidden;
 	}
 
 	.tab-hint:hover,
