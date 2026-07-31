@@ -40,24 +40,11 @@
 
 	let showTabHint = $derived(Boolean(proposal) && currentInput.trim() === '');
 
-	const NO_KEYBOARD_TO_PRESS_TAB_WITH = '(hover: none) and (pointer: coarse)';
-
-	let suggestionIsTappedNotTabbed = $state(false);
-
-	$effect(() => {
-		const coarse = window.matchMedia(NO_KEYBOARD_TO_PRESS_TAB_WITH);
-		suggestionIsTappedNotTabbed = coarse.matches;
-		const follow = (e) => (suggestionIsTappedNotTabbed = e.matches);
-		coarse.addEventListener('change', follow);
-		return () => coarse.removeEventListener('change', follow);
-	});
-
-	function hintLabelFor(activeLanguage, tapped) {
-		if (tapped) return activeLanguage === 'es' ? 'CLICK para autocompletar' : 'CLICK to autocomplete';
-		return activeLanguage === 'es' ? 'TAB para completar' : 'TAB to complete';
+	function hintLabelFor(activeLanguage) {
+		return activeLanguage === 'es' ? 'TAB o CLICK' : 'TAB or CLICK';
 	}
 
-	let tabHintLabel = $derived(hintLabelFor(language, suggestionIsTappedNotTabbed));
+	let tabHintLabel = $derived(hintLabelFor(language));
 
 	let inputRef;
 
@@ -166,17 +153,13 @@
 
 	<div class="input-bar-wrapper">
 		{#if showTabHint}
-			{#if suggestionIsTappedNotTabbed}
-				<button
-					type="button"
-					class="tab-hint tab-hint--tappable"
-					onclick={() => inputRef?.acceptSuggestionFromOutside()}
-				>
-					{tabHintLabel}
-				</button>
-			{:else}
-				<span class="tab-hint">{tabHintLabel}</span>
-			{/if}
+			<button
+				type="button"
+				class="tab-hint"
+				onclick={() => inputRef?.acceptSuggestionFromOutside()}
+			>
+				{tabHintLabel}
+			</button>
 		{/if}
 		<SyvInput
 			bind:this={inputRef}
@@ -194,15 +177,18 @@
 	.chat-container {
 		position: absolute;
 		left: 1.5rem;
-		bottom: 1.5rem;
 		right: 1.5rem;
+		top: 50%;
+		transform: translateY(-50%);
 		max-width: 720px;
 		margin: 0 auto;
 		z-index: 2;
 		font-family: var(--font-mono);
 		display: flex;
 		flex-direction: column;
+		justify-content: flex-end;
 		gap: 0.75rem;
+		max-height: calc(100dvh - 3rem);
 	}
 
 	.bottom-controls {
@@ -219,8 +205,9 @@
 		gap: 0.75rem;
 		padding-right: 0.5rem;
 
-		--kodexbar-stack-reserved-input-bar-height: 270px;
-		height: calc(100vh - var(--kodexbar-stack-reserved-input-bar-height));
+		--kodexbar-stack-grown-conversation-ceiling: 42dvh;
+		max-height: var(--kodexbar-stack-grown-conversation-ceiling);
+		min-height: 0;
 		overflow-y: auto;
 
 		--kodexbar-scrollback-fade-start: 50%;
@@ -347,54 +334,43 @@
 	}
 
 	.tab-hint {
-		display: block;
-		font-family: var(--font-mono);
-		font-size: 9.5px;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		color: var(--warm-400);
-		--kodexbar-tab-hint-whisper-opacity: 0.28;
-		opacity: var(--kodexbar-tab-hint-whisper-opacity);
-		padding-left: 1.21875rem;
-		margin-bottom: 0.3rem;
-		user-select: none;
-		pointer-events: none;
-		animation: hint-in 1.4s var(--ease-candle, ease-out) both;
-	}
-
-	.tab-hint--tappable {
 		display: inline-block;
 		appearance: none;
 		border: 0;
 		background: none;
-		font: inherit;
-		font-size: 9.5px;
+		font-family: var(--font-mono);
+		font-size: 10.5px;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
 		text-align: left;
 		cursor: pointer;
-		pointer-events: auto;
-		--kodexbar-tab-hint-whisper-opacity: 0.55;
-		--kodexbar-tab-hint-ember: #b56f3c;
-		color: var(--kodexbar-tab-hint-ember);
+		color: var(--orange-400);
+		--kodexbar-tab-hint-whisper-opacity: 0.92;
+		opacity: var(--kodexbar-tab-hint-whisper-opacity);
 		padding: 0.45rem 1.21875rem 0.35rem;
-		margin-bottom: 0;
+		user-select: none;
 		-webkit-tap-highlight-color: transparent;
 		animation:
 			hint-in 1.4s var(--ease-candle, ease-out) both,
 			ember-breath 4.2s ease-in-out 1.4s infinite alternate;
 	}
 
-	.tab-hint--tappable:active {
-		--kodexbar-tab-hint-whisper-opacity: 0.85;
+	.tab-hint:hover,
+	.tab-hint:focus-visible {
+		color: var(--orange-300);
+		outline: none;
+	}
+
+	.tab-hint:active {
+		color: var(--cream-100);
 	}
 
 	@keyframes ember-breath {
 		from {
-			color: var(--kodexbar-tab-hint-ember);
-			text-shadow: 0 0 7px rgba(181, 111, 60, 0.35);
+			text-shadow: 0 0 9px rgba(255, 138, 66, 0.4);
 		}
 		to {
-			color: var(--warm-400);
-			text-shadow: 0 0 0 rgba(181, 111, 60, 0);
+			text-shadow: 0 0 0 rgba(255, 138, 66, 0);
 		}
 	}
 
@@ -437,7 +413,7 @@
 		.chat-container {
 			left: 1rem;
 			right: 1rem;
-			bottom: 1rem;
+			max-height: calc(100dvh - 2rem);
 		}
 	}
 </style>

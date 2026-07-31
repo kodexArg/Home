@@ -154,13 +154,14 @@
 		width: 100%;
 		box-sizing: border-box;
 		line-height: 1.5;
-		background-color: rgba(255, 255, 255, 0.02);
-		--syv-input-baseline-rule-color: var(--ink-600);
+		background-color: rgba(255, 106, 26, 0.03);
+		--syv-input-baseline-rule-color: rgba(255, 138, 66, 0.62);
 		background-image: linear-gradient(var(--syv-input-baseline-rule-color), var(--syv-input-baseline-rule-color));
 		background-repeat: no-repeat;
 		background-size: calc(100% - 42px) 2.25px;
 		background-position: 21px calc(100% - 12px);
 		caret-color: var(--orange-500);
+		box-shadow: inset 0 -13px 20px -19px var(--orange-glow);
 		transition:
 			box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
 			background-color 320ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -173,7 +174,7 @@
 	}
 
 	.syv-input::placeholder {
-		color: var(--warm-400);
+		color: var(--warm-300);
 		font-style: normal;
 		letter-spacing: 0.04em;
 		text-shadow: none;
@@ -181,21 +182,22 @@
 	}
 
 	.syv-input:hover {
-		background-color: rgba(255, 255, 255, 0.04);
+		background-color: rgba(255, 106, 26, 0.05);
+		--syv-input-baseline-rule-color: var(--orange-400);
 	}
 
 	.syv-input:focus {
 		outline: none;
-		background-color: rgba(255, 106, 26, 0.05);
+		background-color: rgba(255, 106, 26, 0.08);
 		--syv-input-focus-ribbon-color: var(--orange-500);
-		--syv-input-focus-cell-grid-color: rgba(255, 106, 26, 0.08);
+		--syv-input-focus-cell-grid-color: rgba(255, 106, 26, 0.1);
 		background-image:
 			linear-gradient(var(--syv-input-focus-ribbon-color), var(--syv-input-focus-ribbon-color)),
 			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-focus-cell-grid-color) calc(1ch - 1.5px) 1ch);
 		background-repeat: no-repeat, repeat-x;
 		background-size: calc(100% - 42px) 2.25px, 1ch 100%;
 		background-position: 21px calc(100% - 12px), 21px 0;
-		box-shadow: inset 0 -15px 24px -18px var(--orange-glow);
+		box-shadow: inset 0 -22px 30px -16px var(--orange-glow);
 	}
 
 	.syv-input--grow {
