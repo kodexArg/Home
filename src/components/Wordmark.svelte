@@ -50,7 +50,7 @@
 		);
 		background-repeat: no-repeat;
 		background-position: bottom left;
-		background-size: 100% 1.5px;
+		background-size: 100% 0.0625em;
 	}
 
 	.static {
@@ -67,7 +67,7 @@
 		);
 		background-repeat: no-repeat;
 		background-position: bottom left;
-		background-size: 100% 1px;
+		background-size: 100% 0.06em;
 	}
 
 	.word {

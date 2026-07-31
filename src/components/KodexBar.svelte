@@ -48,6 +48,27 @@
 
 	let inputRef;
 
+	const A_TAP_HERE_WOULD_ONLY_RAISE_THE_KEYBOARD = '(hover: none) and (pointer: coarse)';
+
+	function clickLandedOnSomethingThatHandlesItself(target) {
+		return target instanceof Element && Boolean(target.closest('a, button, input, textarea, select'));
+	}
+
+	function visitorIsSelectingTextInstead() {
+		return String(window.getSelection?.() ?? '').length > 0;
+	}
+
+	$effect(() => {
+		const focusTheBarFromAnywhere = (e) => {
+			if (window.matchMedia(A_TAP_HERE_WOULD_ONLY_RAISE_THE_KEYBOARD).matches) return;
+			if (clickLandedOnSomethingThatHandlesItself(e.target)) return;
+			if (visitorIsSelectingTextInstead()) return;
+			inputRef?.focusFromOutside();
+		};
+		document.addEventListener('click', focusTheBarFromAnywhere);
+		return () => document.removeEventListener('click', focusTheBarFromAnywhere);
+	});
+
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
 	let openingAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
@@ -145,13 +166,7 @@
 		{/if}
 	</div>
 
-	{#if showLanguageToggle}
-		<div class="bottom-controls">
-			<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
-		</div>
-	{/if}
-
-	<div class="input-bar-wrapper">
+	<div class="bottom-controls">
 		<button
 			type="button"
 			class="tab-hint"
@@ -160,6 +175,12 @@
 		>
 			{tabHintLabel}
 		</button>
+		{#if showLanguageToggle}
+			<LanguageToggle {language} onSelect={(next) => languageStore.set(next)} />
+		{/if}
+	</div>
+
+	<div class="input-bar-wrapper">
 		<SyvInput
 			bind:this={inputRef}
 			label={undefined}
@@ -192,7 +213,9 @@
 
 	.bottom-controls {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
 		width: 100%;
 	}
 

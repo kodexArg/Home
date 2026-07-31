@@ -40,6 +40,10 @@
 		moveCaretToEndSoAcceptedTextReadsAsFreshlyTyped();
 	}
 
+	export function focusFromOutside() {
+		inputEl?.focus();
+	}
+
 	export function acceptSuggestionFromOutside() {
 		if (!canAcceptSuggestion) return;
 		acceptSuggestion();
@@ -156,12 +160,12 @@
 		line-height: 1.5;
 		background-color: rgba(255, 106, 26, 0.04);
 		--syv-input-ribbon-color: var(--orange-500);
-		--syv-input-cell-grid-color: rgba(255, 106, 26, 0.09);
+		--syv-input-cell-grid-color: rgba(255, 106, 26, 0.075);
 		background-image:
 			linear-gradient(var(--syv-input-ribbon-color), var(--syv-input-ribbon-color)),
 			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-cell-grid-color) calc(1ch - 1.5px) 1ch);
 		background-repeat: no-repeat, repeat-x;
-		background-size: calc(100% - 42px) 2.25px, 1ch 100%;
+		background-size: calc(100% - 42px) 1.5px, 1ch 100%;
 		background-position: 21px calc(100% - 12px), 21px 0;
 		caret-color: var(--orange-500);
 		box-shadow: inset 0 -18px 26px -18px var(--orange-glow);
@@ -187,11 +191,10 @@
 	.syv-input:hover,
 	.syv-input:focus {
 		outline: none;
-		background-color: rgba(6, 5, 4, 0.55);
-		--syv-input-cell-grid-color: rgba(255, 106, 26, 0.14);
+		--syv-input-cell-grid-color: rgba(255, 106, 26, 0.11);
 		box-shadow:
-			inset 0 -24px 32px -16px var(--orange-glow),
-			0 0 21px -6px rgba(255, 106, 26, 0.3);
+			inset 0 -18px 26px -18px var(--orange-glow),
+			0 0 18px -7px rgba(255, 106, 26, 0.22);
 	}
 
 	.syv-input--grow {
