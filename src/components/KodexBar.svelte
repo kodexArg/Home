@@ -87,6 +87,8 @@
 
 	let thinkingLabel = $derived(language === 'es' ? 'pensando...' : 'thinking...');
 
+	let sendButtonLabel = $derived(language === 'es' ? 'Enviar' : 'Send');
+
 	let openingAnswerIndex = $derived(history.findIndex((l) => l.kind === 'answer'));
 
 	let openingAnswerTypewriterDone = $state(false);
@@ -209,6 +211,7 @@
 			label={undefined}
 			{placeholder}
 			acceptOnTab={proposal}
+			sendLabel={sendButtonLabel}
 			bind:value={currentInput}
 			onCommit={commitQuery}
 			autogrow
