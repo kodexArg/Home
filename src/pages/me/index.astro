@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+
+export const prerender = false;
+---
+
+<Base title="me — kodexArg">
+  <main class="me">
+    <h1>me</h1>
+    <p class="lede">
+      Optional Google identity for kodexArg. The homepage stays public; signing in
+      only unlocks features later.
+    </p>
+    <p class="hint" id="status">Checking session…</p>
+    <p class="actions">
+      <a class="home" href="https://kodexarg.com/">Back to kodexArg</a>
+      <a class="logout" id="logout" hidden href="/cdn-cgi/access/logout">Sign out</a>
+    </p>
+  </main>
+</Base>
+
+<script>
+  const status = document.getElementById('status');
+  const logout = document.getElementById('logout');
+
+  async function refresh() {
+    if (!status) return;
+    try {
+      const res = await fetch('/api/auth/whoami', { credentials: 'same-origin' });
+      const data = (await res.json()) as {
+        accessActive: boolean;
+        authenticated: boolean;
+        email: string | null;
+        name: string | null;
+      };
+      if (!data.accessActive) {
+        status.textContent =
+          'Google login is not active yet on this deployment (Access secrets pending).';
+        return;
+      }
+      if (data.authenticated) {
+        const label = data.name || data.email || 'signed in';
+        status.textContent = `Signed in as ${label}.`;
+        if (logout) logout.hidden = false;
+        return;
+      }
+      status.textContent =
+        'Access is configured. When Cloudflare Access protects /me, Google login runs before this page loads.';
+    } catch {
+      status.textContent = 'Could not read session.';
+    }
+  }
+
+  void refresh();
+</script>
+
+<style>
+  .me {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 2rem 1.8rem;
+    max-width: 28rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--cream-100);
+  }
+
+  .lede,
+  .hint {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--cream-300, #c9b8a4);
+  }
+
+  .hint {
+    color: var(--orange-300);
+    font-size: 0.85rem;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin: 0.4rem 0 0;
+    flex-wrap: wrap;
+  }
+
+  .home,
+  .logout {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--orange-300);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--orange-400);
+  }
+
+  .home:hover,
+  .logout:hover {
+    color: var(--orange-500);
+  }
+</style>

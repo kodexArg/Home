@@ -2,12 +2,17 @@
 import Base from '../layouts/Base.astro';
 import Wordmark from '../components/Wordmark.svelte';
 import KodexBar from '../components/KodexBar.svelte';
+import IdentityOrb from '../components/IdentityOrb.svelte';
 ---
 
 <Base title="kodexArg — Gabriel Cavedal">
   <header>
     <Wordmark static size="1.5rem" href="https://cv.kodexarg.com" />
   </header>
+
+  <aside class="identity" aria-label="Account">
+    <IdentityOrb client:only="svelte" />
+  </aside>
 
   <main aria-label="KodexBar">
     <KodexBar client:only="svelte" />
@@ -24,6 +29,14 @@ import KodexBar from '../components/KodexBar.svelte';
     width: max-content;
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  .identity {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.25rem 1.8rem 1.1rem;
+    z-index: 3;
   }
 
   main {
