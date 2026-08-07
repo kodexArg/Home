@@ -29,6 +29,8 @@ To prevent ambiguity, domain overlap, or inconsistent naming across components, 
 | **`PendingOffer`** | A set of resolved link ids parked in KV `SESSION` after an answer withholds them, awaiting the visitor's consent on the next turn. | `src/lib/kodexbar/offers.ts` |
 | **`Harness`** | Edge-level security layer enforcing cooldowns, origin validation, session capabilities, and zero-trust bindings. | Cloudflare Worker runtime / API routes |
 | **`Pip-Boy Input`** | The typewriter style text field component ([SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte)) featuring platen baseline rule and cell grid on focus. | UI input box |
+| **`/me` (identity surface)** | Canonical optional Google login path on the apex Worker: `https://kodexarg.com/me`. Short host `https://me.kodexarg.com` always redirects here. Apex `/` stays ungated. | [ADR 13](adr-13-optional-google-identity.md) |
+| **`Identity orb`** | Single Svelte chrome for optional identity: top-right circular ocre ring; avatar or login affordance; tiny caption. Starts login; reflects `whoami`. | [ADR 13](adr-13-optional-google-identity.md) |
 
 ## Decision Outcome
 
