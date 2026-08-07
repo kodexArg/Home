@@ -1,0 +1,76 @@
+name: Work
+description: Scoped work item with Required outcomes and Related links (harness-compatible).
+title: "[work]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every issue must declare what must land (**Required**) and what it hangs on (**Related**).
+        For PR prerequisites use `Requires PR: #N` (or `Requires: #N, #M`) inside Related — hunter / `kwf-deps` read that line.
+
+  - type: dropdown
+    id: chapter
+    attributes:
+      label: Chapter
+      description: Optional CAP / milestone this issue belongs to.
+      options:
+        - none
+        - CAP I — minimal base (reaccionar)
+        - CAP II — improve interactions
+        - CAP II — too much → System 2
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One short paragraph — what changes and why.
+      placeholder: Add a System-1 reaction path so clear destination intents skip the LLM…
+    validations:
+      required: true
+
+  - type: textarea
+    id: required
+    attributes:
+      label: Required
+      description: Binding outcomes. The issue is not done until every line here is true. Prefer checkboxes.
+      value: |
+        - [ ] …
+      placeholder: |
+        - [ ] Destination keywords drive a System-1 hit for exact link intents
+        - [ ] Escalation hook exists for “too much” → System 2
+        - [ ] Tests cover the happy path and the escalate path
+    validations:
+      required: true
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: |
+        Links this issue hangs on or illuminates — other issues, PRs (`Requires PR: #N`), ADRs, files, CAP notes, external URLs.
+        Write `none` only when there is genuinely nothing to cite.
+      value: |
+        - Requires PR: #
+        - Issue: #
+        - ADR / docs:
+        - Paths:
+      placeholder: |
+        - Requires PR: #12
+        - Issue: #3 (sibling CAP I slice)
+        - docs/PRD.md §4, docs/adr-10-kodexbar-architecture.md
+        - src/lib/kodexbar/destinations.ts
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: Explicit non-goals for this issue (optional).
+      placeholder: SyV pack content, CAP II interaction polish…
+    validations:
+      required: false
