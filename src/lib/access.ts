@@ -85,14 +85,18 @@ export async function verifyAccessJwt(
 			exp?: number;
 		};
 
-		if (header.alg !== 'RS256') return null;
-		const auds = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
-		if (!auds.includes(expectedAud)) return null;
-		if (!payload.exp || payload.exp * 1000 < Date.now()) return null;
-		if (!payload.email) return null;
+	if (header.alg !== 'RS256') return null;
+	const auds = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
+	if (!auds.includes(expectedAud)) return null;
+	if (!payload.exp || payload.exp * 1000 < Date.now()) return null;
+	if (!payload.email) return null;
 
-		const jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
+	let jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
+	if (!jwk) {
+		certsCache.delete(teamDomain);
+		jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
 		if (!jwk) return null;
+	}
 
 		const key = await crypto.subtle.importKey(
 			'jwk',

@@ -5,6 +5,12 @@ import { truncateDisplayName } from '../../../lib/auth/identitySurface';
 
 export const prerender = false;
 
+function parseCookie(cookieHeader: string | null, name: string): string | null {
+	if (!cookieHeader) return null;
+	const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+	return match ? decodeURIComponent(match[1]) : null;
+}
+
 export interface WhoAmI {
 	accessActive: boolean;
 	authenticated: boolean;
@@ -42,7 +48,9 @@ export const GET: APIRoute = async ({ request }) => {
 		return json(anonymous(false));
 	}
 
-	const assertion = request.headers.get('Cf-Access-Jwt-Assertion');
+	const assertion =
+		request.headers.get('Cf-Access-Jwt-Assertion') ||
+		parseCookie(request.headers.get('Cookie'), 'CF_Authorization');
 	if (!assertion) {
 		return json(anonymous(true));
 	}
