@@ -24,4 +24,4 @@
 * **Package Manager Standard:** `bun` only. `npm`, `npx`, and `yarn` are explicitly prohibited per `AGENTS.md`.
 
 ### 3. API Contract & Answering Endpoint
-`src/pages/api/ask.ts` parses the request, embeds the query with Cloudflare Workers AI (`@cf/baai/bge-m3`), queries Cloudflare Vectorize, applies the retrieval gate, and — only when the gate opens — calls the generation model and returns a structured `KodexAnswer` JSON payload. Full pipeline in [ADR 10](adr-10-kodexbar-architecture.md).
+`src/pages/api/ask.ts` is a **thin HTTP adapter**: parse body, rate-limit, resolve pending link offers, call `answerQuery` from `src/kodexbar/`, shape the JSON response. Embedding, Vectorize, the retrieval gate and generation live in the KodexBar module — not in the route file. Full pipeline in [ADR 10](adr-10-kodexbar-architecture.md). In-repo zone split in [ADR 13](adr-13-repo-layout.md).

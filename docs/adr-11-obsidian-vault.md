@@ -16,6 +16,8 @@ The practice already existed but was recorded nowhere. Commit `02ccaae` ("chore(
 
 The default instinct — and the one this ADR exists to overrule — is to treat editor configuration as machine-local noise and `.gitignore` it. For this repository that instinct is wrong.
 
+`docs/` is **not** KodexCorpus. RAG authoring lives under `corpus/` and is compiled into the engine ([ADR 13](adr-13-repo-layout.md)). Mixing product ADRs into the retrieval index is forbidden.
+
 ## Decision Drivers
 
 * The vault **is** the reading experience of the documentation, not an accessory to it.

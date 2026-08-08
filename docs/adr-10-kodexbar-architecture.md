@@ -45,7 +45,7 @@ Compose prompt ................... base system prompt
       │                            + contributing packs' fragments
       │                            + retrieved chunks
       ▼
-Generate ......................... @cf/meta/llama-3.1-8b-instruct-fp8
+Generate ......................... @cf/zai-org/glm-4.7-flash
       │                            → { text, linkIds[], nextId? }
       ▼
 Resolve + scrub .................. resolveLinkIds() vs DESTINATIONS
@@ -55,7 +55,7 @@ Resolve + scrub .................. resolveLinkIds() vs DESTINATIONS
 KodexAnswer { text, links[], language, matched, suggestion? }
 ```
 
-`nextId` follows the same shape as `linkIds`: the model picks an id from a short authored list (the placeholder's follow-up candidates, `src/lib/kodexbar/suggestions.ts`), the server resolves it, and an unknown id falls back to the strongest deterministic candidate rather than to model text. See [ADR 09 §9](adr-09-kodexbar-security.md). The system prompt additionally forbids the model from mentioning or linking `kodexarg.com` / `www.kodexarg.com` / `home.kodexarg.com` — the visitor asking is already on one of them (ADR 09 §10).
+`nextId` follows the same shape as `linkIds`: the model picks an id from a short authored list (the placeholder's follow-up candidates, `src/kodexbar/suggestions.ts`), the server resolves it, and an unknown id falls back to the strongest deterministic candidate rather than to model text. See [ADR 09 §9](adr-09-kodexbar-security.md). The system prompt additionally forbids the model from mentioning or linking `kodexarg.com` / `www.kodexarg.com` / `home.kodexarg.com` — the visitor asking is already on one of them (ADR 09 §10).
 
 Retrieval is deterministic: cosine similarity and a fixed threshold. The LLM only writes the final paragraph, over context the server chose. Where the answer *comes from* is not a model decision.
 
@@ -71,13 +71,13 @@ The superseded architecture used `@cf/baai/bge-small-en-v1.5`. That is an **Engl
 
 **Operational consequence:** `bge-m3` does not share `bge-small-en-v1.5`'s 384 dimensions. Vectorize indexes are fixed-dimension and cannot be migrated. The existing `kodex-vector-index` MUST be replaced by a new index created with `bge-m3`'s dimension count, taken from the model card at creation time and recorded in `wrangler.jsonc`. Changing the embedding model at any future point means creating a new index and reindexing — never an in-place edit.
 
-### Generation — `@cf/meta/llama-3.1-8b-instruct-fp8`
+### Generation — `@cf/zai-org/glm-4.7-flash`
 
-Requirements: small and fast (this sits in front of a homepage input box), acceptable Spanish, and reliable at emitting a small fixed JSON object.
+Requirements: fast (this sits in front of a homepage input box), strong Spanish, and reliable at emitting a small fixed JSON object.
 
-`llama-3.1-8b-instruct-fp8` is the default. Its output is one short paragraph over supplied context — a task well within an 8B model — and its JSON adherence at this size is adequate given that malformed output is caught by validation rather than trusted.
+`glm-4.7-flash` is the default (switched 2026-08-08 from `llama-3.1-8b-instruct-fp8`). It is multilingual and latency-oriented. Malformed output is still caught by validation rather than trusted.
 
-Evaluated alternates, to be reconsidered if Spanish quality proves insufficient against real queries: `@cf/zai-org/glm-4.7-flash` (explicitly multilingual and fast) and `@cf/mistralai/mistral-small-3.1-24b-instruct` (stronger, slower, costlier). The choice is a **quality/latency tradeoff, not an architectural one**: swapping the generation model requires no index change and no schema change, and does not require an ADR amendment. Swapping the *embedding* model does.
+Other evaluated options: `@cf/qwen/qwen3-30b-a3b-fp8` (stronger, slower) and `@cf/mistralai/mistral-small-3.1-24b-instruct` (stronger, slower, costlier). The choice is a **quality/latency tradeoff, not an architectural one**: swapping the generation model requires no index change and no schema change, and does not require an ADR amendment. Swapping the *embedding* model does.
 
 ### Removed: client-side inference
 
@@ -88,7 +88,9 @@ Chrome Built-in AI (`window.ai` / Gemini Nano) is removed entirely, along with `
 
 ## Knowledge Packs — the extension seam
 
-The corpus is a set of `KnowledgePack`s ([types.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/types.ts)):
+Repo layout (site vs engine vs markdown corpus) is fixed in [ADR 13](adr-13-repo-layout.md). Authoring SSOT is markdown under `corpus/`; the Worker loads compiled packs from `src/kodexbar/packs/`.
+
+The corpus is a set of `KnowledgePack`s ([types.ts](file:///srv/dev/kodexArg/kdx-rag/src/kodexbar/types.ts)):
 
 ```ts
 interface KnowledgePack {
@@ -154,17 +156,18 @@ Private work (Coveris, `syv-mcp-tools`, SROA, the Grupo ALVS platforms) exists i
 
 | Concern | Location |
 |---|---|
-| Types, pack contract | `src/lib/kodexbar/types.ts` |
-| Link allowlist + `resolveLinkIds()` | `src/lib/kodexbar/destinations.ts` |
-| Corpus packs | `src/lib/kodexbar/packs/` |
-| Retrieval + embedding | `src/lib/kodexbar/retrieval.ts` |
-| Answering pipeline | `src/lib/kodexbar/answer.ts` |
-| System prompt | `src/lib/kodexbar/systemPrompt.ts` |
-| Output scrub + JSON parsing | `src/lib/kodexbar/scrub.ts` |
-| Follow-up suggestions (`nextId`) | `src/lib/kodexbar/suggestions.ts` |
-| Rate limiting | `src/lib/kodexbar/rateLimit.ts` |
-| Link offer + consent handshake | `src/lib/kodexbar/offers.ts`, `src/lib/kodexbar/consent.ts` |
-| Endpoint | `src/pages/api/ask.ts` |
-| Dev-only indexing endpoint | `src/pages/api/admin/index-corpus.ts` |
-| Indexing script (drives the endpoint above) | `scripts/index-corpus.ts` |
-| UI | `src/components/KodexBar.svelte`, `src/lib/chat/chatSession.ts` |
+| Markdown authoring SSOT | `corpus/` ([ADR 13](adr-13-repo-layout.md)) |
+| Types, pack contract | `src/kodexbar/types.ts` |
+| Link allowlist + `resolveLinkIds()` | `src/kodexbar/destinations.ts` |
+| Runtime packs (compiled) | `src/kodexbar/packs/` |
+| Retrieval + embedding | `src/kodexbar/retrieval.ts` |
+| Answering pipeline | `src/kodexbar/answer.ts` |
+| System prompt | `src/kodexbar/systemPrompt.ts` |
+| Output scrub + JSON parsing | `src/kodexbar/scrub.ts` |
+| Follow-up suggestions (`nextId`) | `src/kodexbar/suggestions.ts` |
+| Rate limiting | `src/kodexbar/rateLimit.ts` |
+| Link offer + consent handshake | `src/kodexbar/offers.ts`, `src/kodexbar/consent.ts` |
+| HTTP adapters | `src/pages/api/ask.ts`, `src/pages/api/admin/*` |
+| Compile markdown → packs | `scripts/corpus-compile.ts` |
+| Indexing script (drives the admin endpoint) | `scripts/index-corpus.ts` |
+| Site UI | `src/components/KodexBar.svelte`, `src/lib/chat/chatSession.ts` |

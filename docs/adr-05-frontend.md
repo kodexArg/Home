@@ -20,6 +20,8 @@ The frontend for `kodexArg/Home` must deliver an ultra-fast, minimal, Pip-Boy ty
 | **Bundler & Compiler** | **Vite** | 6.x | Fast HMR (Hot Module Replacement) and optimized production asset bundling. |
 | **Adapter** | `@astrojs/cloudflare` | Latest | Deploys Astro server entrypoints to Cloudflare Workers. |
 
+Astro layout stays canonical: `src/pages/`, `src/layouts/`, `src/components/`. Application logic is **not** nested under a fake `surface/pages` tree — see [ADR 13](adr-13-repo-layout.md). Site helpers that are not RAG live in `src/lib/chat/` and `src/lib/ui/` only.
+
 ## Development & Production Workflows
 
 ### 1. Development Workflow

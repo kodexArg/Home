@@ -34,3 +34,4 @@ This ADR remains **Open for Extension** under the Open/Closed Principle. As new 
 
 * *[Extension 2026-07-24]*: Native Cloudflare Workers AI & Vectorize bindings attached to edge runtime via `wrangler.jsonc`.
 * *[Retired 2026-07-26]*: The `outcome: 'Action'` / `NO_MATCH` edge-response validation extension recorded here belonged to the multi-tier router replaced by KodexBar (see [ADR 09](adr-09-kodexbar-security.md), [ADR 10](adr-10-kodexbar-architecture.md)). That enumeration no longer exists in the codebase; the rule has no referent and is retired rather than amended.
+* *[Extension 2026-08-08]*: In-repo zone split — site / `src/kodexbar` / `corpus` — per [ADR 13](adr-13-repo-layout.md). Harness review paths for KodexBar now include `src/kodexbar/` and `corpus/`.
