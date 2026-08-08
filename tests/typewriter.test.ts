@@ -2,7 +2,9 @@ import { describe, expect, test } from 'bun:test';
 import {
 	generateTypewriterSteps,
 	applyTypewriterSteps,
+	totalTypewriterDurationMs,
 	DEFAULT_WORD_PAUSE_MS,
+	DEFAULT_CHAR_DELAY_MS,
 	DEFAULT_TYPO_HESITATION_MS
 } from '../src/lib/ui/typewriter';
 
@@ -117,5 +119,25 @@ describe('generateTypewriterSteps', () => {
 			const steps = generateTypewriterSteps(text, { random, typoProbability: 0.05 });
 			expect(applyTypewriterSteps(steps)).toBe(text);
 		}
+	});
+
+	test('totalTypewriterDurationMs sums every step delay', () => {
+		const steps = generateTypewriterSteps('ab c', {
+			random: () => 1,
+			charDelayMs: 10,
+			wordPauseMs: 50
+		});
+		const expected = steps.reduce((sum, step) => sum + step.delayMs, 0);
+		expect(totalTypewriterDurationMs(steps)).toBe(expected);
+		expect(expected).toBeGreaterThan(DEFAULT_CHAR_DELAY_MS);
+	});
+
+	test('skips typos for characters with no QWERTY neighbour', () => {
+		const steps = generateTypewriterSteps('11', {
+			random: queueRandom([0]),
+			typoProbability: 1
+		});
+		expect(steps.some((s) => s.kind === 'typo')).toBe(false);
+		expect(applyTypewriterSteps(steps)).toBe('11');
 	});
 });

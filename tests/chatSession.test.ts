@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import {
 	ChatSession,
+	conversationIdForTab,
 	createChatSession,
 	isSubmittable,
 	type ChatLanguage,
@@ -48,6 +49,18 @@ describe('isSubmittable', () => {
 	it('accepts anything with content', () => {
 		expect(isSubmittable('cv')).toBe(true);
 		expect(isSubmittable('  cv  ')).toBe(true);
+	});
+});
+
+describe('conversationIdForTab', () => {
+	it('uses crypto.randomUUID when available', () => {
+		expect(conversationIdForTab({ randomUUID: () => 'fixed-uuid' })).toBe('fixed-uuid');
+	});
+
+	it('falls back to a random c-prefixed id when crypto is missing', () => {
+		const id = conversationIdForTab(null);
+		expect(id.startsWith('c')).toBe(true);
+		expect(id.length).toBeGreaterThan(2);
 	});
 });
 
@@ -328,5 +341,73 @@ describe('the link offer', () => {
 		expect(session.history[1]).toMatchObject({ kind: 'answer', text: 'Ahí van.' });
 		expect((session.history[1] as { links: unknown[] }).links).toHaveLength(2);
 		expect(session.snapshot().suggestion).toBe('¿Qué es Coveris?');
+	});
+});
+
+describe('default backend', () => {
+	it('POSTs to /api/ask with the tab conversation id and maps the JSON body', async () => {
+		const originalFetch = globalThis.fetch;
+		const calls: Array<{ url: string; init?: RequestInit }> = [];
+
+		globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+			calls.push({ url: String(input), init });
+			return new Response(
+				JSON.stringify({
+					text: 'desde fetch',
+					links: [{ id: 'cv', url: 'https://cv.kodexarg.com', label: 'CV' }],
+					language: 'en',
+					matched: true,
+					score: 0.9,
+					suggestion: 'Next?',
+					offer: true
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } }
+			);
+		}) as typeof fetch;
+
+		try {
+			const { session } = createSessionWithControllableClock({ language: 'en' });
+			await session.submit('who is he');
+
+			expect(calls).toHaveLength(1);
+			expect(calls[0].url).toBe('/api/ask');
+			expect(calls[0].init?.method).toBe('POST');
+			const sent = JSON.parse(String(calls[0].init?.body));
+			expect(sent.query).toBe('who is he');
+			expect(sent.language).toBe('en');
+			expect(typeof sent.conversation).toBe('string');
+			expect(sent.conversation.length).toBeGreaterThan(0);
+
+			expect(session.history[1]).toMatchObject({
+				kind: 'answer',
+				text: 'desde fetch',
+				matched: true
+			});
+			expect(session.snapshot().suggestion).toBe('Next?');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('treats a response without text as a failure', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = (async () =>
+			new Response(JSON.stringify({ matched: true }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' }
+			})) as typeof fetch;
+
+		try {
+			const errors: unknown[] = [];
+			const { session } = createSessionWithControllableClock({
+				language: 'es',
+				onError: (error) => errors.push(error)
+			});
+			await session.submit('hola');
+			expect(errors).toHaveLength(1);
+			expect(session.history[1]).toMatchObject({ kind: 'status' });
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
 	});
 });

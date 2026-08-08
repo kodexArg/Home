@@ -3,6 +3,7 @@ import {
 	DEFAULT_LANGUAGE,
 	LANGUAGE_GROUP_LABEL,
 	LANGUAGE_LABELS,
+	getLanguageStore,
 	LANGUAGE_STORAGE_KEY,
 	LanguageStore,
 	SUPPORTED_LANGUAGES,
@@ -191,5 +192,14 @@ describe('language copy', () => {
 			expect(label).not.toContain('¿Sí?');
 			expect(label).not.toContain('Yes?');
 		}
+	});
+});
+
+describe('getLanguageStore', () => {
+	it('returns a shared LanguageStore instance', () => {
+		const a = getLanguageStore();
+		const b = getLanguageStore();
+		expect(a).toBe(b);
+		expect(SUPPORTED_LANGUAGES.includes(a.language)).toBe(true);
 	});
 });

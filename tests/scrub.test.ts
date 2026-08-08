@@ -54,6 +54,14 @@ describe('scrubAnswerText', () => {
 		expect(out).not.toInclude('palab…');
 	});
 
+	it('prefers a sentence boundary when one falls late enough in the window', () => {
+		const head = 'palabra '.repeat(70).trimEnd();
+		const out = scrubAnswerText(`${head}. cola `.repeat(40));
+		expect(out.length).toBeLessThanOrEqual(MAX_ANSWER_CHARS + 1);
+		expect(out.endsWith('.')).toBe(true);
+		expect(out).not.toInclude('…');
+	});
+
 	it('returns an empty string for non-string input', () => {
 		expect(scrubAnswerText(null)).toBe('');
 		expect(scrubAnswerText(undefined)).toBe('');
@@ -98,6 +106,7 @@ describe('parseModelJson', () => {
 	it('returns null instead of a fallback the caller could render raw when there is no usable JSON', () => {
 		expect(parseModelJson('Lo siento, no puedo ayudarte con eso.')).toBeNull();
 		expect(parseModelJson('{"text": roto')).toBeNull();
+		expect(parseModelJson('{text: "no quotes on key"}')).toBeNull();
 		expect(parseModelJson('')).toBeNull();
 		expect(parseModelJson(null)).toBeNull();
 	});
