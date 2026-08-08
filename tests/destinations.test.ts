@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { DESTINATIONS, getDestination, resolveLinkIds } from '../src/lib/kodexbar/destinations';
+import { DESTINATIONS, getDestination, resolveLinkIds } from '../src/kodexbar/destinations';
 
 describe('DESTINATIONS', () => {
 	it('has unique ids', () => {

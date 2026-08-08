@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { allChunks } from '../../../lib/kodexbar/packs';
-import { EMBEDDING_MODEL } from '../../../lib/kodexbar/retrieval';
+import { allChunks } from '../../../kodexbar/packs';
+import { EMBEDDING_MODEL } from '../../../kodexbar/retrieval';
 
 export const prerender = false;
 

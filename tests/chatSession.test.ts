@@ -6,8 +6,8 @@ import {
 	type ChatLanguage,
 	type KodexBarPort
 } from '../src/lib/chat/chatSession';
-import type { KodexAnswer } from '../src/lib/kodexbar/types';
-import { getDestination } from '../src/lib/kodexbar/destinations';
+import type { KodexAnswer } from '../src/kodexbar/types';
+import { getDestination } from '../src/kodexbar/destinations';
 
 function createRecordingStubBackend(answer: Partial<KodexAnswer> = {}) {
 	const calls: Array<{ query: string; language: ChatLanguage }> = [];

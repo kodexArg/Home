@@ -4,7 +4,7 @@
 	import Typewriter from './Typewriter.svelte';
 	import { createChatSession, isSubmittable } from '../lib/chat/chatSession';
 	import { getLanguageStore } from '../lib/ui/language';
-	import { OPENING_SUGGESTION } from '../lib/kodexbar/suggestions';
+	import { OPENING_SUGGESTION } from '../kodexbar/suggestions';
 
 	const languageStore = getLanguageStore();
 

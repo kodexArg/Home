@@ -1,4 +1,4 @@
-import type { KodexAnswer, LinkDestination } from '../kodexbar/types';
+import type { KodexAnswer, LinkDestination } from '../../kodexbar/types';
 import { DEFAULT_LANGUAGE, type SupportedLanguage } from '../ui/language';
 
 export type ChatLanguage = SupportedLanguage;

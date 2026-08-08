@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import type { SupportedLanguage } from '../../../lib/ui/language';
-import { retrieve } from '../../../lib/kodexbar/retrieval';
+import { retrieve } from '../../../kodexbar/retrieval';
 
 export const prerender = false;
 

@@ -6,7 +6,7 @@ import {
 	matchesProposedRequest,
 	normalise,
 	parseIntent
-} from '../src/lib/kodexbar/consent';
+} from '../src/kodexbar/consent';
 
 function envReturning(response: unknown, onRun?: () => void): Env {
 	return {

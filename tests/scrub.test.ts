@@ -5,7 +5,7 @@ import {
 	parseModelJson,
 	scrubAnswerText,
 	scrubPlaceholderText
-} from '../src/lib/kodexbar/scrub';
+} from '../src/kodexbar/scrub';
 
 describe('scrubAnswerText', () => {
 	it('collapses multi-paragraph output into one line', () => {

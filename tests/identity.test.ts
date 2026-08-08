@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'bun:test';
-import { allChunks, getChunk, getPack, minScoreFor } from '../src/lib/kodexbar/packs';
+import { allChunks, getChunk, getPack, minScoreFor } from '../src/kodexbar/packs';
 import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
 import {
 	GABRIEL_CAVEDAL_BIRTH_DAY,
 	GABRIEL_CAVEDAL_BIRTH_MONTH,
 	GABRIEL_CAVEDAL_BIRTH_YEAR,
 	computeGabrielCavedalAgeInYears
-} from '../src/lib/kodexbar/packs/identity/age';
+} from '../src/kodexbar/packs/identity/age';
 
 const identityChunksInLanguage = (lang: 'es' | 'en') =>
 	allChunks()

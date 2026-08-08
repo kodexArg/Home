@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import { PACKS, allChunks, expandRelated, getChunk, getPack, minScoreFor } from '../src/lib/kodexbar/packs';
-import { getDestination } from '../src/lib/kodexbar/destinations';
+import { PACKS, allChunks, expandRelated, getChunk, getPack, minScoreFor } from '../src/kodexbar/packs';
+import { getDestination } from '../src/kodexbar/destinations';
 import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
 
 const chunks = allChunks();

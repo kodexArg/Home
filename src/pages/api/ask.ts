@@ -1,13 +1,13 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import type { KodexAnswer } from '../../lib/kodexbar/types';
+import type { KodexAnswer } from '../../kodexbar/types';
 import type { SupportedLanguage } from '../../lib/ui/language';
-import { answerQuery } from '../../lib/kodexbar/answer';
-import { resolveLinkIds } from '../../lib/kodexbar/destinations';
-import { FAILURE, OUT_OF_SCOPE } from '../../lib/kodexbar/systemPrompt';
-import { checkRateLimit, clientIdFrom } from '../../lib/kodexbar/rateLimit';
-import { CONSENT_REPLY, classifyConsent } from '../../lib/kodexbar/consent';
-import { offerKeyFor, putOffer, takeOffer } from '../../lib/kodexbar/offers';
+import { answerQuery } from '../../kodexbar/answer';
+import { resolveLinkIds } from '../../kodexbar/destinations';
+import { FAILURE, OUT_OF_SCOPE } from '../../kodexbar/systemPrompt';
+import { checkRateLimit, clientIdFrom } from '../../kodexbar/rateLimit';
+import { CONSENT_REPLY, classifyConsent } from '../../kodexbar/consent';
+import { offerKeyFor, putOffer, takeOffer } from '../../kodexbar/offers';
 
 export const prerender = false;
 
