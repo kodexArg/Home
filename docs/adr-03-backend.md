@@ -16,7 +16,7 @@
 * **Platform:** Cloudflare Workers (`@astrojs/cloudflare` adapter).
 * **Target Deployment:** `https://kodexarg.com`, aliased at `www.kodexarg.com` and `home.kodexarg.com`, deployed via GitHub Actions CI/CD.
 * **Execution Mode:** Hybrid. Astro's default `output: "static"` prerenders `src/pages/index.astro`; API routes (`/api/ask`, the dev-only `/api/admin/index-corpus`) opt out per-file with `export const prerender = false` and run on request.
-* **Bindings Access:** Routes import `env` directly from `cloudflare:workers` and read `env.AI`, `env.VECTOR_INDEX` and `env.SESSION`. Types for these bindings are declared in [env.d.ts](file:///home/kodex/kodexArg/Home/src/env.d.ts).
+* **Bindings Access:** Routes import `env` directly from `cloudflare:workers` and read `env.AI`, `env.VECTOR_INDEX` and `env.SESSION`. Types for these bindings are declared in [env.d.ts](../src/env.d.ts).
 
 ### 2. Development Backend Environment
 * **Tooling:** **Bun** + Vite + Wrangler (`bun run dev`).

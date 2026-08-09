@@ -33,6 +33,6 @@ No other Cloudflare database service is bound. D1 and Hyperdrive are not part of
   The metadata index on `lang` is what makes `filter: { lang }` work at query time.
 
 ### 2. Development (`bun run dev`)
-* `bunx wrangler` emulates binding declarations from [wrangler.jsonc](file:///home/kodex/kodexArg/Home/wrangler.jsonc).
+* `bunx wrangler` emulates binding declarations from [wrangler.jsonc](../wrangler.jsonc).
 * **`wrangler.jsonc` sets `remote: true` on both `AI` and `VECTOR_INDEX`, and this is deliberate, not a leftover.** Vectorize has no local emulation — without `remote: true`, `astro dev` would query an empty local stub and every answer would degrade to the out-of-scope reply. There is no fallback matcher any more (the deterministic keyword matcher belonged to the retired multi-tier router); KodexBar has a single retrieval path, so dev must exercise the real index. `remote: true` is also what lets `bun run index:corpus` write to the real index from a dev server with no API token — see `src/pages/api/admin/index-corpus.ts`.
 * **There is no offline fallback.** Without connectivity, `/api/ask` returns the out-of-scope reply for every query — which is correct behaviour, not a degraded mode to paper over.

@@ -13,7 +13,7 @@ The **Harness** represents the authoritative security, validation, and execution
 ## Core Directives
 
 ### 1. Importance of `PRD.md` as Single Source of Truth (SSOT)
-[PRD.md](file:///home/kodex/kodexArg/Home/docs/PRD.md) serves as the primary product contract. No feature, routing behavior, or edge capability may be introduced into production without being specified in `PRD.md`. The harness enforces that code implementations reflect the PRD guidelines without scope creep.
+[PRD.md](PRD.md) serves as the primary product contract. No feature, routing behavior, or edge capability may be introduced into production without being specified in `PRD.md`. The harness enforces that code implementations reflect the PRD guidelines without scope creep.
 
 ---
 

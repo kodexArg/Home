@@ -34,6 +34,6 @@ The design system for `kodexArg/Home` is **Subordinación y Valor (SyV)** with *
 * **Durations:** `--t-slow: 900ms`, `--t-med: 480ms`.
 
 ### 4. Component Design Contracts
-* **[SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte)**: Borderless Pip-Boy text input featuring a platen baseline rule (`1.5px`), monospace cell grid on focus (`repeating-linear-gradient`), and simple placeholder **`¿Sí?`**.
-* **[KodexBar.svelte](file:///srv/dev/kodexArg/Home/src/components/KodexBar.svelte)**: Bottom-anchored monospace terminal console stack. Prompt prefixed with candle orange `› `.
+* **[SyvInput.svelte](../src/components/SyvInput.svelte)**: Borderless Pip-Boy text input featuring a platen baseline rule (`1.5px`), monospace cell grid on focus (`repeating-linear-gradient`), and simple placeholder **`¿Sí?`**.
+* **[KodexBar.svelte](../src/components/KodexBar.svelte)**: Bottom-anchored monospace terminal console stack. Prompt prefixed with candle orange `› `.
 * **Links**: Rendered with non-clickable icon ahead (`span.link-icon`), and selectable hyperlinked text (`<a class="who">cv.kodexarg.com</a>`).
