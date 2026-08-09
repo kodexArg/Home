@@ -2,6 +2,10 @@ import type { SupportedLanguage } from '../lib/ui/language';
 
 export type DestinationKind = 'site' | 'repo' | 'contact';
 
+export type ChunkVisibility = 'public' | 'private';
+
+export type ChunkImportance = 'high' | 'normal' | 'low';
+
 export interface LinkDestination {
 	id: string;
 	kind: DestinationKind;
@@ -19,6 +23,9 @@ export interface CorpusChunk {
 	text: string;
 	related: string[];
 	tags: string[];
+	visibility: ChunkVisibility;
+	importance: ChunkImportance;
+	sourceRepo?: string;
 }
 
 export interface KnowledgePack {

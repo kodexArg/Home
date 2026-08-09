@@ -19,6 +19,9 @@ interface ChunkDoc {
 	tags: string[];
 	body: string;
 	needsAge: boolean;
+	visibility: 'public' | 'private';
+	importance: 'high' | 'normal' | 'low';
+	sourceRepo?: string;
 }
 
 function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
@@ -102,7 +105,14 @@ function readChunks(packId: string, lang: string): ChunkDoc[] {
 			throw new Error(`${packId}/${lang}/${name} filename must be ${id}.md`);
 		}
 		const needsAge = body.includes('{{AGE_YEARS}}');
-		return { id, title, related, tags, body, needsAge };
+		const visibility = data.visibility === 'private' ? 'private' : 'public';
+		const importance =
+			data.importance === 'high' || data.importance === 'low' ? data.importance : 'normal';
+		const sourceRepo =
+			typeof data.source_repo === 'string' && data.source_repo.trim()
+				? data.source_repo.trim()
+				: undefined;
+		return { id, title, related, tags, body, needsAge, visibility, importance, sourceRepo };
 	});
 }
 
@@ -123,12 +133,17 @@ function emitChunkModule(packId: string, lang: string, chunks: ChunkDoc[]): stri
 				: escTemplate(c.body);
 			const related = JSON.stringify(c.related);
 			const tags = JSON.stringify(c.tags);
+			const sourceRepo = c.sourceRepo
+				? `\n\t\tsourceRepo: ${JSON.stringify(c.sourceRepo)},`
+				: '';
 			return `\t{
 \t\tid: ${JSON.stringify(c.id)},
 \t\ttitle: ${JSON.stringify(c.title)},
 \t\ttext: \`${body}\`,
 \t\trelated: ${related},
-\t\ttags: ${tags}
+\t\ttags: ${tags},
+\t\tvisibility: ${JSON.stringify(c.visibility)},
+\t\timportance: ${JSON.stringify(c.importance)},${sourceRepo}
 \t}`;
 		})
 		.join(',\n');

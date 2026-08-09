@@ -1,4 +1,4 @@
-import type { CorpusChunk } from '../types';
+import type { ChunkImportance, ChunkVisibility, CorpusChunk } from '../types';
 import type { SupportedLanguage } from '../../lib/ui/language';
 
 export interface ChunkDef {
@@ -7,6 +7,9 @@ export interface ChunkDef {
 	text: string;
 	related?: string[];
 	tags?: string[];
+	visibility?: ChunkVisibility;
+	importance?: ChunkImportance;
+	sourceRepo?: string;
 }
 
 export function defineChunks(
@@ -27,7 +30,11 @@ export function defineChunks(
 			title: def.title,
 			text: def.text.trim().replace(/\s+/g, ' '),
 			related: def.related ?? [],
-			tags: def.tags ?? []
+			tags: def.tags ?? [],
+			visibility: def.visibility === 'private' ? 'private' : 'public',
+			importance:
+				def.importance === 'high' || def.importance === 'low' ? def.importance : 'normal',
+			sourceRepo: def.sourceRepo
 		};
 	});
 }

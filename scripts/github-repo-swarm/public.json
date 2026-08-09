@@ -1,0 +1,289 @@
+[
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "Home",
+    "url": "https://github.com/kodexArg/Home"
+  },
+  {
+    "default_branch": "main",
+    "description": "Project Zomboid Build 42.20 profession mod \u2014 True Detective (urban forage + door-room danger intuition)",
+    "isPrivate": false,
+    "name": "TrueDetective",
+    "url": "https://github.com/kodexArg/TrueDetective"
+  },
+  {
+    "default_branch": "main",
+    "description": "Forced Presentation Orange chrome for Cursor (Glass + classic): backgrounds, icons, hairlines, sunken prompt",
+    "isPrivate": false,
+    "name": "kdx-cursor-forced-theme",
+    "url": "https://github.com/kodexArg/kdx-cursor-forced-theme"
+  },
+  {
+    "default_branch": "master",
+    "description": "Angular 21 Eurotrip 2026 trip planner app",
+    "isPrivate": false,
+    "name": "cf-ng-eurotrip2026",
+    "url": "https://github.com/kodexArg/cf-ng-eurotrip2026"
+  },
+  {
+    "default_branch": "main",
+    "description": "Astro 7 SSR + Svelte frontend / Django 6 + DRF backend template \u2014 two Fargate services on AWS",
+    "isPrivate": false,
+    "name": "astro-drf-aws",
+    "url": "https://github.com/kodexArg/astro-drf-aws"
+  },
+  {
+    "default_branch": "main",
+    "description": "Template harness for fullstack projects \u2014 constitution, docs, ADRs, and agent tooling scaffolding",
+    "isPrivate": false,
+    "name": "harness-default",
+    "url": "https://github.com/kodexArg/harness-default"
+  },
+  {
+    "default_branch": "main",
+    "description": "Live camera\u2192avatar interface adapter (SnekStudio collaboration path) with blank-video and service failover",
+    "isPrivate": false,
+    "name": "kdx-avatar",
+    "url": "https://github.com/kodexArg/kdx-avatar"
+  },
+  {
+    "default_branch": "main",
+    "description": "Deterministic cowsay agent skill (kodexArg) \u2014 Python 3 stdlib renderer + SKILL.md",
+    "isPrivate": false,
+    "name": "cowsay",
+    "url": "https://github.com/kodexArg/cowsay"
+  },
+  {
+    "default_branch": "main",
+    "description": "SyV character creator API (FastAPI + Pydantic)",
+    "isPrivate": false,
+    "name": "syv-pj-api",
+    "url": "https://github.com/kodexArg/syv-pj-api"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "syv-map",
+    "url": "https://github.com/kodexArg/syv-map"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "syv-docs",
+    "url": "https://github.com/kodexArg/syv-docs"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "syv-pj-flutter",
+    "url": "https://github.com/kodexArg/syv-pj-flutter"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "syv-pj",
+    "url": "https://github.com/kodexArg/syv-pj"
+  },
+  {
+    "default_branch": "main",
+    "description": "SyV frontend \u2014 Astro site publishing the Subordinaci\u00f3n y Valor universe",
+    "isPrivate": false,
+    "name": "syv-frontend",
+    "url": "https://github.com/kodexArg/syv-frontend"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "syv-design-system",
+    "url": "https://github.com/kodexArg/syv-design-system"
+  },
+  {
+    "default_branch": "main",
+    "description": "Playground de generaci\u00f3n de im\u00e1genes SyV con ComfyUI: workflows, prompts y pruebas documentadas.",
+    "isPrivate": false,
+    "name": "syv-image-generation",
+    "url": "https://github.com/kodexArg/syv-image-generation"
+  },
+  {
+    "default_branch": "main",
+    "description": "SyV character creator web UI (Astro + Svelte)",
+    "isPrivate": false,
+    "name": "syv-pj-frontend",
+    "url": "https://github.com/kodexArg/syv-pj-frontend"
+  },
+  {
+    "default_branch": "main",
+    "description": "Modern rounded cursor theme based on Bibata, featuring the distinctive Claude coral accent #D97757",
+    "isPrivate": false,
+    "name": "klaude-cursors",
+    "url": "https://github.com/kodexArg/klaude-cursors"
+  },
+  {
+    "default_branch": "master",
+    "description": "The most powerful and modular diffusion model GUI, api and backend with a graph/nodes interface.",
+    "isPrivate": false,
+    "name": "ComfyUI-1",
+    "url": "https://github.com/kodexArg/ComfyUI-1"
+  },
+  {
+    "default_branch": "main",
+    "description": "Autonomous digital-signage video looper for Raspberry Pi 3 A+ (VLC + systemd) with auto-scan and self-recovery.",
+    "isPrivate": false,
+    "name": "kdx-pi-signage",
+    "url": "https://github.com/kodexArg/kdx-pi-signage"
+  },
+  {
+    "default_branch": "main",
+    "description": "Django + DRF REST API and dashboard for indoor-crop IoT sensor monitoring (Raspberry Pi \u2192 TimescaleDB), containerized with Docker.",
+    "isPrivate": false,
+    "name": "dj-indoor-monitor",
+    "url": "https://github.com/kodexArg/dj-indoor-monitor"
+  },
+  {
+    "default_branch": "dev",
+    "description": "Self-hosted AI workspace. ",
+    "isPrivate": false,
+    "name": "odysseus",
+    "url": "https://github.com/kodexArg/odysseus"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "rpi-door-access-rfid",
+    "url": "https://github.com/kodexArg/rpi-door-access-rfid"
+  },
+  {
+    "default_branch": "main",
+    "description": "ALVS Capacitaci\u00f3n IA \u2014 presentaci\u00f3n interactiva con Astro",
+    "isPrivate": false,
+    "name": "alvs-capacitacion",
+    "url": "https://github.com/kodexArg/alvs-capacitacion"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "figus",
+    "url": "https://github.com/kodexArg/figus"
+  },
+  {
+    "default_branch": "main",
+    "description": "Angular 21 CSR starter template with PrimeNG 21, Tailwind v4, Vitest, and Claude Code skills",
+    "isPrivate": false,
+    "name": "template-angular-21-csr-primeng",
+    "url": "https://github.com/kodexArg/template-angular-21-csr-primeng"
+  },
+  {
+    "default_branch": "main",
+    "description": "Persistent memory system for AI coding agents. Agent-agnostic Go binary with SQLite + FTS5, MCP server, HTTP API, CLI, and TUI.",
+    "isPrivate": false,
+    "name": "engram",
+    "url": "https://github.com/kodexArg/engram"
+  },
+  {
+    "default_branch": "main",
+    "description": "Fast and lightweight DNS proxy as ad-blocker for local network with many features",
+    "isPrivate": false,
+    "name": "blocky",
+    "url": "https://github.com/kodexArg/blocky"
+  },
+  {
+    "default_branch": "main",
+    "description": "MCP server that exposes python-telegram-bot methods as MCP tools \u2014 1:1 interface for Telegram Bot API",
+    "isPrivate": false,
+    "name": "python-telegram-bot-mcp",
+    "url": "https://github.com/kodexArg/python-telegram-bot-mcp"
+  },
+  {
+    "default_branch": "main",
+    "description": "QA audit reports \u2014 HTML only",
+    "isPrivate": false,
+    "name": "qa-reports",
+    "url": "https://github.com/kodexArg/qa-reports"
+  },
+  {
+    "default_branch": "main",
+    "description": "CV/Resume site built with Astro - Gabriel Cavedal",
+    "isPrivate": false,
+    "name": "astro-cv",
+    "url": "https://github.com/kodexArg/astro-cv"
+  },
+  {
+    "default_branch": "main",
+    "description": "Your own personal AI assistant. Any OS. Any Platform. The lobster way. \ud83e\udd9e ",
+    "isPrivate": false,
+    "name": "openclaw",
+    "url": "https://github.com/kodexArg/openclaw"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "kdx-pi-signage-2",
+    "url": "https://github.com/kodexArg/kdx-pi-signage-2"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "kdx-pi-cam",
+    "url": "https://github.com/kodexArg/kdx-pi-cam"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "n8n-apprunner",
+    "url": "https://github.com/kodexArg/n8n-apprunner"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "dj-apprunner-template",
+    "url": "https://github.com/kodexArg/dj-apprunner-template"
+  },
+  {
+    "default_branch": "main",
+    "description": "",
+    "isPrivate": false,
+    "name": "camera-alert-to-telegram",
+    "url": "https://github.com/kodexArg/camera-alert-to-telegram"
+  },
+  {
+    "default_branch": "main",
+    "description": "Configurable multi-organization help-desk ticketing system built with Django 5 + HTMX, containerized with Docker.",
+    "isPrivate": false,
+    "name": "welpdesk",
+    "url": "https://github.com/kodexArg/welpdesk"
+  },
+  {
+    "default_branch": "main",
+    "description": "This is a repo with links to everything you'd ever want to learn about data engineering",
+    "isPrivate": false,
+    "name": "data-engineer-handbook",
+    "url": "https://github.com/kodexArg/data-engineer-handbook"
+  },
+  {
+    "default_branch": "main",
+    "description": "This script convert all Ec2 machine to Route53 records. If you have a domain, all your Ec2 machines can be accesses by its name.",
+    "isPrivate": false,
+    "name": "lambda-update-route53",
+    "url": "https://github.com/kodexArg/lambda-update-route53"
+  },
+  {
+    "default_branch": "main",
+    "description": "Raspberry Temperature Humidity",
+    "isPrivate": false,
+    "name": "raspberry-pi-temperature-to-telegram",
+    "url": "https://github.com/kodexArg/raspberry-pi-temperature-to-telegram"
+  }
+]

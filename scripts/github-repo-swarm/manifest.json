@@ -1,0 +1,674 @@
+[
+  {
+    "name": "Home",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/Home.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/Home.md"
+  },
+  {
+    "name": "TrueDetective",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/TrueDetective.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/TrueDetective.md"
+  },
+  {
+    "name": "kdx-cursor-forced-theme",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/kdx-cursor-forced-theme.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-cursor-forced-theme.md"
+  },
+  {
+    "name": "alvs-financial-gateway",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-financial-gateway.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-financial-gateway.md"
+  },
+  {
+    "name": "alvs-corporate-books",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-corporate-books.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-corporate-books.md"
+  },
+  {
+    "name": "cf-ng-eurotrip2026",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/cf-ng-eurotrip2026.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cf-ng-eurotrip2026.md"
+  },
+  {
+    "name": "alvs-feedlot-campo",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-feedlot-campo.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-feedlot-campo.md"
+  },
+  {
+    "name": "astro-drf-aws",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/astro-drf-aws.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/astro-drf-aws.md"
+  },
+  {
+    "name": "harness-default",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/harness-default.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/harness-default.md"
+  },
+  {
+    "name": "kdx-avatar",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/kdx-avatar.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-avatar.md"
+  },
+  {
+    "name": "ALVS-REGISTROS-LIBROS-SOCIETARIOS-KODEXARG",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ALVS-REGISTROS-LIBROS-SOCIETARIOS-KODEXARG.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ALVS-REGISTROS-LIBROS-SOCIETARIOS-KODEXARG.md"
+  },
+  {
+    "name": "harness-triage-party",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/harness-triage-party.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/harness-triage-party.md"
+  },
+  {
+    "name": "kodexBot",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/kodexBot.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kodexBot.md"
+  },
+  {
+    "name": "cowsay",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/cowsay.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cowsay.md"
+  },
+  {
+    "name": "coveris",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/coveris.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/coveris.md"
+  },
+  {
+    "name": "home-hyprland",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/home-hyprland.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/home-hyprland.md"
+  },
+  {
+    "name": "syv-pj-api",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-pj-api.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-pj-api.md"
+  },
+  {
+    "name": "syv-map",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-map.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-map.md"
+  },
+  {
+    "name": "syv-docs",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-docs.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-docs.md"
+  },
+  {
+    "name": "kodexarg.com",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/kodexarg.com.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kodexarg.com.md"
+  },
+  {
+    "name": "alvs-km-gw",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-km-gw.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-km-gw.md"
+  },
+  {
+    "name": "welp-app",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/welp-app.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/welp-app.md"
+  },
+  {
+    "name": "alvs-finanzas",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-finanzas.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-finanzas.md"
+  },
+  {
+    "name": "kcbd-monitor",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/kcbd-monitor.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kcbd-monitor.md"
+  },
+  {
+    "name": "alvs-fabric-config",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-fabric-config.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-fabric-config.md"
+  },
+  {
+    "name": "syv-pj-flutter",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-pj-flutter.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-pj-flutter.md"
+  },
+  {
+    "name": "syv-pj",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-pj.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-pj.md"
+  },
+  {
+    "name": "syv-frontend",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-frontend.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-frontend.md"
+  },
+  {
+    "name": "syv-design-system",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-design-system.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-design-system.md"
+  },
+  {
+    "name": "syv-image-generation",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-image-generation.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-image-generation.md"
+  },
+  {
+    "name": "cotton-coveris-mvp",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-coveris-mvp.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-coveris-mvp.md"
+  },
+  {
+    "name": "cotton-coveris",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-coveris.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-coveris.md"
+  },
+  {
+    "name": "syv-pj-frontend",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/syv-pj-frontend.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-pj-frontend.md"
+  },
+  {
+    "name": "amesup-com-ar",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/amesup-com-ar.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/amesup-com-ar.md"
+  },
+  {
+    "name": "klaude-cursors",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/klaude-cursors.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/klaude-cursors.md"
+  },
+  {
+    "name": "api-python-debo",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/api-python-debo.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/api-python-debo.md"
+  },
+  {
+    "name": "ComfyUI-1",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/ComfyUI-1.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ComfyUI-1.md"
+  },
+  {
+    "name": "cotton-aws-ai",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-aws-ai.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-aws-ai.md"
+  },
+  {
+    "name": "syv-game-system",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/syv-game-system.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-game-system.md"
+  },
+  {
+    "name": "kdx-pi-signage",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/kdx-pi-signage.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-pi-signage.md"
+  },
+  {
+    "name": "dj-indoor-monitor",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/dj-indoor-monitor.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dj-indoor-monitor.md"
+  },
+  {
+    "name": "odysseus",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/odysseus.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/odysseus.md"
+  },
+  {
+    "name": "rpi-door-access-rfid",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/rpi-door-access-rfid.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/rpi-door-access-rfid.md"
+  },
+  {
+    "name": "design.kodexarg.com",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/design.kodexarg.com.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/design.kodexarg.com.md"
+  },
+  {
+    "name": "El-presente-de-la-aI",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/El-presente-de-la-aI.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/El-presente-de-la-aI.md"
+  },
+  {
+    "name": "alvs-capacitacion",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/alvs-capacitacion.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-capacitacion.md"
+  },
+  {
+    "name": "syv-character-kit",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/syv-character-kit.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-character-kit.md"
+  },
+  {
+    "name": "gdt-syv",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/gdt-syv.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/gdt-syv.md"
+  },
+  {
+    "name": "coveris-issue-track-and-fix",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/coveris-issue-track-and-fix.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/coveris-issue-track-and-fix.md"
+  },
+  {
+    "name": "docs-portal",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/docs-portal.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/docs-portal.md"
+  },
+  {
+    "name": "cotton-coveris-mvp-main-documentation",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-coveris-mvp-main-documentation.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-coveris-mvp-main-documentation.md"
+  },
+  {
+    "name": "sociedad-rural-oeste-argentino",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/sociedad-rural-oeste-argentino.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/sociedad-rural-oeste-argentino.md"
+  },
+  {
+    "name": "docs-new-infra-grupoalvs-com",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/docs-new-infra-grupoalvs-com.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/docs-new-infra-grupoalvs-com.md"
+  },
+  {
+    "name": "figus",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/figus.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/figus.md"
+  },
+  {
+    "name": "template-angular-21-csr-primeng",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/template-angular-21-csr-primeng.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/template-angular-21-csr-primeng.md"
+  },
+  {
+    "name": "engram",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/engram.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/engram.md"
+  },
+  {
+    "name": "kdx-ng-coveris-docs",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/kdx-ng-coveris-docs.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-ng-coveris-docs.md"
+  },
+  {
+    "name": "blocky",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/blocky.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/blocky.md"
+  },
+  {
+    "name": "kdx-ng-template",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/kdx-ng-template.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-ng-template.md"
+  },
+  {
+    "name": "dj-west",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/dj-west.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dj-west.md"
+  },
+  {
+    "name": "python-telegram-bot-mcp",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/python-telegram-bot-mcp.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/python-telegram-bot-mcp.md"
+  },
+  {
+    "name": "qa-reports",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/qa-reports.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/qa-reports.md"
+  },
+  {
+    "name": "astro-cv",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/astro-cv.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/astro-cv.md"
+  },
+  {
+    "name": "openclaw",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/openclaw.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/openclaw.md"
+  },
+  {
+    "name": "SDGD",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/SDGD.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/SDGD.md"
+  },
+  {
+    "name": "cotton",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton.md"
+  },
+  {
+    "name": "syv-godot",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/syv-godot.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-godot.md"
+  },
+  {
+    "name": "syv-mcp-tools",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/syv-mcp-tools.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/syv-mcp-tools.md"
+  },
+  {
+    "name": "cotton-west",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-west.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-west.md"
+  },
+  {
+    "name": "cotton-dj-template",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/cotton-dj-template.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/cotton-dj-template.md"
+  },
+  {
+    "name": "kdx-pi-signage-2",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/kdx-pi-signage-2.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-pi-signage-2.md"
+  },
+  {
+    "name": "kdx-pi-cam",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/kdx-pi-cam.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/kdx-pi-cam.md"
+  },
+  {
+    "name": "pi-cam",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/pi-cam.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/pi-cam.md"
+  },
+  {
+    "name": "docker-kmportal",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/docker-kmportal.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/docker-kmportal.md"
+  },
+  {
+    "name": "django-kmportal",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/django-kmportal.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/django-kmportal.md"
+  },
+  {
+    "name": "n8n-apprunner",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/n8n-apprunner.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/n8n-apprunner.md"
+  },
+  {
+    "name": "dj-apprunner-template",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/dj-apprunner-template.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dj-apprunner-template.md"
+  },
+  {
+    "name": "apprunnertest2",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/apprunnertest2.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/apprunnertest2.md"
+  },
+  {
+    "name": "camera-alert-to-telegram",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/camera-alert-to-telegram.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/camera-alert-to-telegram.md"
+  },
+  {
+    "name": "welpdesk",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/welpdesk.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/welpdesk.md"
+  },
+  {
+    "name": "pz-detective-profession",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/pz-detective-profession.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/pz-detective-profession.md"
+  },
+  {
+    "name": "data-engineer-handbook",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/data-engineer-handbook.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/data-engineer-handbook.md"
+  },
+  {
+    "name": "dj-rpi-monitor",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/dj-rpi-monitor.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dj-rpi-monitor.md"
+  },
+  {
+    "name": "portal-tajamar",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/portal-tajamar.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/portal-tajamar.md"
+  },
+  {
+    "name": "alvs-script-conciliar-xls",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/alvs-script-conciliar-xls.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/alvs-script-conciliar-xls.md"
+  },
+  {
+    "name": "names.rand",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/names.rand.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/names.rand.md"
+  },
+  {
+    "name": "ComfyUI",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ComfyUI.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ComfyUI.md"
+  },
+  {
+    "name": "ryf",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ryf.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ryf.md"
+  },
+  {
+    "name": "on-screen-dolar",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/on-screen-dolar.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/on-screen-dolar.md"
+  },
+  {
+    "name": "mini-character-sheet",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/mini-character-sheet.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/mini-character-sheet.md"
+  },
+  {
+    "name": "dollar-today-km1151",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/dollar-today-km1151.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dollar-today-km1151.md"
+  },
+  {
+    "name": "lambda-update-route53",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/lambda-update-route53.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/lambda-update-route53.md"
+  },
+  {
+    "name": "PyCreadorPJ",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/PyCreadorPJ.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/PyCreadorPJ.md"
+  },
+  {
+    "name": "aws-lambda-flask-entry-point",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/aws-lambda-flask-entry-point.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/aws-lambda-flask-entry-point.md"
+  },
+  {
+    "name": "raspberry-pi-temperature-to-telegram",
+    "visibility": "public",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-public-repos/raspberry-pi-temperature-to-telegram.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/raspberry-pi-temperature-to-telegram.md"
+  },
+  {
+    "name": "ScrapperMDZOL",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ScrapperMDZOL.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ScrapperMDZOL.md"
+  },
+  {
+    "name": "dj-crudo",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/dj-crudo.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/dj-crudo.md"
+  },
+  {
+    "name": "fsk-showers",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/fsk-showers.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/fsk-showers.md"
+  },
+  {
+    "name": "multimedia-handler-for-rpi",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/multimedia-handler-for-rpi.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/multimedia-handler-for-rpi.md"
+  },
+  {
+    "name": "django-captive-portal-oauth",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/django-captive-portal-oauth.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/django-captive-portal-oauth.md"
+  },
+  {
+    "name": "django-unifi-portal",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/django-unifi-portal.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/django-unifi-portal.md"
+  },
+  {
+    "name": "PyFinanzasPersonales",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/PyFinanzasPersonales.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/PyFinanzasPersonales.md"
+  },
+  {
+    "name": "PyMceOcup",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/PyMceOcup.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/PyMceOcup.md"
+  },
+  {
+    "name": "ProcesarOcupacion",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ProcesarOcupacion.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ProcesarOcupacion.md"
+  },
+  {
+    "name": "rpi-temp",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/rpi-temp.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/rpi-temp.md"
+  },
+  {
+    "name": "DjangoMCE",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/DjangoMCE.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/DjangoMCE.md"
+  },
+  {
+    "name": "DjangoConda",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/DjangoConda.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/DjangoConda.md"
+  },
+  {
+    "name": "CreadorPJ",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/CreadorPJ.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/CreadorPJ.md"
+  },
+  {
+    "name": "Flia",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/Flia.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/Flia.md"
+  },
+  {
+    "name": "ComMCE",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/ComMCE.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/ComMCE.md"
+  },
+  {
+    "name": "PiHome",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/PiHome.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/PiHome.md"
+  },
+  {
+    "name": "GITCon",
+    "visibility": "private",
+    "outputPath": "/srv/dev/kodexArg/kdx-rag/github-private-repos/GITCon.md",
+    "promptPath": "/srv/dev/kodexArg/kdx-rag/scripts/github-repo-swarm/prompts-out/GITCon.md"
+  }
+]

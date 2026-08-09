@@ -17,9 +17,12 @@ export const GENERATION_MODEL = '@cf/zai-org/glm-4.7-flash';
 export const MAX_OUTPUT_TOKENS = 500;
 export const TEMPERATURE = 0.3;
 
-export function allowedLinksFor(chunks: readonly { related: string[] }[]): LinkDestination[] {
+export function allowedLinksFor(
+	chunks: readonly { related: string[]; visibility?: string }[]
+): LinkDestination[] {
 	const ids: string[] = [];
 	for (const chunk of chunks) {
+		if (chunk.visibility === 'private') continue;
 		for (const ref of chunk.related) {
 			if (getDestination(ref)) ids.push(ref);
 		}
