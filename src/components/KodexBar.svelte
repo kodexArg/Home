@@ -55,13 +55,19 @@
 		history;
 		isThinking;
 		if (!stackEl) return;
+		const el = stackEl;
 		const measure = () => {
-			scrollbackRunsPastTheTop = stackEl.scrollHeight - stackEl.clientHeight > 1;
+			const overflows = el.scrollHeight - el.clientHeight > 1;
+			scrollbackRunsPastTheTop = overflows && el.scrollTop > 1;
 		};
 		measure();
 		const observer = new ResizeObserver(measure);
-		observer.observe(stackEl);
-		return () => observer.disconnect();
+		observer.observe(el);
+		el.addEventListener('scroll', measure);
+		return () => {
+			observer.disconnect();
+			el.removeEventListener('scroll', measure);
+		};
 	});
 
 	const A_TAP_HERE_WOULD_ONLY_RAISE_THE_KEYBOARD = '(hover: none) and (pointer: coarse)';

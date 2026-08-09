@@ -11,7 +11,7 @@
 		sendLabel = 'Enviar'
 	} = $props();
 
-	let inputEl;
+	let inputEl = $state();
 
 	let hasSomethingToSend = $derived(value.trim() !== '');
 
@@ -141,18 +141,28 @@
 			onclick={send}
 		>
 			<svg
-				width="20"
-				height="20"
+				class="syv-send__enter"
+				width="26"
+				height="26"
 				viewBox="0 0 24 24"
 				fill="none"
-				stroke="currentColor"
-				stroke-width="2.2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
 				aria-hidden="true"
+				focusable="false"
 			>
-				<path d="M5 12h13"></path>
-				<path d="m12 5 7 7-7 7"></path>
+				<path
+					d="M19 5v7a3 3 0 0 1-3 3H6"
+					stroke="currentColor"
+					stroke-width="2.85"
+					stroke-linecap="square"
+					stroke-linejoin="miter"
+				/>
+				<path
+					d="M10 11 5 15l5 4"
+					stroke="currentColor"
+					stroke-width="2.85"
+					stroke-linecap="square"
+					stroke-linejoin="miter"
+				/>
 			</svg>
 		</button>
 	{/if}
@@ -177,48 +187,64 @@
 
 	.syv-send {
 		position: absolute;
-		right: 13.5px;
-		bottom: 21px;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 2.625rem;
+		padding: 0;
+		margin: 0;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 39px;
-		height: 39px;
 		appearance: none;
-		border: 1px solid rgba(255, 106, 26, 0.45);
-		border-radius: 7.5px;
-		background: rgba(255, 106, 26, 0.1);
-		color: var(--orange-300);
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+		color: var(--orange-500);
+		font: inherit;
 		cursor: pointer;
+		z-index: 2;
 		-webkit-tap-highlight-color: transparent;
-		animation: syv-send-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
-		transition:
-			background 160ms cubic-bezier(0.16, 1, 0.3, 1),
-			border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
-			box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+		animation: syv-send-in 420ms ease-out both;
+	}
+
+	.syv-send__enter {
+		display: block;
+		opacity: 0.9;
+		/* Engraved / sunk into the phosphor wash */
+		filter:
+			drop-shadow(0 1px 0 rgba(255, 138, 66, 0.22))
+			drop-shadow(0 -0.75px 0 rgba(0, 0, 0, 0.78));
+		pointer-events: none;
+	}
+
+	.syv-send:hover .syv-send__enter,
+	.syv-send:focus-visible .syv-send__enter {
+		opacity: 0.95;
+	}
+
+	.syv-send:active .syv-send__enter {
+		opacity: 1;
+		transform: translateY(0.5px);
 	}
 
 	.syv-send:hover,
-	.syv-send:focus-visible {
-		background: rgba(255, 106, 26, 0.2);
-		border-color: var(--orange-500);
-		color: var(--cream-100);
-		box-shadow: 0 0 18px -7px rgba(255, 106, 26, 0.55);
-		outline: none;
-	}
-
+	.syv-send:focus,
+	.syv-send:focus-visible,
 	.syv-send:active {
-		background: rgba(255, 106, 26, 0.32);
+		outline: none;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+		color: var(--orange-500);
 	}
 
 	@keyframes syv-send-in {
 		from {
 			opacity: 0;
-			transform: translateX(-0.5rem);
 		}
 		to {
 			opacity: 1;
-			transform: translateX(0);
 		}
 	}
 
@@ -260,12 +286,20 @@
 		background-color: rgba(255, 106, 26, 0.04);
 		--syv-input-ribbon-color: var(--orange-500);
 		--syv-input-cell-grid-color: rgba(255, 106, 26, 0.075);
+		--syv-send-wash: transparent;
 		background-image:
 			linear-gradient(var(--syv-input-ribbon-color), var(--syv-input-ribbon-color)),
-			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-cell-grid-color) calc(1ch - 1.5px) 1ch);
-		background-repeat: no-repeat, repeat-x;
-		background-size: calc(100% - 42px) 1.5px, 1ch 100%;
-		background-position: 21px calc(100% - 12px), 21px 0;
+			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-cell-grid-color) calc(1ch - 1.5px) 1ch),
+			linear-gradient(
+				to left,
+				var(--syv-send-wash) 0%,
+				var(--syv-send-wash) 5%,
+				color-mix(in srgb, var(--syv-send-wash) 55%, transparent) 14%,
+				transparent 26%
+			);
+		background-repeat: no-repeat, repeat-x, no-repeat;
+		background-size: calc(100% - 42px) 1.5px, 1ch 100%, 100% 100%;
+		background-position: 21px calc(100% - 12px), 21px 0, 0 0;
 		caret-color: var(--orange-500);
 		box-shadow: inset 0 -18px 26px -18px var(--orange-glow);
 		transition:
@@ -297,7 +331,24 @@
 	}
 
 	.syv-input--room-for-send {
-		padding-right: 66px;
+		padding-right: 2.75rem;
+		/* Same hue as franjas, a bit brighter so the wash reads as ready-to-send. */
+		--syv-send-wash: rgba(255, 106, 26, 0.2);
+	}
+
+	.syv-field__control:has(.syv-send:hover) .syv-input--room-for-send,
+	.syv-field__control:has(.syv-send:focus-visible) .syv-input--room-for-send {
+		--syv-send-wash: rgba(255, 106, 26, 0.26);
+		background-image:
+			linear-gradient(var(--syv-input-ribbon-color), var(--syv-input-ribbon-color)),
+			repeating-linear-gradient(90deg, transparent 0 calc(1ch - 1.5px), var(--syv-input-cell-grid-color) calc(1ch - 1.5px) 1ch),
+			linear-gradient(
+				to left,
+				var(--syv-send-wash) 0%,
+				var(--syv-send-wash) 7%,
+				color-mix(in srgb, var(--syv-send-wash) 60%, transparent) 17%,
+				transparent 29%
+			);
 	}
 
 	.syv-input--grow {
