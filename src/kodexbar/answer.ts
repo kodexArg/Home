@@ -17,6 +17,19 @@ export const GENERATION_MODEL = '@cf/zai-org/glm-4.7-flash';
 export const MAX_OUTPUT_TOKENS = 500;
 export const TEMPERATURE = 0.3;
 
+/** Workers AI may return legacy `{ response }` or OpenAI chat.completion shapes. */
+export function extractGenerationText(result: unknown): string | undefined {
+	if (!result || typeof result !== 'object') return undefined;
+	const row = result as {
+		response?: unknown;
+		choices?: { message?: { content?: unknown } }[];
+	};
+	if (typeof row.response === 'string' && row.response.trim()) return row.response;
+	const content = row.choices?.[0]?.message?.content;
+	if (typeof content === 'string' && content.trim()) return content;
+	return undefined;
+}
+
 export function allowedLinksFor(
 	chunks: readonly { related: string[]; visibility?: string }[]
 ): LinkDestination[] {
@@ -109,9 +122,13 @@ export async function answerQuery(
 				{ role: 'user', content: buildUserPrompt(query, lang) }
 			],
 			max_tokens: MAX_OUTPUT_TOKENS,
-			temperature: TEMPERATURE
-		});
-		raw = result?.response;
+			temperature: TEMPERATURE,
+			// GLM-4.7-Flash reasons by default; with max_tokens=500 it often fills
+			// reasoning and leaves message.content null. Disable thinking for JSON answers.
+			reasoning_effort: null,
+			chat_template_kwargs: { enable_thinking: false }
+		} as never);
+		raw = extractGenerationText(result);
 	} catch (err) {
 		console.error('[kodexbar] generation failed:', err);
 		return toAnswer(FAILURE[lang], [], lang, false, retrieval.topScore);

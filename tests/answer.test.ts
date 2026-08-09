@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { allowedLinksFor, answerQuery } from '../src/kodexbar/answer';
+import { allowedLinksFor, answerQuery, extractGenerationText } from '../src/kodexbar/answer';
 import { FAILURE, OUT_OF_SCOPE } from '../src/kodexbar/systemPrompt';
 import { OPENING_SUGGESTION } from '../src/kodexbar/suggestions';
 import { getChunk } from '../src/kodexbar/packs';
@@ -19,18 +19,43 @@ function hit(ids: string[], score = 0.8): RetrievalResult {
 
 const MISS: RetrievalResult = { chunks: [], hits: [], topScore: 0.2, passed: false };
 
-function envReturning(response: unknown, onRun?: (model: string, inputs: any) => void): Env {
+function envReturning(payload: unknown, onRun?: (model: string, inputs: any) => void): Env {
 	return {
 		AI: {
 			async run(model: string, inputs: Record<string, unknown>) {
 				onRun?.(model, inputs);
-				return { data: [], response } as any;
+				if (typeof payload === 'string') return { data: [], response: payload } as any;
+				return payload as any;
 			}
 		}
 	} as Env;
 }
 
 const retrieverFor = (result: RetrievalResult) => async () => result;
+
+describe('extractGenerationText', () => {
+	it('reads the legacy Workers AI response field', () => {
+		expect(extractGenerationText({ response: '{"text":"hola","linkIds":[]}' })).toBe(
+			'{"text":"hola","linkIds":[]}'
+		);
+	});
+
+	it('reads OpenAI-shaped chat.completion content', () => {
+		expect(
+			extractGenerationText({
+				choices: [{ message: { content: '{"text":"hola","linkIds":[]}' } }]
+			})
+		).toBe('{"text":"hola","linkIds":[]}');
+	});
+
+	it('returns undefined when content is null (thinking burned the budget)', () => {
+		expect(
+			extractGenerationText({
+				choices: [{ message: { content: null, reasoning: '…' } }]
+			})
+		).toBeUndefined();
+	});
+});
 
 describe('the retrieval gate', () => {
 	it('never calls the generation model and returns the fixed decline when retrieval misses', async () => {
@@ -149,6 +174,36 @@ describe('failure paths', () => {
 		});
 		expect(answer.text).toBe(FAILURE.es);
 		expect(answer.links).toEqual([]);
+	});
+
+	it('disables GLM thinking so content is not burned on reasoning (ADR 02)', async () => {
+		let inputs: Record<string, unknown> | undefined;
+		const env = envReturning('{"text":"Gabriel trabaja con AWS en producción.","linkIds":[]}', (_m, i) => {
+			inputs = i;
+		});
+		const answer = await answerQuery(env, 'aws', 'es', {
+			retriever: retrieverFor(hit(['cv:skill-cloud-devops:es']))
+		});
+		expect(answer.matched).toBe(true);
+		expect(inputs?.reasoning_effort).toBeNull();
+		expect(inputs?.chat_template_kwargs).toEqual({ enable_thinking: false });
+	});
+
+	it('accepts OpenAI-shaped generation payloads', async () => {
+		const env = envReturning({
+			choices: [
+				{
+					message: {
+						content: '{"text":"Gabriel trabaja con AWS en producción.","linkIds":[]}'
+					}
+				}
+			]
+		});
+		const answer = await answerQuery(env, 'aws', 'es', {
+			retriever: retrieverFor(hit(['cv:skill-cloud-devops:es']))
+		});
+		expect(answer.matched).toBe(true);
+		expect(answer.text).toInclude('AWS');
 	});
 
 	it('survives the generation model throwing', async () => {
