@@ -1,9 +1,10 @@
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { CORPUS_LANGS, parseFrontmatter, validateCorpusLayout } from './corpus-layout';
 
 const CORPUS_ROOT = join(import.meta.dir, '..', 'corpus');
 const PACKS_ROOT = join(import.meta.dir, '..', 'src', 'kodexbar', 'packs');
-const LANGS = ['es', 'en'] as const;
+const LANGS = CORPUS_LANGS;
 
 interface PackMeta {
 	id: string;
@@ -22,45 +23,6 @@ interface ChunkDoc {
 	visibility: 'public' | 'private';
 	importance: 'high' | 'normal' | 'low';
 	sourceRepo?: string;
-}
-
-function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
-	const trimmed = raw.replace(/^\uFEFF/, '');
-	if (!trimmed.startsWith('---')) {
-		throw new Error('missing frontmatter');
-	}
-	const end = trimmed.indexOf('\n---', 3);
-	if (end < 0) throw new Error('unterminated frontmatter');
-	const yaml = trimmed.slice(4, end).trim();
-	const body = trimmed.slice(end + 4).replace(/^\n/, '').trim();
-	const data: Record<string, unknown> = {};
-	for (const line of yaml.split('\n')) {
-		const m = line.match(/^([A-Za-z][A-Za-z0-9_]*)\s*:\s*(.*)$/);
-		if (!m) continue;
-		const key = m[1]!;
-		const value = m[2]!.trim();
-		if (value === '[]') {
-			data[key] = [];
-			continue;
-		}
-		if (value.startsWith('[') && value.endsWith(']')) {
-			data[key] = JSON.parse(value.replace(/'/g, '"'));
-			continue;
-		}
-		if (/^-?\d+(\.\d+)?$/.test(value)) {
-			data[key] = Number(value);
-			continue;
-		}
-		if (
-			(value.startsWith('"') && value.endsWith('"')) ||
-			(value.startsWith("'") && value.endsWith("'"))
-		) {
-			data[key] = JSON.parse(value.includes('"') ? value : value.replace(/^'|'$/g, '"'));
-			continue;
-		}
-		data[key] = value;
-	}
-	return { data, body };
 }
 
 function listPackIds(): string[] {
@@ -234,6 +196,13 @@ export function expandRelated(chunks: readonly CorpusChunk[], lang: SupportedLan
 \treturn out;
 }
 `;
+}
+
+const layoutErrors = validateCorpusLayout(CORPUS_ROOT);
+if (layoutErrors.length > 0) {
+	console.error('✗ corpus layout/format errors:');
+	for (const err of layoutErrors) console.error(`  - ${err}`);
+	process.exit(1);
 }
 
 const packIds = listPackIds();
