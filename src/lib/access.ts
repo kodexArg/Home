@@ -18,6 +18,24 @@ export function accessConfigured(env: {
 	return Boolean(env.CF_ACCESS_TEAM_DOMAIN && env.CF_ACCESS_AUD);
 }
 
+/** Read a single cookie value (Access may put CF_Authorization on ungated apex routes). */
+export function parseCookie(cookieHeader: string | null, name: string): string | null {
+	if (!cookieHeader) return null;
+	const match = cookieHeader.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+	return match?.[1] ? decodeURIComponent(match[1]) : null;
+}
+
+/**
+ * Prefer the Access edge header; fall back to CF_Authorization after /me login
+ * so apex whoami can reflect the same-host session (ADR 13 optional identity).
+ */
+export function accessAssertionFromRequest(request: Request): string | null {
+	return (
+		request.headers.get('Cf-Access-Jwt-Assertion') ||
+		parseCookie(request.headers.get('Cookie'), 'CF_Authorization')
+	);
+}
+
 interface Jwk {
 	kid: string;
 	kty: string;
@@ -91,8 +109,13 @@ export async function verifyAccessJwt(
 		if (!payload.exp || payload.exp * 1000 < Date.now()) return null;
 		if (!payload.email) return null;
 
-		const jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
-		if (!jwk) return null;
+		// Unknown kid after JWKS rotation: drop TTL cache and refetch once.
+		let jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
+		if (!jwk) {
+			certsCache.delete(teamDomain);
+			jwk = (await getKeys(teamDomain)).find((k) => k.kid === header.kid);
+			if (!jwk) return null;
+		}
 
 		const key = await crypto.subtle.importKey(
 			'jwk',
