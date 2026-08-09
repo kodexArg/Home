@@ -7,5 +7,12 @@ source_repo: "GITCon"
 related: []
 tags: ["gitcon", "github", "private", "low", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Internal gym-member analytics toolkit: Oracle SQL + pandas/matplotlib reporting, with an unused Django admin shell for future GIC web tooling. | | Audience | Internal operators/analysts for a gym chain using Oracle-backed session tracking; original developer workstation paths suggest a single-maintainer dev setup. No agent harness or external consumer docs exist. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Internal gym-member analytics toolkit: Oracle SQL + pandas/matplotlib reporting, with an unused Django admin shell for future GIC web tooling. |
+| Audience | Internal operators/analysts for a gym chain using Oracle-backed session tracking; original developer workstation paths suggest a single-maintainer dev setup. No agent harness or external consumer docs exist. |

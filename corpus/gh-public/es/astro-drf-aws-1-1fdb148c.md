@@ -7,5 +7,12 @@ source_repo: "astro-drf-aws"
 related: ["astro-drf-aws"]
 tags: ["astro-drf-aws", "github", "public", "high", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | (integration); is the production deploy branch | | One-line pitch | Astro 7 SSR + Svelte frontend and Django 6 + DRF backend template — two Fargate services on AWS, with OIDC auth, Bedrock router/assistant, M365 Graph integration, and an agent harness that enforces API-first, TDD/BDD discipline. | | Audience | kodexArg operators and agents building ALVS-family web apps; backend/frontend engineers adopting the stack; AI agents entering through / ; reviewers of PRD, API, and ADR surfaces via guardian subagents. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | (integration); is the production deploy branch |
+| One-line pitch | Astro 7 SSR + Svelte frontend and Django 6 + DRF backend template — two Fargate services on AWS, with OIDC auth, Bedrock router/assistant, M365 Graph integration, and an agent harness that enforces API-first, TDD/BDD discipline. |
+| Audience | kodexArg operators and agents building ALVS-family web apps; backend/frontend engineers adopting the stack; AI agents entering through / ; reviewers of PRD, API, and ADR surfaces via guardian subagents. |

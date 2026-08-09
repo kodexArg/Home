@@ -7,5 +7,6 @@ source_repo: "PyMceOcup"
 related: []
 tags: ["pymceocup", "github", "private", "low", "summary"]
 ---
+## PyMceOcup
 
-# PyMceOcup > **Problem thesis (required):** A small Python toolkit for **Casino Mendoza** (MCE) operations that automates two offline data chores: pulling daily occupancy CSV attachments from a corporate IMAP inbox, and consolidating many per-day CSV files into one Excel workbook ( ). The repository is a legacy, script-only ETL snapshot from mid-2021 with no web UI, no tests, and no dependency manifest.
+> **Problem thesis (required):** A small Python toolkit for **Casino Mendoza** (MCE) operations that automates two offline data chores: pulling daily occupancy CSV attachments from a corporate IMAP inbox, and consolidating many per-day CSV files into one Excel workbook ( ). The repository is a legacy, script-only ETL snapshot from mid-2021 with no web UI, no tests, and no dependency manifest.

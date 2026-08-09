@@ -7,5 +7,9 @@ source_repo: "dj-crudo"
 related: []
 tags: ["dj-crudo", "github", "private", "normal", "summary"]
 ---
+### P3 — Container-to-host command execution for firewall control
 
-### P3 — Container-to-host command execution for firewall control - **Who hurts:** Developers deploying Django in Docker on a host that also runs the network edge (e.g., a Raspberry Pi or gateway box) who want the app to influence host without SSH sidecars. - **Pain today:** Containers cannot normally modify host firewall rules. SSH or a privileged sidecar adds operational complexity. - **How this repo answers:** defines which writes a command string into (bind-mounted from host ). On the host, loops forever executing . Docker Compose mounts on the service. imports and includes a commented example . The README explicitly warns about the security implications ("what can possible go wrong with it"). - **Out of scope:** Command allowlisting, audit logging, privilege separation, seccomp profiles, and any production-grade remote execution framework. This is a proof-of-concept bridge, not a hardened control plane.
+- **Who hurts:** Developers deploying Django in Docker on a host that also runs the network edge (e.g., a Raspberry Pi or gateway box) who want the app to influence host without SSH sidecars.
+- **Pain today:** Containers cannot normally modify host firewall rules. SSH or a privileged sidecar adds operational complexity.
+- **How this repo answers:** defines which writes a command string into (bind-mounted from host ). On the host, loops forever executing . Docker Compose mounts on the service. imports and includes a commented example . The README explicitly warns about the security implications ("what can possible go wrong with it").
+- **Out of scope:** Command allowlisting, audit logging, privilege separation, seccomp profiles, and any production-grade remote execution framework. This is a proof-of-concept bridge, not a hardened control plane.

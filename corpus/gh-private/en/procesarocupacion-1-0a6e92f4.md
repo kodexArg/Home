@@ -7,5 +7,12 @@ source_repo: "ProcesarOcupacion"
 related: []
 tags: ["procesarocupacion", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Python IMAP scripts that pull CSV occupation reports from a casino monitoring inbox, save attachments to disk, and move processed messages to a processed folder. | | Audience | Internal casino / ALVS operators, monitoring staff, and anyone maintaining Mendoza Central occupancy reporting workflows. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Python IMAP scripts that pull CSV occupation reports from a casino monitoring inbox, save attachments to disk, and move processed messages to a processed folder. |
+| Audience | Internal casino / ALVS operators, monitoring staff, and anyone maintaining Mendoza Central occupancy reporting workflows. |

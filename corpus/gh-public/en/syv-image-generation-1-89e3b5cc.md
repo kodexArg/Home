@@ -7,5 +7,12 @@ source_repo: "syv-image-generation"
 related: ["gh-syv-image-generation"]
 tags: ["syv-image-generation", "github", "public", "high", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Playground and SSOT for SyV character portrait generation: ComfyUI workflows, prompt compilation, inbox delivery, and whitelist-driven calibration loop. | | Audience | SyV creators, ComfyUI operators on the local SyV harness machine, coding agents ( / symlink), and downstream consumers of portrait assets ( , , ). |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Playground and SSOT for SyV character portrait generation: ComfyUI workflows, prompt compilation, inbox delivery, and whitelist-driven calibration loop. |
+| Audience | SyV creators, ComfyUI operators on the local SyV harness machine, coding agents ( / symlink), and downstream consumers of portrait assets ( , , ). |

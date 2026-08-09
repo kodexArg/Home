@@ -7,5 +7,9 @@ source_repo: "n8n-apprunner"
 related: ["n8n-apprunner"]
 tags: ["n8n-apprunner", "github", "public", "normal", "summary"]
 ---
+### P3 — App Runner health checks vs n8n authentication
 
-### P3 — App Runner health checks vs n8n authentication - **Who hurts:** Anyone configuring App Runner liveness probes against an n8n instance that has Basic Auth enabled globally. - **Pain today:** Default n8n routes may require auth; misconfigured health checks cause deploy failures or flapping services. - **How this repo answers:** Sets in so n8n exposes without authentication. README explicitly states health check protocol/path must be configured in the **App Runner console** (HTTP, path ) — not in , which App Runner does not use for health check definition. - **Out of scope:** Deep application-level workflow health; synthetic monitoring of individual automations.
+- **Who hurts:** Anyone configuring App Runner liveness probes against an n8n instance that has Basic Auth enabled globally.
+- **Pain today:** Default n8n routes may require auth; misconfigured health checks cause deploy failures or flapping services.
+- **How this repo answers:** Sets in so n8n exposes without authentication. README explicitly states health check protocol/path must be configured in the **App Runner console** (HTTP, path ) — not in , which App Runner does not use for health check definition.
+- **Out of scope:** Deep application-level workflow health; synthetic monitoring of individual automations.

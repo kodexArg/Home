@@ -7,5 +7,9 @@ source_repo: "pi-cam"
 related: []
 tags: ["pi-cam", "github", "private", "normal", "summary"]
 ---
+### P3 — Evolving from script soup to testable services
 
-### P3 — Evolving from script soup to testable services - **Who hurts:** Maintainers of a growing Telegram + RTSP + motion-detection codebase where root-level modules became tightly coupled. - **Pain today:** Direct imports between bot handlers and OpenCV calls make unit testing and feature addition (e.g., REST API, alternate input channels) costly. - **How this repo answers:** A documented layered refactor ( ) introduces , , , and packages. centralizes command types ( , , , etc.), tracks , and coordinates and through a . Legacy root modules ( , , …) remain for gradual migration compatibility. - **Out of scope:** Fully completed migration (some root duplicates still exist); hot configuration reload; REST/WebSocket interfaces (planned only in ).
+- **Who hurts:** Maintainers of a growing Telegram + RTSP + motion-detection codebase where root-level modules became tightly coupled.
+- **Pain today:** Direct imports between bot handlers and OpenCV calls make unit testing and feature addition (e.g., REST API, alternate input channels) costly.
+- **How this repo answers:** A documented layered refactor ( ) introduces , , , and packages. centralizes command types ( , , , etc.), tracks , and coordinates and through a . Legacy root modules ( , , …) remain for gradual migration compatibility.
+- **Out of scope:** Fully completed migration (some root duplicates still exist); hot configuration reload; REST/WebSocket interfaces (planned only in ).

@@ -7,5 +7,12 @@ source_repo: "dj-indoor-monitor"
 related: ["dj-indoor-monitor"]
 tags: ["dj-indoor-monitor", "github", "public", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | (integration); production CD targets branch | | One-line pitch | Django + DRF REST API and HTMX/Plotly dashboard for indoor-crop IoT sensor monitoring (Raspberry Pi → TimescaleDB), containerized with Docker and deployed on-premise. | | Audience | Indoor growers / facility operators monitoring grow rooms; edge-device maintainers configuring Raspberry Pi sensor services; backend developers extending DRF endpoints or chart views; AI agents guided by and . |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | (integration); production CD targets branch |
+| One-line pitch | Django + DRF REST API and HTMX/Plotly dashboard for indoor-crop IoT sensor monitoring (Raspberry Pi → TimescaleDB), containerized with Docker and deployed on-premise. |
+| Audience | Indoor growers / facility operators monitoring grow rooms; edge-device maintainers configuring Raspberry Pi sensor services; backend developers extending DRF endpoints or chart views; AI agents guided by and . |

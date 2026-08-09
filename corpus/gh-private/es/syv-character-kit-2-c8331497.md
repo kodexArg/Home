@@ -7,5 +7,9 @@ source_repo: "syv-character-kit"
 related: []
 tags: ["syv-character-kit", "github", "private", "high", "summary"]
 ---
+### P1 — No portable, stack-agnostic character contract for SyV
 
-### P1 — No portable, stack-agnostic character contract for SyV - **Who hurts:** Teams building battle engines, lore galleries, scenario generators, and narrative tooling across the SyV ecosystem. - **Pain today:** Each consumer invented its own character shape, tag vocabulary, and persistence rules. Stats, ranks, equipment, and squad membership diverged silently between repos. Integrations required ad-hoc translation layers and broke when one side renamed a field. - **How this repo answers:** Publishes synchronized contracts in , , , and — character sheet schema ( ), tag system ( ), squad schema ( ), attribute vocabulary ( ), and 28 mapped user stories ( ). The HTTP surface is specified but not implemented here; implementers choose their own stack. - **Out of scope:** Running API server, database, authentication, UI, or deployment. Those belong to downstream application repos.
+- **Who hurts:** Teams building battle engines, lore galleries, scenario generators, and narrative tooling across the SyV ecosystem.
+- **Pain today:** Each consumer invented its own character shape, tag vocabulary, and persistence rules. Stats, ranks, equipment, and squad membership diverged silently between repos. Integrations required ad-hoc translation layers and broke when one side renamed a field.
+- **How this repo answers:** Publishes synchronized contracts in , , , and — character sheet schema ( ), tag system ( ), squad schema ( ), attribute vocabulary ( ), and 28 mapped user stories ( ). The HTTP surface is specified but not implemented here; implementers choose their own stack.
+- **Out of scope:** Running API server, database, authentication, UI, or deployment. Those belong to downstream application repos.

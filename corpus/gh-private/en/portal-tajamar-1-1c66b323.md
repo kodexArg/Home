@@ -7,5 +7,12 @@ source_repo: "portal-tajamar"
 related: []
 tags: ["portal-tajamar", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Authenticated Django portal scaffold for Tajamar TV with file upload, email login, and AWS Elastic Beanstalk + S3 + MySQL deployment wiring. | | Audience | Tajamar TV internal staff uploading or viewing company assets; developers deploying on AWS EB; Django operators managing users via admin. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Authenticated Django portal scaffold for Tajamar TV with file upload, email login, and AWS Elastic Beanstalk + S3 + MySQL deployment wiring. |
+| Audience | Tajamar TV internal staff uploading or viewing company assets; developers deploying on AWS EB; Django operators managing users via admin. |

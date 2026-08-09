@@ -7,5 +7,12 @@ source_repo: "syv-mcp-tools"
 related: []
 tags: ["syv-mcp-tools", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | MCP server with tools for validating and extracting YAML frontmatter metadata from SyV Markdown files. | | Audience | SyV project collaborators, AI coding agents (Cursor, Claude Desktop, Grok) connected via MCP, and maintainers of the parent SyV lore repository. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | MCP server with tools for validating and extracting YAML frontmatter metadata from SyV Markdown files. |
+| Audience | SyV project collaborators, AI coding agents (Cursor, Claude Desktop, Grok) connected via MCP, and maintainers of the parent SyV lore repository. |

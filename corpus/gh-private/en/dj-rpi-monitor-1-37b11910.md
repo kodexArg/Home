@@ -7,5 +7,12 @@ source_repo: "dj-rpi-monitor"
 related: []
 tags: ["dj-rpi-monitor", "github", "private", "low", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Private Django + DRF + HTMX + Plotly prototype that ingests Raspberry Pi temperature/humidity POSTs and shows a live ten-minute dashboard. | | Audience | Internal KCBD lab operators prototyping sensor visibility; Raspberry Pi edge scripts posting JSON payloads; developers iterating on the monitoring stack before migrating to or . |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Private Django + DRF + HTMX + Plotly prototype that ingests Raspberry Pi temperature/humidity POSTs and shows a live ten-minute dashboard. |
+| Audience | Internal KCBD lab operators prototyping sensor visibility; Raspberry Pi edge scripts posting JSON payloads; developers iterating on the monitoring stack before migrating to or . |

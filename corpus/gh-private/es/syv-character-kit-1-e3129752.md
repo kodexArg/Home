@@ -7,5 +7,12 @@ source_repo: "syv-character-kit"
 related: []
 tags: ["syv-character-kit", "github", "private", "high", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | SyV — Character Kit: PRD, canonical character sheet, tag catalog, squad mocks, and battle-motor design for squad-vs-squad combat in a dieselpunk Patagonian war setting (year 2178). | | Audience | Game designers, narrative writers, API implementers, battle-motor developers, QA pipelines, and AI agents curating SyV canon; not end players directly. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | SyV — Character Kit: PRD, canonical character sheet, tag catalog, squad mocks, and battle-motor design for squad-vs-squad combat in a dieselpunk Patagonian war setting (year 2178). |
+| Audience | Game designers, narrative writers, API implementers, battle-motor developers, QA pipelines, and AI agents curating SyV canon; not end players directly. |

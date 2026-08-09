@@ -151,6 +151,7 @@ A `KnowledgePack` bundles chunks, a system-prompt fragment and a retrieval thres
 | `cv` | Profile, experience, skills, projects, education, contact, QA/method — from `cv.kodexarg.com` including long-form `/full/` detail (ES + EN) | v2.0 |
 | `identity` | Authorized personal identity facts | Active |
 | `interests` | Loose authorized personal-interest notes (hobbies, tastes); grows by additive markdown — [ADR 15](adr-15-interests-pack.md) | Active (scaffold) |
+| `platzi` | Per-diploma Platzi course notes (what he learned); membership from public student diplomas — [ADR 16](adr-16-platzi-pack.md) | Active (scaffold) |
 | `gh-public` / `gh-private` | GitHub repo summaries | Active — [ADR 14](adr-14-github-corpus.md) |
 | `syv` | Subordinación y Valor | Planned |
 

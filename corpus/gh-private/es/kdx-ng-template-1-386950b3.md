@@ -7,5 +7,12 @@ source_repo: "kdx-ng-template"
 related: []
 tags: ["kdx-ng-template", "github", "private", "high", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Opinionated Angular 21 CSR + Django 5.2 DRF SaaS blueprint with PrimeNG, signals, API-first contracts, and AI skills that enforce one way to build. | | Audience | Internal developers and AI coding agents scaffolding new SaaS products on the kodexArg AWS stack; DevOps engineers targeting Amplify + App Runner + RDS; backend engineers extending DRF apps; frontend engineers building signal-native Angular features. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Opinionated Angular 21 CSR + Django 5.2 DRF SaaS blueprint with PrimeNG, signals, API-first contracts, and AI skills that enforce one way to build. |
+| Audience | Internal developers and AI coding agents scaffolding new SaaS products on the kodexArg AWS stack; DevOps engineers targeting Amplify + App Runner + RDS; backend engineers extending DRF apps; frontend engineers building signal-native Angular features. |

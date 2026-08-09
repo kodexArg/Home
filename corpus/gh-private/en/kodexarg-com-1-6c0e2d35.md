@@ -7,5 +7,12 @@ source_repo: "kodexarg.com"
 related: []
 tags: ["kodexarg.com", "github", "private", "high", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Personal liminal home: Astro static pages + Svelte 5 islands on Cloudflare Workers, bun-only toolchain, candlelit dark aesthetic. | | Audience | kodexArg (owner), coding agents maintaining the site, visitors to the live home, and internal readers of SyV RPG design docs hosted as static pages. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Personal liminal home: Astro static pages + Svelte 5 islands on Cloudflare Workers, bun-only toolchain, candlelit dark aesthetic. |
+| Audience | kodexArg (owner), coding agents maintaining the site, visitors to the live home, and internal readers of SyV RPG design docs hosted as static pages. |

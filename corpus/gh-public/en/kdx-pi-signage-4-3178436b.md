@@ -7,5 +7,9 @@ source_repo: "kdx-pi-signage"
 related: ["kdx-pi-signage"]
 tags: ["kdx-pi-signage", "github", "public", "normal", "summary"]
 ---
+### P3 — Silent failures on unattended kiosk hardware
 
-### P3 — Silent failures on unattended kiosk hardware - **Who hurts:** Operators who cannot physically visit the screen when playback stalls overnight. - **Pain today:** A single corrupt file or VLC glitch can leave a black screen indefinitely; empty directories cause idle hangs without clear telemetry. - **How this repo answers:** tracks ; after (default 3) it re-scans the directory and resets the counter. VLC end/error events route through callbacks ( , ). **loguru** writes rotating logs ( , ) plus stderr warnings; systemd captures stdout/stderr to journal with identifier . Service unit sets , burst limits, and hardening. - **Out of scope:** Remote alerting (email, Telegram), health HTTP endpoint, automatic video transcoding/repair, thermal throttling logic in-app.
+- **Who hurts:** Operators who cannot physically visit the screen when playback stalls overnight.
+- **Pain today:** A single corrupt file or VLC glitch can leave a black screen indefinitely; empty directories cause idle hangs without clear telemetry.
+- **How this repo answers:** tracks ; after (default 3) it re-scans the directory and resets the counter. VLC end/error events route through callbacks ( , ). **loguru** writes rotating logs ( , ) plus stderr warnings; systemd captures stdout/stderr to journal with identifier . Service unit sets , burst limits, and hardening.
+- **Out of scope:** Remote alerting (email, Telegram), health HTTP endpoint, automatic video transcoding/repair, thermal throttling logic in-app.

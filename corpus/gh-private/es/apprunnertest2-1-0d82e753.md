@@ -7,5 +7,12 @@ source_repo: "apprunnertest2"
 related: []
 tags: ["apprunnertest2", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Minimal Django 3.11 app deployed on AWS App Runner with RDS, S3/CloudFront, and Secrets Manager — gated by startup integration tests. | | Audience | kodexArg operators and backend engineers validating AWS App Runner for Django; future maintainers extending ALVS infrastructure patterns; agents needing context on the App Runner + Django stack choice. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Minimal Django 3.11 app deployed on AWS App Runner with RDS, S3/CloudFront, and Secrets Manager — gated by startup integration tests. |
+| Audience | kodexArg operators and backend engineers validating AWS App Runner for Django; future maintainers extending ALVS infrastructure patterns; agents needing context on the App Runner + Django stack choice. |

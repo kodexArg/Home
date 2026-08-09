@@ -7,5 +7,9 @@ source_repo: "dj-indoor-monitor"
 related: ["dj-indoor-monitor"]
 tags: ["dj-indoor-monitor", "github", "public", "normal", "summary"]
 ---
+### P3 — On-premise Docker deployment with sensor-compatible networking
 
-### P3 — On-premise Docker deployment with sensor-compatible networking - **Who hurts:** Teams deploying on a private LAN (e.g. static host on ) where sensors were already configured to POST to port 8000, and where inbound SSH from the public internet is undesirable for CI/CD. - **Pain today:** Cloud-first deploy guides do not match LAN topology; opening SSH for GitHub Actions is a security risk; nginx/Django port mapping mismatches break existing sensor configs. - **How this repo answers:** runs (Gunicorn), (TimescaleDB), , and . Nginx maps host ports and → container port 80, so sensors targeting keep working ( ). GitHub Actions workflow uses a **self-hosted runner** on push to , running without exposing inbound ports ( ). - **Out of scope:** Cloudflare Workers deploy (this repo is on-prem Docker, not edge Workers); managed Kubernetes; automatic TLS/Let's Encrypt (docs assume optional HTTP on LAN).
+- **Who hurts:** Teams deploying on a private LAN (e.g. static host on ) where sensors were already configured to POST to port 8000, and where inbound SSH from the public internet is undesirable for CI/CD.
+- **Pain today:** Cloud-first deploy guides do not match LAN topology; opening SSH for GitHub Actions is a security risk; nginx/Django port mapping mismatches break existing sensor configs.
+- **How this repo answers:** runs (Gunicorn), (TimescaleDB), , and . Nginx maps host ports and → container port 80, so sensors targeting keep working ( ). GitHub Actions workflow uses a **self-hosted runner** on push to , running without exposing inbound ports ( ).
+- **Out of scope:** Cloudflare Workers deploy (this repo is on-prem Docker, not edge Workers); managed Kubernetes; automatic TLS/Let's Encrypt (docs assume optional HTTP on LAN).
