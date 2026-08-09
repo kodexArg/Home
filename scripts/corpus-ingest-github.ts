@@ -25,7 +25,7 @@ const PRIVATE_DIR = join(ROOT, 'github-private-repos');
 const TARGET_CHARS = 1_400;
 const MIN_CHARS = 80;
 /** Keep Worker + Vectorize lean: identity/problems/stack sections first. */
-const MAX_CHUNKS_PER_REPO = 6;
+const MAX_CHUNKS_PER_REPO = 9;
 
 /** Manual destinations.ts repo URLs → ids (do not import DESTINATIONS; that pulls generated github list). */
 const MANUAL_REPO_DEST_IDS: ReadonlyMap<string, string> = new Map(
@@ -94,14 +94,14 @@ function chunkId(repo: string, index: number, title: string): string {
 
 function scrubBody(text: string): string {
 	return text
-		.replace(/\bhttps?:\/\/\S+/gi, '')
-		.replace(/\bmailto:\S+/gi, '')
-		.replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, '')
-		.replace(/\b[a-z0-9-]+\.(?:com|org|net|io|dev|ar)\b/gi, '')
+		.replace(/```[\s\S]*?```/g, ' ')
+		.replace(/`([^`]*)`/g, '$1')
 		.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
 		.replace(/!\[[^\]]*\]\([^)]+\)/g, '')
-		.replace(/```[\s\S]*?```/g, ' ')
-		.replace(/`[^`]+`/g, ' ')
+		.replace(/\bhttps?:\/\/[^\s<>()[\]{}'"]+/gi, '')
+		.replace(/\bmailto:[^\s<>()[\]{}'"]+/gi, '')
+		.replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, '')
+		.replace(/\b[a-z0-9-]+\.(?:com|org|net|io|dev|ar)\b/gi, '')
 		.replace(/\s+/g, ' ')
 		.trim();
 }

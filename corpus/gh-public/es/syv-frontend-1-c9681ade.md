@@ -8,4 +8,4 @@ related: ["gh-syv-frontend"]
 tags: ["syv-frontend", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Static Astro site publishing the Subordinación y Valor universe — landing, canon status reports, and edge-hosted assets on the SyV production host. | | Audience | SyV worldbuilders and operators (Gabriel / kodexArg), agent teams producing canon-review reports, future players or readers discovering the universe, and developers maintaining the Cloudflare deployment. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/syv-frontend | | Visibility | public | | Default branch | main | | One-line pitch | Static Astro site publishing the Subordinación y Valor universe — landing, canon status reports, and edge-hosted assets on the SyV production host. | | Audience | SyV worldbuilders and operators (Gabriel / kodexArg), agent teams producing canon-review reports, future players or readers discovering the universe, and developers maintaining the Cloudflare deployment. |

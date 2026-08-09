@@ -8,4 +8,4 @@ related: []
 tags: ["cotton-aws-ai", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Greenfield AWS agentic AI project — LLM provider and orchestration pattern under evaluation, with a phased plan from foundation through production hardening. | | Audience | Internal kodexArg engineers and coding agents working on AWS-native LLM/agent integration; not a published library or end-user product yet. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/cotton-aws-ai | | Visibility | private | | Default branch | main | | One-line pitch | Greenfield AWS agentic AI project — LLM provider and orchestration pattern under evaluation, with a phased plan from foundation through production hardening. | | Audience | Internal kodexArg engineers and coding agents working on AWS-native LLM/agent integration; not a published library or end-user product yet. |

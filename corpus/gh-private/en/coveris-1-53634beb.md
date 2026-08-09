@@ -8,4 +8,4 @@ related: []
 tags: ["coveris", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Real-time staffing gap measurement and assignment tooling for mid-size private clinics, built on a demand/offer domain model over a hierarchical org chart. | | Audience | Clinic HR managers, service chiefs, auditors, and employees (role-scoped); internal developers and AI agents maintaining the stack; operators deploying to Cloudflare. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/coveris | | Visibility | private | | Default branch | main | | One-line pitch | Real-time staffing gap measurement and assignment tooling for mid-size private clinics, built on a demand/offer domain model over a hierarchical org chart. | | Audience | Clinic HR managers, service chiefs, auditors, and employees (role-scoped); internal developers and AI agents maintaining the stack; operators deploying to Cloudflare. |

@@ -8,4 +8,4 @@ related: []
 tags: ["docker-kmportal", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Containerized Django portal for B2B fuel load ordering, ExtraCash transfers, and pump-operator fulfillment at KM 1151. | | Audience | B2B fleet customer users (OAuth login), pump operators (staff intranet), Django admins, and internal operators deploying to EC2. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/docker-kmportal | | Visibility | private | | Default branch | main | | One-line pitch | Containerized Django portal for B2B fuel load ordering, ExtraCash transfers, and pump-operator fulfillment at KM 1151. | | Audience | B2B fleet customer users (OAuth login), pump operators (staff intranet), Django admins, and internal operators deploying to EC2. |

@@ -8,4 +8,4 @@ related: []
 tags: ["rpi-temp", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Dockerized Flask + nginx stack that charts the last 100 temperature/humidity rows from MySQL for Raspberry Pi sensor feeds. | | Audience | Home-lab operators, grow-room monitors, and anyone maintaining edge Pi sensors that write into a shared MySQL table. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/rpi-temp | | Visibility | private | | Default branch | main | | One-line pitch | Dockerized Flask + nginx stack that charts the last 100 temperature/humidity rows from MySQL for Raspberry Pi sensor feeds. | | Audience | Home-lab operators, grow-room monitors, and anyone maintaining edge Pi sensors that write into a shared MySQL tb_temperatura table. |

@@ -8,4 +8,4 @@ related: []
 tags: ["procesarocupacion", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Python IMAP scripts that pull CSV occupation reports from a casino monitoring inbox, save attachments to disk, and move processed messages to a processed folder. | | Audience | Internal casino / ALVS operators, monitoring staff, and anyone maintaining Mendoza Central occupancy reporting workflows. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/ProcesarOcupacion | | Visibility | private | | Default branch | main | | One-line pitch | Python IMAP scripts that pull CSV occupation reports from a casino monitoring inbox, save attachments to disk, and move processed messages to a processed folder. | | Audience | Internal casino / ALVS operators, monitoring staff, and anyone maintaining Mendoza Central occupancy reporting workflows. |

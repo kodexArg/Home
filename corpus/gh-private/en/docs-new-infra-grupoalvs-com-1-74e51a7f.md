@@ -8,4 +8,4 @@ related: []
 tags: ["docs-new-infra-grupoalvs-com", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Canonical MkDocs site plus Python tooling that documents and orchestrates ALVS v3 AWS infrastructure (DEV+PROD VPCs, ECS, RDS, Cognito, OIDC CI/CD) for projects. | | Audience | ALVS admins and architects (infra ownership), project developers (CI/CD and Django conventions), and AI agents editing or consuming the spec ( , ). |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/docs-new-infra-grupoalvs-com | | Visibility | private | | Default branch | main | | One-line pitch | Canonical MkDocs site plus Python tooling that documents and orchestrates ALVS v3 AWS infrastructure (DEV+PROD VPCs, ECS, RDS, Cognito, OIDC CI/CD) for projects. | | Audience | ALVS admins and architects (infra ownership), project developers (CI/CD and Django conventions), and AI agents editing or consuming the spec (AGENTS.md, .agents/docs/). |

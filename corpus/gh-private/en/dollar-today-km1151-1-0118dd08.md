@@ -8,4 +8,4 @@ related: []
 tags: ["dollar-today-km1151", "github", "private", "low", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Small Python toolkit to overlay daily currency prices on a marquee background and preview fullscreen — marquesina on-work project. | | Audience | Internal operators updating a physical or digital marquee (KM1151 context); developers extending the overlay/display pipeline. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/dollar-today-km1151 | | Visibility | private | | Default branch | main | | One-line pitch | Small Python toolkit to overlay daily currency prices on a marquee background and preview fullscreen — marquesina on-work project. | | Audience | Internal operators updating a physical or digital marquee (KM1151 context); developers extending the overlay/display pipeline. |

@@ -8,4 +8,4 @@ related: ["kdx-pi-signage-2"]
 tags: ["kdx-pi-signage-2", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Headless digital-signage daemon that syncs video assets from Google Drive and plays them fullscreen via VLC on Raspberry Pi or Windows. | | Audience | Operators running Pi-based TV signage; KDX developers maintaining playback and sync logic; future integrators who may call a planned minimal HTTP control API. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/kdx-pi-signage-2 | | Visibility | public | | Default branch | main | | One-line pitch | Headless digital-signage daemon that syncs video assets from Google Drive and plays them fullscreen via VLC on Raspberry Pi or Windows. | | Audience | Operators running Pi-based TV signage; KDX developers maintaining playback and sync logic; future integrators who may call a planned minimal HTTP control API. |

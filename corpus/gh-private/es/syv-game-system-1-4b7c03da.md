@@ -8,4 +8,4 @@ related: []
 tags: ["syv-game-system", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Platform-agnostic Obsidian vault of WEGO wargame rules, JSON schemas, mathematical foundations, and Patagonian lore for *Subordinación y Valor*. | | Audience | Game designers and rule authors; AI agents acting as "Diseñador de Sistemas de Juego y Arquitecto Conceptual" per ; future engine implementers who need schemas and reglamento as SSOT. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/syv-game-system | | Visibility | private | | Default branch | main | | One-line pitch | Platform-agnostic Obsidian vault of WEGO wargame rules, JSON schemas, mathematical foundations, and Patagonian lore for *Subordinación y Valor*. | | Audience | Game designers and rule authors; AI agents acting as "Diseñador de Sistemas de Juego y Arquitecto Conceptual" per AGENTS.md; future engine implementers who need schemas and reglamento as SSOT. |

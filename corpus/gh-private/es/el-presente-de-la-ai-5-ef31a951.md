@@ -8,4 +8,4 @@ related: []
 tags: ["el-presente-de-la-ai", "github", "private", "normal", "summary"]
 ---
 
-layout engine, or brand kit for non-ALVS decks — rules inherit typography/color inspiration from sibling repo but content is unique to this talk.
+generate_orbital_family.py, generate_tokens_image.py, gen_02_05_difusion.py, generate_04_03_image.py) implement early raster experiments; canonical path is SVG compose + cairosvg via uv per design docs. - **Out of scope:** A general-purpose design system product, automated Slides API layout engine, or brand kit for non-ALVS decks — rules inherit typography/color inspiration from sibling repo alvs-capacitacion but content is unique to this talk.

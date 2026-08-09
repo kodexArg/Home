@@ -8,4 +8,4 @@ related: []
 tags: ["dj-crudo", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Self-hosted Django survey CRUD plus Google OAuth WiFi portal, with an experimental named-pipe bridge for host iptables control. | | Audience | Internal operators running a WiFi hotspot or visitor intake kiosk; developers maintaining a minimal Django stack in Docker; not intended as a production-hardened SaaS replacement without significant security work. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/dj-crudo | | Visibility | private | | Default branch | main | | One-line pitch | Self-hosted Django survey CRUD plus Google OAuth WiFi portal, with an experimental named-pipe bridge for host iptables control. | | Audience | Internal operators running a WiFi hotspot or visitor intake kiosk; developers maintaining a minimal Django stack in Docker; not intended as a production-hardened SaaS replacement without significant security work. |

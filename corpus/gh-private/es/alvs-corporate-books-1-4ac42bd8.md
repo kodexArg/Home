@@ -8,4 +8,4 @@ related: []
 tags: ["alvs-corporate-books", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | (integration); is the production deploy branch | | One-line pitch | Corporate books, compliance, and litigation for Grupo ALVS — Astro SSR UI over a Django 6 API on two Fargate services with PostgreSQL, Cognito auth, and Bedrock-assisted routing. | | Audience | Internal ALVS legal/compliance/corporate operators, firm administrators, and using the chat router; kodexArg maintainers and agent harness users. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/alvs-corporate-books | | Visibility | private | | Default branch | main (integration); prod is the production deploy branch | | One-line pitch | Corporate books, compliance, and litigation for Grupo ALVS — Astro SSR UI over a Django 6 API on two Fargate services with PostgreSQL, Cognito auth, and Bedrock-assisted routing. | | Audience | Internal ALVS legal/compliance/corporate operators, firm administrators, and ai_operators using the chat router; kodexArg maintainers and agent harness users. |

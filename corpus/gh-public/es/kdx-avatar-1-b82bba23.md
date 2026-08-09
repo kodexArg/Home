@@ -8,4 +8,4 @@ related: ["gh-kdx-avatar"]
 tags: ["kdx-avatar", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Live camera→avatar adapter (SnekStudio collaboration path) with blank-video and service failover. | | Audience | Primary operator on a Linux/Wayland host (debian-sid reference); downstream video consumers (Discord, Meet, OBS); upstream SnekStudio OSS collaborators; AI agents working inside the harness-default documentation vault. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/kdx-avatar | | Visibility | public | | Default branch | main | | One-line pitch | Live camera→avatar adapter (SnekStudio collaboration path) with blank-video and service failover. | | Audience | Primary operator on a Linux/Wayland host (debian-sid reference); downstream video consumers (Discord, Meet, OBS); upstream SnekStudio OSS collaborators; AI agents working inside the harness-default documentation vault. |

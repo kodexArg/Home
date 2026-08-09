@@ -8,4 +8,4 @@ related: []
 tags: ["django-captive-portal-oauth", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Django captive portal that authenticates WiFi guests through Google/Facebook OAuth before granting internet access. | | Audience | Venue operators deploying guest WiFi (hospitality context suggested by template branding), Django developers integrating UniFi or similar captive-portal hardware, and internal Kodex Arg maintainers. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/django-captive-portal-oauth | | Visibility | private | | Default branch | main | | One-line pitch | Django captive portal that authenticates WiFi guests through Google/Facebook OAuth before granting internet access. | | Audience | Venue operators deploying guest WiFi (hospitality context suggested by template branding), Django developers integrating UniFi or similar captive-portal hardware, and internal Kodex Arg maintainers. |

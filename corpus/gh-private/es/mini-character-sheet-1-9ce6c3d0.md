@@ -8,4 +8,4 @@ related: []
 tags: ["mini-character-sheet", "github", "private", "low", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Python + Pillow script that pastes a Warhammer stat row onto a resized miniature photo and saves the composite. | | Audience | Internal hobby use — tabletop wargame players who want quick stat-on-picture exports; not a packaged library or public service. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/mini-character-sheet | | Visibility | private | | Default branch | main | | One-line pitch | Python + Pillow script that pastes a Warhammer stat row onto a resized miniature photo and saves the composite. | | Audience | Internal hobby use — tabletop wargame players who want quick stat-on-picture exports; not a packaged library or public service. |

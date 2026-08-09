@@ -8,4 +8,4 @@ related: []
 tags: ["pymceocup", "github", "private", "low", "summary"]
 ---
 
-### 3.1 North-star use cases 1. Operator runs after shift change to pull new occupancy CSV attachments and archive processed mail. 2. Analyst runs after CSVs are placed in to regenerate the master Excel occupancy sheet. 3. Supervisor opens (or individual CSVs) for floor utilization review.
+### 3.1 North-star use cases 1. Operator runs download_emails.py after shift change to pull new occupancy CSV attachments and archive processed mail. 2. Analyst runs join_csvs.py after CSVs are placed in csvs/ to regenerate the master Excel occupancy sheet. 3. Supervisor opens ocupacion.xlsx (or individual Mendoza_Sesion_* CSVs) for floor utilization review.

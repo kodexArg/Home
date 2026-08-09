@@ -8,4 +8,4 @@ related: []
 tags: ["kcbd-monitor", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Full-stack refactor of dj-indoor-monitor: headless Django REST API + Astro static frontend for IoT environmental time-series monitoring in controlled cultivation spaces. | | Audience | Growers/operators (dashboard consumers), technicians/installers (sensor catalog), Raspberry Pi field devices (ingest clients), system admins (infra/CI), AI coding agents (extensive SSOT docs and ADRs). |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/kcbd-monitor | | Visibility | private | | Default branch | main | | One-line pitch | Full-stack refactor of dj-indoor-monitor: headless Django REST API + Astro static frontend for IoT environmental time-series monitoring in controlled cultivation spaces. | | Audience | Growers/operators (dashboard consumers), technicians/installers (sensor catalog), Raspberry Pi field devices (ingest clients), system admins (infra/CI), AI coding agents (extensive SSOT docs and ADRs). |

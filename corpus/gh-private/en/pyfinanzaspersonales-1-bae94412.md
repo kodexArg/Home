@@ -8,4 +8,4 @@ related: []
 tags: ["pyfinanzaspersonales", "github", "private", "low", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Aplicación para controlar gastos personales y familiares de manera ordenada — a reserved private repo name and license shell for a future Python expense tracker. | | Audience | Intended end users: individuals and families managing household spending; intended developers: kodexArg maintainers who would implement the Python app. No agent harness or operator docs exist yet. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/PyFinanzasPersonales | | Visibility | private | | Default branch | main | | One-line pitch | Aplicación para controlar gastos personales y familiares de manera ordenada — a reserved private repo name and license shell for a future Python expense tracker. | | Audience | Intended end users: individuals and families managing household spending; intended developers: kodexArg maintainers who would implement the Python app. No agent harness or operator docs exist yet. |

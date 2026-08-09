@@ -8,4 +8,4 @@ related: []
 tags: ["pz-detective-profession", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | A Project Zomboid mod that registers a Detective profession with urban foraging bonuses, fedora-and-trench-coat spawn gear, and door-adjacent zombie intuition voiced through randomized phrases. | | Audience | Project Zomboid players on Build 41, mod authors studying profession/forage hooks, and maintainers tracing the predecessor to the TrueDetective B42 rebuild. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/pz-detective-profession | | Visibility | private | | Default branch | main | | One-line pitch | A Project Zomboid mod that registers a Detective profession with urban foraging bonuses, fedora-and-trench-coat spawn gear, and door-adjacent zombie intuition voiced through randomized phrases. | | Audience | Project Zomboid players on Build 41, mod authors studying profession/forage hooks, and maintainers tracing the predecessor to the TrueDetective B42 rebuild. |

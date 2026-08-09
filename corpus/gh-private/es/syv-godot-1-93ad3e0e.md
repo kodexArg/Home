@@ -8,4 +8,4 @@ related: []
 tags: ["syv-godot", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Turn-based WEGO hex strategy with simultaneous secret orders, authoritative server resolution, and a Godot client that carries zero rule logic. | | Audience | Game developers on the SyV team; AI agents using skills for Godot, FastAPI, and Docker setup; future players on PC (Steam/Linux target per PRD). Design lore and platform-agnostic rules live in sibling repos ( , ). |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/syv-godot | | Visibility | private | | Default branch | master | | One-line pitch | Turn-based WEGO hex strategy with simultaneous secret orders, authoritative server resolution, and a Godot client that carries zero rule logic. | | Audience | Game developers on the SyV team; AI agents using .agent/ skills for Godot, FastAPI, and Docker setup; future players on PC (Steam/Linux target per PRD). Design lore and platform-agnostic rules live in sibling repos (syv-game-system, gdt-syv). |

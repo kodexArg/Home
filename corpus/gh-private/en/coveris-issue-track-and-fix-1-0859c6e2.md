@@ -8,4 +8,4 @@ related: []
 tags: ["coveris-issue-track-and-fix", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Autonomous Antigravity agents that triage Coveris GitHub issues and open fix pull requests with governed tool access. | | Audience | Internal operators and agent maintainers on Linux; Antigravity SDK agents consuming MCP and filesystem skills; human engineers reviewing deferred or issues. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/coveris-issue-track-and-fix | | Visibility | private | | Default branch | main | | One-line pitch | Autonomous Antigravity agents that triage Coveris GitHub issues and open fix pull requests with governed tool access. | | Audience | Internal operators and agent maintainers on Linux; Antigravity SDK agents consuming MCP and filesystem skills; human engineers reviewing deferred or complex issues. |

@@ -8,4 +8,4 @@ related: []
 tags: ["cotton-coveris-mvp", "github", "private", "high", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Healthcare capacity-planning SaaS that measures live demand-vs-supply across a clinic organigram and supports assignment, coverage, hours, scheduling, and payroll-adjacent workflows. | | Audience | Clinic HR managers (“Jefe” / MANAGER), operational staff (“Agente” / EMPLOYEE), auditors (AUDITOR), platform admins (ADMIN, internal), developers and AI agents maintaining the stack. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/cotton-coveris-mvp | | Visibility | private | | Default branch | main | | One-line pitch | Healthcare capacity-planning SaaS that measures live demand-vs-supply across a clinic organigram and supports assignment, coverage, hours, scheduling, and payroll-adjacent workflows. | | Audience | Clinic HR managers (“Jefe” / MANAGER), operational staff (“Agente” / EMPLOYEE), auditors (AUDITOR), platform admins (ADMIN, internal), developers and AI agents maintaining the stack. |

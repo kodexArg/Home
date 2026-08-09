@@ -48,7 +48,7 @@ export const GITHUB_DESTINATIONS: LinkDestination[] = [
     "kind": "repo",
     "name": "kdx-cursor-forced-theme (GitHub)",
     "url": "https://github.com/kodexArg/kdx-cursor-forced-theme",
-    "description": "> **Problem thesis (required):** Cursor and VS Code color themes operate within the theming API—they cannot reach into Glass-mode Agents UI, paint radial orange/teal glows on sidebars, override / host tokens, or shape the composer prompt as a sunken Hyprland-aligned well. This re",
+    "description": "> **Problem thesis (required):** Cursor and VS Code color themes operate within the theming API—they cannot reach into Glass-mode Agents UI, paint radial orange/teal glows on sidebars, override --cursor-chrome / --cursor-sidebar host tokens, or shape the composer prompt as a sunk",
     "keywords": [
       "kdx-cursor-forced-theme",
       "github",
@@ -90,7 +90,7 @@ export const GITHUB_DESTINATIONS: LinkDestination[] = [
     "kind": "repo",
     "name": "syv-frontend (GitHub)",
     "url": "https://github.com/kodexArg/syv-frontend",
-    "description": "> **Problem thesis (required):** kodexArg's **Subordinación y Valor** (SyV) universe — a Spanish-language game-world with a large markdown corpus maintained in the sibling repository — needs its own lightweight public web front door. This repo is that front door: a static Astro s",
+    "description": "> **Problem thesis (required):** kodexArg's **Subordinación y Valor** (SyV) universe — a Spanish-language game-world with a large markdown corpus maintained in the sibling syv-docs repository — needs its own lightweight public web front door. This repo is that front door: a stati",
     "keywords": [
       "syv-frontend",
       "github",
@@ -104,7 +104,7 @@ export const GITHUB_DESTINATIONS: LinkDestination[] = [
     "kind": "repo",
     "name": "syv-image-generation (GitHub)",
     "url": "https://github.com/kodexArg/syv-image-generation",
-    "description": "> **Problem thesis (required):** This repository is the **visual portrait factory** for the *Subordinación y Valor* (SyV) universe. It exists because lore-rich character data lives in sibling repos ( sheets, canon) but **images must be produced locally on a GPU via ComfyUI**, wit",
+    "description": "> **Problem thesis (required):** This repository is the **visual portrait factory** for the *Subordinación y Valor* (SyV) universe. It exists because lore-rich character data lives in sibling repos (syv-pj sheets, syv-docs canon) but **images must be produced locally on a GPU via",
     "keywords": [
       "syv-image-generation",
       "github",
@@ -160,7 +160,7 @@ export const GITHUB_DESTINATIONS: LinkDestination[] = [
     "kind": "repo",
     "name": "syv-pj-frontend (GitHub)",
     "url": "https://github.com/kodexArg/syv-pj-frontend",
-    "description": "> **Problem thesis (required):** Subordinación y Valor (_SyV_) is a tabletop-style game ecosystem whose character-creation rules and canonical metadata live in a dedicated Python API ( ). This repository is the **web UI layer** for that creator: an Astro 7 + Svelte 5 application ",
+    "description": "> **Problem thesis (required):** Subordinación y Valor (_SyV_) is a tabletop-style game ecosystem whose character-creation rules and canonical metadata live in a dedicated Python API (syv-pj-api). This repository is the **web UI layer** for that creator: an Astro 7 + Svelte 5 app",
     "keywords": [
       "syv-pj-frontend",
       "github",
@@ -174,7 +174,7 @@ export const GITHUB_DESTINATIONS: LinkDestination[] = [
     "kind": "repo",
     "name": "syv-pj (GitHub)",
     "url": "https://github.com/kodexArg/syv-pj",
-    "description": "> **Problem thesis (required):** is the **minimum-entity module** for *Subordinación y Valor* (SyV): the **character** ( ). It is **not an application** — it is a self-contained set of **contracts, catalogs, and rules in Markdown** that define what a character is in this universe",
+    "description": "> **Problem thesis (required):** syv-pj is the **minimum-entity module** for *Subordinación y Valor* (SyV): the **character** (personaje). It is **not an application** — it is a self-contained set of **contracts, catalogs, and rules in Markdown** that define what a character is i",
     "keywords": [
       "syv-pj",
       "github",

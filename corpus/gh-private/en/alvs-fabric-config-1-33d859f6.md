@@ -8,4 +8,4 @@ related: []
 tags: ["alvs-fabric-config", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | CLI-first configuration for the ALVS Data Lakehouse on Microsoft Fabric, with SharePoint Online as the file source. | | Audience | ALVS data engineers, operators, and AI agents working on Fabric lakehouse setup; kodexArg maintainers with access to the private repo. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/alvs-fabric-config | | Visibility | private | | Default branch | main | | One-line pitch | CLI-first configuration for the ALVS Data Lakehouse on Microsoft Fabric, with SharePoint Online as the file source. | | Audience | ALVS data engineers, operators, and AI agents working on Fabric lakehouse setup; kodexArg maintainers with access to the private repo. |

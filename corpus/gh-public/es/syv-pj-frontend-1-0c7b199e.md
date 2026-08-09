@@ -8,4 +8,4 @@ related: ["gh-syv-pj-frontend"]
 tags: ["syv-pj-frontend", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Browser UI for the SyV character creator, built with Astro 7 + Svelte 5 on Cloudflare Workers, consuming the rules engine via same-origin proxy (dev) or service binding (prod). | | Audience | SyV players building characters; kodexArg developers and coding agents extending the creator UI; operators deploying the paired frontend/backend Workers. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/syv-pj-frontend | | Visibility | public | | Default branch | main | | One-line pitch | Browser UI for the SyV character creator, built with Astro 7 + Svelte 5 on Cloudflare Workers, consuming the syv-pj-api rules engine via same-origin proxy (dev) or service binding (prod). | | Audience | SyV players building characters; kodexArg developers and coding agents extending the creator UI; operators deploying the paired frontend/backend Workers. |

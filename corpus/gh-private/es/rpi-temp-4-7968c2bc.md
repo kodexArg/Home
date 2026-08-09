@@ -8,4 +8,4 @@ related: []
 tags: ["rpi-temp", "github", "private", "normal", "summary"]
 ---
 
-### P3 — Noisy humidity readings distort trends - **Who hurts:** Anyone reading live humidity who would misinterpret spikes caused by sensor glitches. - **Pain today:** Unfiltered time series show impossible values (e.g., humidity > 110%) that break chart scaling. - **How this repo answers:** filters out rows where before JSON serialization. - **Out of scope:** Broader data-quality pipelines, calibration, or per-device thresholds.
+### P3 — Noisy humidity readings distort trends - **Who hurts:** Anyone reading live humidity who would misinterpret spikes caused by sensor glitches. - **Pain today:** Unfiltered time series show impossible values (e.g., humidity > 110%) that break chart scaling. - **How this repo answers:** views.py filters out rows where Humedad > 110 before JSON serialization. - **Out of scope:** Broader data-quality pipelines, calibration, or per-device thresholds.

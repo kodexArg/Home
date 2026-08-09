@@ -8,4 +8,4 @@ related: []
 tags: ["scrappermdzol", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Scrapy spiders that keyword-filter regional news headlines and export full-article JSON for offline use. | | Audience | Internal operators or developers who need filtered news snapshots; anyone extending XPath selectors if the target site's HTML changes. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/ScrapperMDZOL | | Visibility | private | | Default branch | main | | One-line pitch | Scrapy spiders that keyword-filter regional news headlines and export full-article JSON for offline use. | | Audience | Internal operators or developers who need filtered news snapshots; anyone extending XPath selectors if the target site's HTML changes. |

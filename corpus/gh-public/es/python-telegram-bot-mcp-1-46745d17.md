@@ -8,4 +8,4 @@ related: ["python-telegram-bot-mcp"]
 tags: ["python-telegram-bot-mcp", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | MCP server (planned) that maps every method to an equivalent MCP tool for AI-driven Telegram bot operations. | | Audience | AI agent operators (Claude Code, Cursor, other MCP clients), Python developers building Telegram bots, and internal ALVS workflows that need scoped bot messaging without personal-account MTProto access. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/python-telegram-bot-mcp | | Visibility | public | | Default branch | main | | One-line pitch | MCP server (planned) that maps every telegram.Bot method to an equivalent MCP tool for AI-driven Telegram bot operations. | | Audience | AI agent operators (Claude Code, Cursor, other MCP clients), Python developers building Telegram bots, and internal ALVS workflows that need scoped bot messaging without personal-account MTProto access. |

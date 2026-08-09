@@ -8,4 +8,4 @@ related: ["n8n-apprunner"]
 tags: ["n8n-apprunner", "github", "public", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Self-contained n8n service packaged for AWS App Runner — runs upstream n8n with production env, Postgres persistence, Basic Auth, and Secrets Manager bindings declared in . | | Audience | kodexArg operators deploying internal workflow automation; anyone cloning the pattern for App Runner + n8n without maintaining a Dockerfile. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/n8n-apprunner | | Visibility | public | | Default branch | main | | One-line pitch | Self-contained n8n service packaged for AWS App Runner — npm start runs upstream n8n with production env, Postgres persistence, Basic Auth, and Secrets Manager bindings declared in apprunner.yaml. | | Audience | kodexArg operators deploying internal workflow automation; anyone cloning the pattern for App Runner + n8n without maintaining a Dockerfile. |

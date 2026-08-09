@@ -8,4 +8,4 @@ related: []
 tags: ["alvs-registros-libros-societarios-kodexarg", "github", "private", "high", "summary"]
 ---
 
-behavior is referenced for parity (e.g. shareholding delete as ) but the old app is not vendored.
+docs/tdds/. - **Out of scope:** Replacing the public registries (DPJ/IGJ/IPJ/INAES) themselves, e-invoicing, or general ERP functions. External legacy behavior is referenced for parity (e.g. shareholding delete as eliminar_tenencia) but the old app is not vendored.

@@ -8,4 +8,4 @@ related: ["astro-cv"]
 tags: ["astro-cv", "github", "public", "normal", "summary"]
 ---
 
-## 3. Product / idea astro-cv is a **single-page static CV** (primary route: ) designed to look like an A4 paper document floating on a fixed gradient background. The mental model is: **structured data → Astro components → static HTML**, with optional light client interactivity for sidebar/skill-tree UX and print CSS for PDF-friendly output.
+## 3. Product / idea astro-cv is a **single-page static CV** (primary route: src/pages/index.astro) designed to look like an A4 paper document floating on a fixed gradient background. The mental model is: **structured data → Astro components → static HTML**, with optional light client interactivity for sidebar/skill-tree UX and print CSS for PDF-friendly output.

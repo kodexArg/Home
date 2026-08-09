@@ -8,4 +8,4 @@ related: []
 tags: ["multimedia-handler-for-rpi", "github", "private", "normal", "summary"]
 ---
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Flask operator UI that turns images into loopable MP4s and distributes them into per–Raspberry Pi video folders for a multimedia signage network. | | Audience | Internal operators / technicians curating content for Raspberry Pi signage endpoints; not end viewers of the signs themselves. |
+## 1. Identity | Field | Value | |-------|-------| | Org / repo | kodexArg/multimedia-handler-for-rpi | | Visibility | private | | Default branch | main | | One-line pitch | Flask operator UI that turns images into loopable MP4s and distributes them into per–Raspberry Pi video folders for a multimedia signage network. | | Audience | Internal operators / technicians curating content for Raspberry Pi signage endpoints; not end viewers of the signs themselves. |
