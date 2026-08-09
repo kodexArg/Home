@@ -17,7 +17,7 @@ Managing API credentials, database connections, and model parameters securely is
 * All external service communication MUST use zero-trust native Cloudflare environment bindings wherever possible.
 
 ### 2. Native Cloudflare Environment Bindings
-Cloudflare Workers AI and Cloudflare Vectorize run via native IPC bindings declared in [wrangler.jsonc](file:///home/kodex/kodexArg/Home/wrangler.jsonc):
+Cloudflare Workers AI and Cloudflare Vectorize run via native IPC bindings declared in [wrangler.jsonc](../wrangler.jsonc):
 
 ```jsonc
 {
@@ -37,7 +37,7 @@ Cloudflare Workers AI and Cloudflare Vectorize run via native IPC bindings decla
 
 Because these operate directly over Cloudflare's internal hypervisor, **no API tokens or headers are passed or stored** — including for `bun run index:corpus`, which writes to the real index from `bun run dev`. Both bindings carry `remote: true` because Vectorize has no local emulation; see [ADR 04 §2](adr-04-database.md) for why that is required rather than optional, and [ADR 10](adr-10-kodexbar-architecture.md) for why the index is fixed-dimension and cannot be migrated in place.
 
-### 3. TypeScript Type Safety ([src/env.d.ts](file:///home/kodex/kodexArg/Home/src/env.d.ts))
+### 3. TypeScript Type Safety ([src/env.d.ts](../src/env.d.ts))
 Runtime environment types are bound to `App.Locals.runtime.env` so Astro API endpoints safely dereference `env.AI` and `env.VECTOR_INDEX` with full editor completion and build validation.
 
 ### 4. Local Development vs Production Secret Isolation

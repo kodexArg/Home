@@ -90,7 +90,7 @@ Chrome Built-in AI (`window.ai` / Gemini Nano) is removed entirely, along with `
 
 Repo layout (site vs engine vs markdown corpus) is fixed in [ADR 13](adr-13-repo-layout.md). Authoring SSOT is markdown under `corpus/`; the Worker loads compiled packs from `src/kodexbar/packs/`.
 
-The corpus is a set of `KnowledgePack`s ([types.ts](file:///srv/dev/kodexArg/kdx-rag/src/kodexbar/types.ts)):
+The corpus is a set of `KnowledgePack`s ([types.ts](../src/kodexbar/types.ts)):
 
 ```ts
 interface KnowledgePack {
