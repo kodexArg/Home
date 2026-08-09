@@ -7,5 +7,6 @@ source_repo: "apprunnertest2"
 related: []
 tags: ["apprunnertest2", "github", "private", "normal", "summary"]
 ---
+## 3. Product / idea
 
-## 3. Product / idea The repository is a **single Django project** ( ) with one domain app ( ) and a shared template layer under . Mental model: The home page ( ) is a minimal testing shell linking to the DB health check. There is no user-facing product beyond proving infrastructure works.
+The repository is a **single Django project** ( ) with one domain app ( ) and a shared template layer under . Mental model: The home page ( ) is a minimal testing shell linking to the DB health check. There is no user-facing product beyond proving infrastructure works.

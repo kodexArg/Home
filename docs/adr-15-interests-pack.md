@@ -50,6 +50,7 @@ The pack fragment tells the model these are authorized personal-interest notes, 
 | `identity` | Legal name, birth, origin — strict gate |
 | `gh-*` | Repo summaries |
 | `interests` | Personal tastes / hobbies / loose life context |
+| `platzi` | Completed Platzi diplomas — what he learned per course ([ADR 16](adr-16-platzi-pack.md)) |
 
 `related` from `cv` MUST NOT point into `interests` unless a future ADR opens that edge (same hygiene as identity smuggling in [ADR 09 §3b](adr-09-kodexbar-security.md)).
 

@@ -191,6 +191,7 @@ Any PR touching `src/kodexbar/`, `corpus/`, `src/pages/api/ask.ts`, `src/lib/cha
 - [ ] No untrusted input reaches the corpus or the index (§3).
 - [ ] The `identity` pack still gates strictly above `cv`, still derives age rather than stating it, and gained no new class of personal data without an amendment (§3b).
 - [ ] The `interests` pack stays separate from `cv` / `identity` (no career or civil-identity facts; `minScore` 0.52 unless ADR 15 is amended).
+- [ ] The `platzi` pack only claims courses with a public diploma on the student profile; no invented syllabi; `minScore` 0.48 unless ADR 16 is amended; bodies stay free of URL/domain/email literals.
 - [ ] Every new `DESTINATIONS` entry was verified reachable, public and live (§5).
 - [ ] Output post-processing still strips formatting and URL-shaped text (§4).
 - [ ] Server-side rate limiting still present and independent of the client cooldown (§7).

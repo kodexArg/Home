@@ -7,5 +7,12 @@ source_repo: "dj-west"
 related: []
 tags: ["dj-west", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Server-rendered Django inventory + POS with Cotton components, HTMX interactivity, and AWS App Runner deployment. | | Audience | Internal operators and counter staff at a retail location; developers and AI agents maintaining the stack; deployers configuring App Runner and RDS secrets. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Server-rendered Django inventory + POS with Cotton components, HTMX interactivity, and AWS App Runner deployment. |
+| Audience | Internal operators and counter staff at a retail location; developers and AI agents maintaining the stack; deployers configuring App Runner and RDS secrets. |

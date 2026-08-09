@@ -7,5 +7,9 @@ source_repo: "PyCreadorPJ"
 related: []
 tags: ["pycreadorpj", "github", "private", "normal", "summary"]
 ---
+### P3 — Spanish-first naming and trait grammar
 
-### P3 — Spanish-first naming and trait grammar - **Who hurts:** GMs who want procedurally generated Spanish names and gender-inflected trait text without hand-editing. - **Pain today:** Generic name generators ignore Spanish frequency distributions and gendered adjective endings required by RyF trait lists. - **How this repo answers:** filters INE-derived name CSVs by age/power, weighted by frequency. reads and applies gender-specific suffix rules (Mujer/Hombre/Indeterminado placeholder patterns with / markers). Apellidos sampled from . - **Out of scope:** Localization to other languages; official INE API integration (static CSV snapshots only).
+- **Who hurts:** GMs who want procedurally generated Spanish names and gender-inflected trait text without hand-editing.
+- **Pain today:** Generic name generators ignore Spanish frequency distributions and gendered adjective endings required by RyF trait lists.
+- **How this repo answers:** filters INE-derived name CSVs by age/power, weighted by frequency. reads and applies gender-specific suffix rules (Mujer/Hombre/Indeterminado placeholder patterns with / markers). Apellidos sampled from .
+- **Out of scope:** Localization to other languages; official INE API integration (static CSV snapshots only).

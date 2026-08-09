@@ -7,5 +7,9 @@ source_repo: "ComfyUI"
 related: []
 tags: ["comfyui", "github", "private", "normal", "summary"]
 ---
+### P4 — Running SD on constrained or diverse hardware
 
-### P4 — Running SD on constrained or diverse hardware - **Who hurts:** Users with &lt;3 GB VRAM GPUs, CPU-only hosts, AMD ROCm Linux boxes, Apple Silicon, Intel Arc, or Windows DirectML paths. - **Pain today:** Single-code-path UIs assume 8+ GB NVIDIA CUDA and fail obscurely elsewhere. - **How this repo answers:** exposes a large matrix of device and precision flags ( , , fp8 UNET modes, attention backends, , etc.). README documents per-vendor install commands and env overrides ( ). auto-enables on small cards; forces CPU inference. - **Out of scope:** Guaranteed performance parity across vendors; automatic driver installation.
+- **Who hurts:** Users with &lt;3 GB VRAM GPUs, CPU-only hosts, AMD ROCm Linux boxes, Apple Silicon, Intel Arc, or Windows DirectML paths.
+- **Pain today:** Single-code-path UIs assume 8+ GB NVIDIA CUDA and fail obscurely elsewhere.
+- **How this repo answers:** exposes a large matrix of device and precision flags ( , , fp8 UNET modes, attention backends, , etc.). README documents per-vendor install commands and env overrides ( ). auto-enables on small cards; forces CPU inference.
+- **Out of scope:** Guaranteed performance parity across vendors; automatic driver installation.

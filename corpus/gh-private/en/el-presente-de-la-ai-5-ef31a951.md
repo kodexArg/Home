@@ -7,5 +7,4 @@ source_repo: "El-presente-de-la-aI"
 related: []
 tags: ["el-presente-de-la-ai", "github", "private", "normal", "summary"]
 ---
-
 layout engine, or brand kit for non-ALVS decks — rules inherit typography/color inspiration from sibling repo but content is unique to this talk.

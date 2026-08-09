@@ -7,5 +7,9 @@ source_repo: "ScrapperMDZOL"
 related: []
 tags: ["scrappermdzol", "github", "private", "normal", "summary"]
 ---
+### P3 — Section noise reduction on a mixed-content homepage
 
-### P3 — Section noise reduction on a mixed-content homepage - **Who hurts:** Operators who want hard-news filters but would otherwise follow lifestyle or syndicated links that share the same listing layout. - **Pain today:** The homepage mixes lifestyle paths and third-party syndication prefixes with core news; a naive "follow all links" crawl wastes bandwidth and pollutes output. - **How this repo answers:** in drops any listing link whose href starts with banned prefixes (lifestyle section path and an external syndication prefix) before filter evaluation. - **Out of scope:** Dynamic section discovery, robots.txt section parsing, or per-section spider configuration files.
+- **Who hurts:** Operators who want hard-news filters but would otherwise follow lifestyle or syndicated links that share the same listing layout.
+- **Pain today:** The homepage mixes lifestyle paths and third-party syndication prefixes with core news; a naive "follow all links" crawl wastes bandwidth and pollutes output.
+- **How this repo answers:** in drops any listing link whose href starts with banned prefixes (lifestyle section path and an external syndication prefix) before filter evaluation.
+- **Out of scope:** Dynamic section discovery, robots.txt section parsing, or per-section spider configuration files.

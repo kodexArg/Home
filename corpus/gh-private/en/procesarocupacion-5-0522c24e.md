@@ -7,5 +7,8 @@ source_repo: "ProcesarOcupacion"
 related: []
 tags: ["procesarocupacion", "github", "private", "normal", "summary"]
 ---
+### 3.1 North-star use cases
 
-### 3.1 North-star use cases 1. Operator runs on a schedule (cron or manual) to pull the latest daily attachment(s) from the monitoring inbox. 2. Analyst clones the repo (or copies saved CSVs) to study hourly occupancy columns ( … , ) per / . 3. Historical reviewer inspects rows for roulette machines: credits played/won, manual payouts, jackpots, ticket in/out, and occupancy percentage at snapshot time.
+1. Operator runs on a schedule (cron or manual) to pull the latest daily attachment(s) from the monitoring inbox.
+2. Analyst clones the repo (or copies saved CSVs) to study hourly occupancy columns ( … , ) per / .
+3. Historical reviewer inspects rows for roulette machines: credits played/won, manual payouts, jackpots, ticket in/out, and occupancy percentage at snapshot time.

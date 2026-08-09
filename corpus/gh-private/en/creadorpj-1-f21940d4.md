@@ -7,5 +7,12 @@ source_repo: "CreadorPJ"
 related: []
 tags: ["creadorpj", "github", "private", "normal", "summary"]
 ---
+## 1. Identity
 
-## 1. Identity | Field | Value | |-------|-------| | Org / repo | | | Visibility | | | Default branch | | | One-line pitch | Browser-based random character creator and scenario reference for the SyV tabletop RPG, with save/load via pickle files. | | Audience | Game masters and players of *Subordinación y Valor* who need NPCs, quick PCs, or on-screen scenario notes during play. |
+| Field | Value |
+|-------|-------|
+| Org / repo | |
+| Visibility | |
+| Default branch | |
+| One-line pitch | Browser-based random character creator and scenario reference for the SyV tabletop RPG, with save/load via pickle files. |
+| Audience | Game masters and players of *Subordinación y Valor* who need NPCs, quick PCs, or on-screen scenario notes during play. |

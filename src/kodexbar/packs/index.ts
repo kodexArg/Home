@@ -5,8 +5,9 @@ import { GH_PRIVATE_PACK } from './gh-private';
 import { GH_PUBLIC_PACK } from './gh-public';
 import { IDENTITY_PACK } from './identity';
 import { INTERESTS_PACK } from './interests';
+import { PLATZI_PACK } from './platzi';
 
-export const PACKS: readonly KnowledgePack[] = [CV_PACK, GH_PRIVATE_PACK, GH_PUBLIC_PACK, IDENTITY_PACK, INTERESTS_PACK];
+export const PACKS: readonly KnowledgePack[] = [CV_PACK, GH_PRIVATE_PACK, GH_PUBLIC_PACK, IDENTITY_PACK, INTERESTS_PACK, PLATZI_PACK];
 
 const BY_ID = new Map(PACKS.map((p) => [p.id, p]));
 
