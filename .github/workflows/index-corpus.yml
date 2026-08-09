@@ -1,0 +1,74 @@
+name: Index corpus (Vectorize)
+
+# Reindex Vectorize when the authoring SSOT (or compiled packs) changes on main.
+# Reuses the local path: corpus:compile → bun run dev → bun run index:corpus
+# (dev-only /api/admin/index-corpus + remote AI/Vectorize bindings).
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'corpus/**'
+      - 'src/kodexbar/packs/**'
+      - 'scripts/index-corpus.ts'
+      - 'scripts/corpus-compile.ts'
+      - 'src/pages/api/admin/index-corpus.ts'
+      - '.github/workflows/index-corpus.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: index-corpus-main
+  cancel-in-progress: true
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    name: Compile and index corpus
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Compile corpus → packs
+        run: bun run corpus:compile
+
+      - name: Start Astro dev (remote AI + Vectorize bindings)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          bun run dev > /tmp/astro-dev.log 2>&1 &
+          echo $! > /tmp/astro-dev.pid
+          for i in $(seq 1 90); do
+            if curl -sf http://localhost:4321 >/dev/null; then
+              echo "Dev server ready after ${i}s"
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/astro-dev.pid)" 2>/dev/null; then
+              echo "Dev server exited early. Log:"
+              cat /tmp/astro-dev.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Timed out waiting for http://localhost:4321. Log:"
+          cat /tmp/astro-dev.log
+          exit 1
+
+      - name: Upsert embeddings into Vectorize
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KODEXBAR_DEV_URL: http://localhost:4321
+        run: bun run index:corpus
