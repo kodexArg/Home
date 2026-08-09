@@ -11,6 +11,7 @@
     "test": "bun test",
     "corpus:compile": "bun run scripts/corpus-compile.ts",
     "corpus:export": "bun run scripts/corpus-export.ts",
+    "corpus:ingest-github": "bun run scripts/corpus-ingest-github.ts",
     "index:corpus": "bun run scripts/index-corpus.ts",
     "eval:grounding": "bun run scripts/grounding-eval/runGroundingEval.ts"
   },

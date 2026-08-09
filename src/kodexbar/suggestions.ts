@@ -20,15 +20,21 @@ const LINK_REQUEST_PHRASE: Record<SupportedLanguage, (label: string) => string> 
 	en: (label) => `Show me the link to ${label}`
 };
 
+const PROJECT_LINK_REQUEST: Record<SupportedLanguage, string> = {
+	es: '¿Querés ver el link del proyecto?',
+	en: 'Do you want to see the project link?'
+};
+
 function shortDestinationLabel(name: string): string {
 	return name.split(' - ')[0].trim();
 }
 
 export function linkRequestFor(
-	destinations: readonly { name: string }[],
+	destinations: readonly { name: string; kind?: string }[],
 	lang: SupportedLanguage
 ): string {
 	if (destinations.length === 0) return '';
+	if (destinations.some((d) => d.kind === 'repo')) return PROJECT_LINK_REQUEST[lang];
 	return LINK_REQUEST_PHRASE[lang](shortDestinationLabel(destinations[0].name));
 }
 

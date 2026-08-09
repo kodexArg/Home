@@ -25,6 +25,11 @@ describe('corpus integrity', () => {
 		}
 	});
 
+	it('keeps every chunk id within the Vectorize 64-byte budget (ADR 02)', () => {
+		const offenders = chunks.filter((c) => c.id.length > 64).map((c) => `${c.id} (${c.id.length})`);
+		expect(offenders).toEqual([]);
+	});
+
 	it('only uses supported languages', () => {
 		for (const chunk of chunks) {
 			expect(SUPPORTED_LANGUAGES).toContain(chunk.lang);

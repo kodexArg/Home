@@ -1,6 +1,7 @@
 import type { LinkDestination } from './types';
+import { GITHUB_DESTINATIONS } from './destinations.github';
 
-export const DESTINATIONS: LinkDestination[] = [
+const MANUAL_DESTINATIONS: LinkDestination[] = [
   {
     id: 'email',
     kind: 'contact',
@@ -405,6 +406,8 @@ export const DESTINATIONS: LinkDestination[] = [
     ]
   }
 ];
+
+export const DESTINATIONS: LinkDestination[] = [...MANUAL_DESTINATIONS, ...GITHUB_DESTINATIONS];
 
 const BY_ID = new Map(DESTINATIONS.map((d) => [d.id, d]));
 
