@@ -265,6 +265,10 @@ function main() {
 			2
 		)
 	);
+
+	if (CHECK && changed > 0) {
+		process.exit(1);
+	}
 }
 
 main();
