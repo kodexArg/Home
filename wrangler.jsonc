@@ -32,6 +32,10 @@
     {
       "pattern": "home.kodexarg.com",
       "custom_domain": true
+    },
+    {
+      "pattern": "me.kodexarg.com",
+      "custom_domain": true
     }
   ]
 }

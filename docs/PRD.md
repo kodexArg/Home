@@ -43,7 +43,7 @@ Bots and scrapers must not be able to drive the endpoint by hammering it. Humans
 
 - A general-purpose chatbot. KodexBar answers about Gabriel Cavedal, kodexArg projects and how to reach him. Everything else is declined.
 - Conversational memory across turns. Each query is answered independently.
-- Account login / multi-user profiles.
+- Multi-user profiles or an account-settings product. **Optional Google identity** (who + avatar) to unlock later features is in scope — see [ADR 13](adr-13-optional-google-identity.md).
 - Dynamic discovery of repositories. Destinations are an **explicit allowlist**, and membership requires the target be public and live.
 - SEO-heavy marketing pages or blog.
 
@@ -54,6 +54,7 @@ Bots and scrapers must not be able to drive the endpoint by hammering it. Humans
 | Element | Role |
 |---------|------|
 | **Wordmark** | `kodexArg`. Top-left, static. |
+| **Identity orb** | Top-right, wordmark height: ocre ring; login affordance or avatar; tiny `LOG IN` / truncated name. Starts optional Google identity via `/me` — [ADR 13](adr-13-optional-google-identity.md). |
 | **KodexBar** | Bottom-anchored console: scrollback stack + `SyvInput` (`¿Sí?`). |
 | **Atmosphere** | Aurora / dark Presentation Orange background only — no extra widgets. |
 

@@ -39,6 +39,10 @@ interface Env {
 	};
 	VECTOR_INDEX?: VectorizeIndex;
 	SESSION?: KVNamespace;
+	/** Cloudflare Access team hostname, e.g. kodexarg.cloudflareaccess.com (ADR 13). */
+	CF_ACCESS_TEAM_DOMAIN?: string;
+	/** Access application AUD for /me (ADR 13). */
+	CF_ACCESS_AUD?: string;
 }
 
 type Runtime = import('@astrojs/cloudflare').Runtime<Env>;
