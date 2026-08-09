@@ -110,7 +110,7 @@ Query → rate limit → pending-offer check (consent classifier if one is open)
       → embed (bge-m3) → Vectorize (topK 5, filter lang)
       → gate: score < minScore ? fixed decline (no LLM)
       → expand related chunks
-      → generate (llama-3.1-8b-instruct-fp8) → { text, linkIds[], nextId? }
+      → generate (glm-4.7-flash) → { text, linkIds[], nextId? }
       → resolve ids vs allowlist + resolve nextId vs candidates + scrub formatting
       → KodexAnswer { text, links[], language, matched, suggestion?, offer? }
       → if links present: park them in KV, respond with links: [], offer: true
@@ -144,16 +144,19 @@ interface KodexAnswer {
 
 A `KnowledgePack` bundles chunks, a system-prompt fragment and a retrieval threshold. The engine knows packs and chunks; it does not know what a "skill" or a "project" is. Domain vocabulary lives in chunk text, `tags` and `related`.
 
+**Authoring SSOT:** markdown under `corpus/` ([ADR 13](adr-13-repo-layout.md)). Compile into `src/kodexbar/packs/`, then reindex. Do not hand-edit generated chunk modules after compile.
+
 | Pack | Content | Status |
 |---|---|---|
-| `cv` | Profile, experience, skills, projects, education, contact, QA/method — extracted from `cv.kodexarg.com` (ES + EN) | v2.0 |
+| `cv` | Profile, experience, skills, projects, education, contact, QA/method — from `cv.kodexarg.com` including long-form `/full/` detail (ES + EN) | v2.0 |
+| `identity` | Authorized personal identity facts | Active |
 | `syv` | Subordinación y Valor | Planned |
 
 `related` is the graph: a skill chunk names the projects that evidence it, so one query retrieves the claim, its proof, and the links.
 
 ### 4.4 Destinations
 
-Configured in `src/lib/kodexbar/destinations.ts`. **Membership rule: public and live, verified before adding.**
+Configured in `src/kodexbar/destinations.ts`. **Membership rule: public and live, verified before adding.**
 
 | Kind | Count | Examples |
 |---|---|---|
@@ -197,7 +200,7 @@ Private work (Coveris, `syv-mcp-tools`, SROA, the Grupo ALVS production platform
 ┌─────────────────────────────────────────────────────────────┐
 │  Cloudflare Worker / Pages Function                         │
 │  env.AI            @cf/baai/bge-m3            (embeddings)  │
-│                    @cf/meta/llama-3.1-8b-instruct-fp8       │
+│                    @cf/zai-org/glm-4.7-flash                 │
 │  env.VECTOR_INDEX  Cloudflare Vectorize (corpus)            │
 │  env.SESSION       KV (rate limiting)                       │
 └─────────────────────────────────────────────────────────────┘
@@ -210,7 +213,7 @@ No client-side inference. Chrome Built-in AI / Gemini Nano is removed — the co
 - **Package manager**: `bun` (`bun install`, `bun.lock`).
 - **CLI runner**: `bunx wrangler` for Cloudflare tasks.
 - **Build & test**: `bun run build`, `bun test`.
-- **Corpus indexing**: `bun run index:corpus` — explicit, versioned, re-run on corpus change.
+- **Corpus indexing**: `bun run corpus:compile` then `bun run index:corpus` — markdown SSOT under `corpus/`, then Vectorize upsert ([ADR 13](adr-13-repo-layout.md)).
 
 ## 7. UX requirements
 

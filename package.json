@@ -9,6 +9,8 @@
     "preview": "astro preview",
     "deploy": "wrangler deploy",
     "test": "bun test",
+    "corpus:compile": "bun run scripts/corpus-compile.ts",
+    "corpus:export": "bun run scripts/corpus-export.ts",
     "index:corpus": "bun run scripts/index-corpus.ts",
     "eval:grounding": "bun run scripts/grounding-eval/runGroundingEval.ts"
   },

@@ -19,14 +19,15 @@ To prevent ambiguity, domain overlap, or inconsistent naming across components, 
 | **`kodexArg`** | The overarching personal brand, organization, and primary domain namespace (`kodexarg.com`). | Brand / Org identity |
 | **`SyV`** | **Subordinación y Valor** — The official warm orange, Pip-Boy typewriter design system. | Component styling, CSS tokens |
 | **`Presentation Orange`** | Color theme palette variant featuring warm amber, candle orange (`--orange-500`), cream, and dark ink tones. | CSS variables, design system |
-| **`KodexBar`** | The assistant behind the homepage input box: single-tier retrieval-augmented answering over Cloudflare Workers AI + Vectorize. Answers questions about Gabriel Cavedal and hands out links. Not a router. | `src/lib/kodexbar/`, `src/pages/api/ask.ts` |
-| **`LinkDestination`** | A place KodexBar may send a visitor. Membership rule: **public and live**. The only source of URLs in the system. | `src/lib/kodexbar/destinations.ts` |
-| **`KnowledgePack`** | A pluggable body of knowledge (chunks + system prompt fragment + retrieval threshold). The open/closed seam: a new subject area is a new pack, not an engine change. | `src/lib/kodexbar/types.ts` |
-| **`CorpusChunk`** | One retrievable unit of context. `related` holds destination and chunk ids — this is the knowledge graph. | `src/lib/kodexbar/types.ts` |
-| **`RawModelAnswer`** | What the LLM is contractually required to return: `{ text, linkIds }`. Carries **ids, never URLs** — see ADR 09 §1. | `src/lib/kodexbar/types.ts` |
-| **`KodexAnswer`** | The validated reply rendered by the UI: one plain paragraph plus resolved `LinkDestination[]`. | `src/lib/kodexbar/types.ts` |
-| **`Suggestion`** | An authored follow-up question the model may propose as `nextId`. Resolved server-side; a hallucinated or missing id falls back to the strongest candidate, never to model text. | `src/lib/kodexbar/suggestions.ts` |
-| **`PendingOffer`** | A set of resolved link ids parked in KV `SESSION` after an answer withholds them, awaiting the visitor's consent on the next turn. | `src/lib/kodexbar/offers.ts` |
+| **`KodexBar`** | The application engine behind the homepage input: single-tier retrieval-augmented answering over Cloudflare Workers AI + Vectorize. Answers questions about Gabriel Cavedal and hands out links. Not a router. Lives apart from the Astro/Svelte surface. | `src/kodexbar/`, thin adapters in `src/pages/api/ask.ts` |
+| **`KodexCorpus`** | Markdown authoring SSOT for knowledge packs (`corpus/`). Compiled into runtime pack modules; never read from disk on each ask. Distinct from the Obsidian `docs/` vault. | `corpus/`, [ADR 13](adr-13-repo-layout.md) |
+| **`LinkDestination`** | A place KodexBar may send a visitor. Membership rule: **public and live**. The only source of URLs in the system. | `src/kodexbar/destinations.ts` |
+| **`KnowledgePack`** | A pluggable body of knowledge (chunks + system prompt fragment + retrieval threshold). The open/closed seam: a new subject area is a new pack, not an engine change. | `src/kodexbar/types.ts`, authored under `corpus/<pack>/` |
+| **`CorpusChunk`** | One retrievable unit of context. `related` holds destination and chunk ids — this is the knowledge graph. | `src/kodexbar/types.ts` |
+| **`RawModelAnswer`** | What the LLM is contractually required to return: `{ text, linkIds }`. Carries **ids, never URLs** — see ADR 09 §1. | `src/kodexbar/types.ts` |
+| **`KodexAnswer`** | The validated reply rendered by the UI: one plain paragraph plus resolved `LinkDestination[]`. | `src/kodexbar/types.ts` |
+| **`Suggestion`** | An authored follow-up question the model may propose as `nextId`. Resolved server-side; a hallucinated or missing id falls back to the strongest candidate, never to model text. | `src/kodexbar/suggestions.ts` |
+| **`PendingOffer`** | A set of resolved link ids parked in KV `SESSION` after an answer withholds them, awaiting the visitor's consent on the next turn. | `src/kodexbar/offers.ts` |
 | **`Harness`** | Edge-level security layer enforcing cooldowns, origin validation, session capabilities, and zero-trust bindings. | Cloudflare Worker runtime / API routes |
 | **`Pip-Boy Input`** | The typewriter style text field component ([SyvInput.svelte](file:///home/kodex/kodexArg/Home/src/components/SyvInput.svelte)) featuring platen baseline rule and cell grid on focus. | UI input box |
 | **`/me` (identity surface)** | Canonical optional Google login path on the apex Worker: `https://kodexarg.com/me`. Short host `https://me.kodexarg.com` always redirects here. Apex `/` stays ungated. | [ADR 13](adr-13-optional-google-identity.md) |

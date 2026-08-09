@@ -5,10 +5,10 @@ import {
 	SUGGESTIONS,
 	candidatesFor,
 	resolveSuggestion
-} from '../src/lib/kodexbar/suggestions';
-import { allChunks, getChunk } from '../src/lib/kodexbar/packs';
+} from '../src/kodexbar/suggestions';
+import { allChunks, getChunk } from '../src/kodexbar/packs';
 import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
-import type { CorpusChunk } from '../src/lib/kodexbar/types';
+import type { CorpusChunk } from '../src/kodexbar/types';
 
 const chunk = (localId: string, lang = 'es'): CorpusChunk =>
 	getChunk(`cv:${localId}:${lang}`)!;

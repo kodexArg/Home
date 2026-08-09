@@ -1,4 +1,4 @@
-import type { KodexAnswer, LinkDestination } from '../kodexbar/types';
+import type { KodexAnswer, LinkDestination } from '../../kodexbar/types';
 import { DEFAULT_LANGUAGE, type SupportedLanguage } from '../ui/language';
 
 export type ChatLanguage = SupportedLanguage;
@@ -69,14 +69,15 @@ export function isSubmittable(query: string): boolean {
 
 const defaultDelay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-function randomConversationId(): string {
+export function conversationIdForTab(
+	cryptoLike: { randomUUID?: () => string } | null | undefined = globalThis.crypto
+): string {
+	const uuid = cryptoLike?.randomUUID?.();
+	if (uuid) return uuid;
 	return `c${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
 }
 
-const TAB_SCOPED_CONVERSATION_ID = ((): string => {
-	const uuid = globalThis.crypto?.randomUUID?.();
-	return uuid ?? randomConversationId();
-})();
+const TAB_SCOPED_CONVERSATION_ID = conversationIdForTab();
 
 const defaultBackend: KodexBarPort = {
 	async ask(query, language) {

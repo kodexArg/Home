@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'bun:test';
-import { allowedLinksFor, answerQuery } from '../src/lib/kodexbar/answer';
-import { FAILURE, OUT_OF_SCOPE } from '../src/lib/kodexbar/systemPrompt';
-import { OPENING_SUGGESTION } from '../src/lib/kodexbar/suggestions';
-import { getChunk } from '../src/lib/kodexbar/packs';
-import type { RetrievalResult } from '../src/lib/kodexbar/retrieval';
+import { allowedLinksFor, answerQuery } from '../src/kodexbar/answer';
+import { FAILURE, OUT_OF_SCOPE } from '../src/kodexbar/systemPrompt';
+import { OPENING_SUGGESTION } from '../src/kodexbar/suggestions';
+import { getChunk } from '../src/kodexbar/packs';
+import type { RetrievalResult } from '../src/kodexbar/retrieval';
 
 const chunk = (id: string) => getChunk(id)!;
 

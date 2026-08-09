@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test';
-import { OFFER_TTL_SECONDS, offerKeyFor, putOffer, takeOffer } from '../src/lib/kodexbar/offers';
+import { OFFER_TTL_SECONDS, offerKeyFor, putOffer, takeOffer } from '../src/kodexbar/offers';
 
 function fakeKv(seed: Record<string, string> = {}) {
 	const store = new Map(Object.entries(seed));

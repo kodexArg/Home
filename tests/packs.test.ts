@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test';
-import { PACKS, allChunks, expandRelated, getChunk, getPack, minScoreFor } from '../src/lib/kodexbar/packs';
-import { getDestination } from '../src/lib/kodexbar/destinations';
+import { PACKS, allChunks, expandRelated, getChunk, getPack, minScoreFor } from '../src/kodexbar/packs';
+import { defineChunks } from '../src/kodexbar/packs/defineChunks';
+import { getDestination } from '../src/kodexbar/destinations';
 import { SUPPORTED_LANGUAGES } from '../src/lib/ui/language';
 
 const chunks = allChunks();
@@ -165,5 +166,16 @@ describe('getPack', () => {
 		for (const pack of PACKS) {
 			expect(pack.systemPromptFragment.trim().length).toBeGreaterThan(0);
 		}
+	});
+});
+
+describe('defineChunks', () => {
+	it('rejects duplicate local ids inside a pack language', () => {
+		expect(() =>
+			defineChunks('demo', 'es', [
+				{ id: 'a', title: 'Uno', text: 'x' },
+				{ id: 'a', title: 'Dos', text: 'y' }
+			])
+		).toThrow(/duplicate chunk id "a"/);
 	});
 });

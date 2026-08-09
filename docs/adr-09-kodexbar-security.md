@@ -36,7 +36,7 @@ A reviewer who finds free prose in this component is **not** looking at a regres
 
 This is the load-bearing control of the entire design.
 
-The LLM is required to return `RawModelAnswer` ([types.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/types.ts)):
+The LLM is required to return `RawModelAnswer` ([types.ts](file:///srv/dev/kodexArg/kdx-rag/src/kodexbar/types.ts)):
 
 ```ts
 interface RawModelAnswer { text: string; linkIds: string[]; nextId?: string }
@@ -44,7 +44,7 @@ interface RawModelAnswer { text: string; linkIds: string[]; nextId?: string }
 
 `nextId` is the same pattern applied to the follow-up placeholder — see §9. It is not a URL and does not widen this contract.
 
-* `linkIds` are **ids**, not URLs. They are resolved server-side by `resolveLinkIds()` against `DESTINATIONS` ([destinations.ts](file:///srv/dev/kodexArg/Home/src/lib/kodexbar/destinations.ts)).
+* `linkIds` are **ids**, not URLs. They are resolved server-side by `resolveLinkIds()` against `DESTINATIONS` ([destinations.ts](file:///srv/dev/kodexArg/kdx-rag/src/kodexbar/destinations.ts)).
 * An id absent from the allowlist is **dropped silently**. There is no fallback, no fuzzy match, no pass-through.
 * `text` MUST be scrubbed of anything URL-shaped before render (§4). A model that writes a link into its prose has it removed, not rendered.
 
@@ -181,7 +181,7 @@ Other kodexArg subdomains (the CV, docs, design system, project sites) are unaff
 
 ## Mandatory Review for Changes
 
-Any PR touching `src/lib/kodexbar/`, `src/pages/api/ask.ts`, `src/lib/chat/`, or the KodexBar component MUST be audited for:
+Any PR touching `src/kodexbar/`, `corpus/`, `src/pages/api/ask.ts`, `src/lib/chat/`, or the KodexBar component MUST be audited for:
 
 - [ ] The model still cannot emit a URL: `RawModelAnswer` carries `linkIds` only (§1).
 - [ ] `linkIds` are still resolved exclusively via `resolveLinkIds()` against `DESTINATIONS`; unknown ids still dropped (§1).
