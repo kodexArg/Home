@@ -1,6 +1,10 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { accessConfigured, verifyAccessJwt } from '../../../lib/access';
+import {
+	accessAssertionFromRequest,
+	accessConfigured,
+	verifyAccessJwt
+} from '../../../lib/access';
 import { truncateDisplayName } from '../../../lib/auth/identitySurface';
 
 export const prerender = false;
@@ -42,7 +46,7 @@ export const GET: APIRoute = async ({ request }) => {
 		return json(anonymous(false));
 	}
 
-	const assertion = request.headers.get('Cf-Access-Jwt-Assertion');
+	const assertion = accessAssertionFromRequest(request);
 	if (!assertion) {
 		return json(anonymous(true));
 	}

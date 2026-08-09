@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, mock } from 'bun:test';
-import { accessConfigured, verifyAccessJwt } from '../src/lib/access';
+import {
+	accessAssertionFromRequest,
+	accessConfigured,
+	parseCookie,
+	verifyAccessJwt
+} from '../src/lib/access';
 
 function b64url(bytes: ArrayBuffer | Uint8Array): string {
 	const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
@@ -86,6 +91,27 @@ describe('accessConfigured', () => {
 	});
 });
 
+describe('accessAssertionFromRequest', () => {
+	it('reads the Access header first', () => {
+		const request = new Request('https://home.kodexarg.com/api/auth/whoami', {
+			headers: {
+				'Cf-Access-Jwt-Assertion': 'header-jwt',
+				Cookie: 'CF_Authorization=cookie-jwt'
+			}
+		});
+		expect(accessAssertionFromRequest(request)).toBe('header-jwt');
+	});
+
+	it('falls back to CF_Authorization so apex whoami sees a /me session', () => {
+		const request = new Request('https://home.kodexarg.com/api/auth/whoami', {
+			headers: { Cookie: 'other=1; CF_Authorization=cookie%2Djwt; trail=x' }
+		});
+		expect(accessAssertionFromRequest(request)).toBe('cookie-jwt');
+		expect(parseCookie(null, 'CF_Authorization')).toBeNull();
+		expect(parseCookie('a=b', 'CF_Authorization')).toBeNull();
+	});
+});
+
 describe('verifyAccessJwt', () => {
 	it('returns null for a malformed assertion', async () => {
 		expect(await verifyAccessJwt('not-a-jwt', 'team.example', AUD)).toBeNull();
@@ -127,10 +153,20 @@ describe('verifyAccessJwt', () => {
 		expect(await verifyAccessJwt(noEmail, 'email.example', AUD)).toBeNull();
 	});
 
-	it('returns null when JWKS has no matching kid', async () => {
+	it('returns null when JWKS has no matching kid after a forced refetch', async () => {
 		const { privateKey } = await generateRs256Pair();
 		const team = 'kid-miss.example';
-		mockCerts(team, [{ kid: 'other', kty: 'RSA', n: 'x', e: 'AQAB', alg: 'RS256' }]);
+		let calls = 0;
+		fetchMock = mock(async () => {
+			calls += 1;
+			return new Response(
+				JSON.stringify({
+					keys: [{ kid: 'other', kty: 'RSA', n: 'x', e: 'AQAB', alg: 'RS256' }]
+				}),
+				{ status: 200 }
+			);
+		});
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
 		const jwt = await signJwt(
 			privateKey,
 			{ kid: 'test-kid', alg: 'RS256' },
@@ -141,6 +177,34 @@ describe('verifyAccessJwt', () => {
 			}
 		);
 		expect(await verifyAccessJwt(jwt, team, AUD)).toBeNull();
+		expect(calls).toBe(2);
+	});
+
+	it('refetches JWKS once when a rotated kid misses the cache', async () => {
+		const { privateKey, jwk } = await generateRs256Pair();
+		const team = 'rotate.example';
+		let calls = 0;
+		fetchMock = mock(async () => {
+			calls += 1;
+			const keys = calls === 1 ? [{ ...jwk, kid: 'stale-kid' }] : [jwk];
+			return new Response(JSON.stringify({ keys }), { status: 200 });
+		});
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		const jwt = await signJwt(
+			privateKey,
+			{ kid: 'test-kid', alg: 'RS256' },
+			{
+				email: 'rot@example.com',
+				aud: AUD,
+				exp: Math.floor(Date.now() / 1000) + 120
+			}
+		);
+		expect(await verifyAccessJwt(jwt, team, AUD)).toEqual({
+			email: 'rot@example.com',
+			name: 'rot',
+			picture: null
+		});
+		expect(calls).toBe(2);
 	});
 
 	it('returns null when certs fetch fails', async () => {
