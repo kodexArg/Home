@@ -190,6 +190,7 @@ Any PR touching `src/kodexbar/`, `corpus/`, `src/pages/api/ask.ts`, `src/lib/cha
 - [ ] The gate is still server-side and not overridable by request parameters (§2).
 - [ ] No untrusted input reaches the corpus or the index (§3).
 - [ ] The `identity` pack still gates strictly above `cv`, still derives age rather than stating it, and gained no new class of personal data without an amendment (§3b).
+- [ ] The `interests` pack stays separate from `cv` / `identity` (no career or civil-identity facts; `minScore` 0.52 unless ADR 15 is amended).
 - [ ] Every new `DESTINATIONS` entry was verified reachable, public and live (§5).
 - [ ] Output post-processing still strips formatting and URL-shaped text (§4).
 - [ ] Server-side rate limiting still present and independent of the client cooldown (§7).
